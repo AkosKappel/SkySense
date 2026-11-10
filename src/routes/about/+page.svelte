@@ -3,6 +3,20 @@
 	import { resolve } from '$app/paths';
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
 	import { m } from '#lib/paraglide/messages.js';
+
+	// Every feature once, in plain words (P-07); add a line when a feature lands.
+	const features = [
+		m.feature_answers,
+		m.feature_activities,
+		m.feature_comfort,
+		m.feature_confidence,
+		m.feature_normal,
+		m.feature_air,
+		m.feature_sky,
+		m.feature_places,
+		m.feature_offline,
+		m.feature_settings
+	];
 </script>
 
 <svelte:head>
@@ -20,6 +34,12 @@
 	<article class="mt-6 space-y-4 glass p-6 leading-relaxed">
 		<p class="answer">{m.tagline()}</p>
 		<p>{m.about_what()}</p>
+		<h2 class="question pt-2">{m.about_features()}</h2>
+		<ul class="list-disc space-y-2 pl-5 marker:text-ink-muted">
+			{#each features as feature (feature)}
+				<li>{feature()}</li>
+			{/each}
+		</ul>
 		<p>{m.about_data()}</p>
 		<p>{m.about_languages()}</p>
 		<p>
