@@ -1,0 +1,39 @@
+import { describe, expect, it } from 'vitest';
+import { render } from 'vitest-browser-svelte';
+import { formatter } from '#lib/format.js';
+import { metric } from '#lib/units.js';
+import type { Hour } from '#lib/weather.js';
+import UmbrellaTile from './UmbrellaTile.svelte';
+
+const f = formatter('en', metric);
+
+const hours = (chances: number[]): Hour[] =>
+	chances.map((rainChance, i) => ({
+		time: `2026-11-10T${String(8 + i).padStart(2, '0')}:00`,
+		temp: 8,
+		feels: 6,
+		condition: rainChance >= 50 ? 'rain' : 'cloudy',
+		isDay: true,
+		rainChance,
+		rain: 0,
+		wind: 10,
+		gust: 20,
+		uv: 1
+	}));
+
+describe('UmbrellaTile', () => {
+	it('says no when no hour is likely to be wet', async () => {
+		const screen = render(UmbrellaTile, { hours: hours([10, 20, 30]), f });
+		await expect.element(screen.getByText('No, it should stay dry.')).toBeVisible();
+	});
+
+	it('says when rain that is falling stops', async () => {
+		const screen = render(UmbrellaTile, { hours: hours([90, 80, 10]), f });
+		await expect.element(screen.getByText('Yes, until 10:00.')).toBeVisible();
+	});
+
+	it('says when rain starts and stops', async () => {
+		const screen = render(UmbrellaTile, { hours: hours([10, 10, 70, 60, 20]), f });
+		await expect.element(screen.getByText('Yes, from 10:00 to 12:00.')).toBeVisible();
+	});
+});

@@ -5,9 +5,10 @@ import settings from '../../project.inlang/settings.json';
 type Messages = Record<string, string>;
 
 const load = (locale: string): Messages => {
-	const { $schema: _, ...messages } = JSON.parse(
+	const messages = JSON.parse(
 		readFileSync(new URL(`../../messages/${locale}.json`, import.meta.url), 'utf-8')
 	);
+	delete messages.$schema;
 	return messages;
 };
 
