@@ -243,6 +243,35 @@
 				<UmbrellaTile hours={forecast.hours} {f} />
 			</section>
 
+			<section class="glass p-6 md:col-span-2 lg:col-span-4">
+				<ActivityTile
+					hours={forecast.hours.slice(0, 24)}
+					week={forecast.hours}
+					days={forecast.days}
+					{f}
+					comfort={data.comfort}
+				/>
+			</section>
+
+			<section class="glass p-5 md:col-span-2 lg:col-span-4">
+				<h2 class="question">{m.next_hours()}</h2>
+				<HourlyStrip hours={forecast.hours.slice(0, 24)} {f} />
+			</section>
+
+			<section class="glass p-6 md:col-span-2 lg:col-span-4">
+				<TempChart hours={forecast.hours.slice(0, 25)} {f} />
+				<a
+					href="{resolve('/p/[coords]/[[name]]', {
+						coords: page.params.coords ?? '',
+						name: encodeURIComponent(page.params.name ?? '')
+					})}?models"
+					class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
+					>{m.compare_models()} <ChevronRight size={16} aria-hidden="true" /></a
+				>
+			</section>
+
+			<!-- After the activities on a phone (docs/design.md); the dense grid still puts them beside
+				the umbrella on wider screens. -->
 			<section class="glass p-6">
 				<p class="question"><Sunset size={18} aria-hidden="true" /> {m.dark_question()}</p>
 				{#if dark.kind === 'sets'}
@@ -283,33 +312,6 @@
 						{m.wind_gust_warning({ gust: f.wind(strongestGust) })}
 					</p>
 				{/if}
-			</section>
-
-			<section class="glass p-6 md:col-span-2 lg:col-span-4">
-				<ActivityTile
-					hours={forecast.hours.slice(0, 24)}
-					week={forecast.hours}
-					days={forecast.days}
-					{f}
-					comfort={data.comfort}
-				/>
-			</section>
-
-			<section class="glass p-5 md:col-span-2 lg:col-span-4">
-				<h2 class="question">{m.next_hours()}</h2>
-				<HourlyStrip hours={forecast.hours.slice(0, 24)} {f} />
-			</section>
-
-			<section class="glass p-6 md:col-span-2 lg:col-span-4">
-				<TempChart hours={forecast.hours.slice(0, 25)} {f} />
-				<a
-					href="{resolve('/p/[coords]/[[name]]', {
-						coords: page.params.coords ?? '',
-						name: encodeURIComponent(page.params.name ?? '')
-					})}?models"
-					class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
-					>{m.compare_models()} <ChevronRight size={16} aria-hidden="true" /></a
-				>
 			</section>
 
 			<section class="glass p-6 lg:col-span-2 lg:row-span-2">
