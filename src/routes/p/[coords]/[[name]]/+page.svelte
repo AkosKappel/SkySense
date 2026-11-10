@@ -19,6 +19,7 @@
 	import PlaceSheet from '#lib/components/PlaceSheet.svelte';
 	import ShareButton from '#lib/components/ShareButton.svelte';
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
+	import SkyLayer from '#lib/components/SkyLayer.svelte';
 	import UmbrellaTile from '#lib/components/UmbrellaTile.svelte';
 	import WeatherIcon from '#lib/components/WeatherIcon.svelte';
 	import { conditionLabel } from '#lib/components/labels.js';
@@ -29,6 +30,7 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { rememberLastPlace, savedPlaces } from '#lib/places.svelte.js';
+	import { precipitation, skyKind } from '#lib/sky.js';
 	import { beaufort } from '#lib/units.js';
 	import type { PageProps } from './$types';
 
@@ -59,6 +61,18 @@
 		day ? m.weather_on({ place: name, date: f.date(day.date) }) : m.weather_in({ place: name })
 	);
 	const dayHours = $derived(day ? forecast.hours.filter((h) => h.time.startsWith(day.date)) : []);
+
+	// A day view shows that day's sky at noon; the overview shows the sky now.
+	const skyAt = $derived(
+		day
+			? (dayHours.find((h) => h.time.endsWith('T12:00')) ?? {
+					time: `${day.date}T12:00`,
+					isDay: true,
+					condition: day.condition
+				})
+			: now
+	);
+	const sky = $derived(skyKind(skyAt, day ?? today));
 
 	const direction = $derived(
 		{
@@ -247,4 +261,5 @@
 	<SiteFooter />
 </main>
 
+<SkyLayer kind={sky} falling={precipitation(skyAt.condition)} />
 <PlaceSheet current={data.coordinates} />

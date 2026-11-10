@@ -6,7 +6,7 @@
 	--font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
 
 	--color-ink: #ffffff;
-	--color-ink-muted: rgb(255 255 255 / 0.8);
+	--color-ink-muted: rgb(255 255 255 / 0.85);
 	--color-sun: #fcd34d;
 	--color-sun-soft: #fde68a;
 	--color-rain: #7dd3fc;
@@ -18,13 +18,12 @@
 	--radius-tile: 1.5rem;
 }
 
-/* Sky backgrounds. The living sky (U-01) picks one per hour; dusk is the default. */
+/* The default sky, for pages without a place. Matches `dusk` in src/lib/sky.ts, whose contrast
+   sky.test.ts measures; a place's own sky (U-01) is drawn over it. */
 :root {
 	--sky-dusk:
-		radial-gradient(60rem 40rem at 85% -10%, #f59e0b55, transparent 60%),
-		radial-gradient(50rem 40rem at -10% 30%, #0ea5e955, transparent 60%),
-		radial-gradient(40rem 30rem at 60% 110%, #8b5cf655, transparent 60%),
-		linear-gradient(170deg, #1e3a8a 0%, #312e81 45%, #1e1b4b 100%);
+		radial-gradient(60rem 40rem at 85% -10%, #f59e0b38, transparent 60%),
+		linear-gradient(170deg, #1e3a8a, #312e81, #1e1b4b);
 }
 
 body {
