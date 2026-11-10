@@ -36,6 +36,17 @@ const handleSecurity: Handle = async ({ event, resolve }) => {
 	for (const [name, value] of Object.entries(securityHeaders)) {
 		if (!response.headers.has(name)) response.headers.set(name, value);
 	}
+	// The embeddable card (X-12) is the one page other sites may frame. It has no actions to
+	// trick anyone into, and its links open in a new tab.
+	if (event.url.pathname.startsWith('/embed/')) {
+		const csp = response.headers.get('content-security-policy');
+		if (csp) {
+			response.headers.set(
+				'content-security-policy',
+				csp.replace("frame-ancestors 'none'", 'frame-ancestors *')
+			);
+		}
+	}
 	return response;
 };
 

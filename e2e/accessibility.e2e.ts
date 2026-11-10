@@ -11,6 +11,7 @@ const pages = [
 	'/p/48.15,17.11/Bratislava?models',
 	'/p/1.29,103.85/Singapore',
 	'/compare?a=48.15,17.11&an=Bratislava&b=40.42,-3.7&bn=Madrid',
+	'/embed/48.15,17.11/Bratislava',
 	'/settings',
 	'/about',
 	'/privacy',

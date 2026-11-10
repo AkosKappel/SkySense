@@ -55,6 +55,21 @@ pnpm dev
 
 `SKYSENSE_FIXTURES=1` makes the server answer from the recorded responses in `src/lib/server/fixtures/`, so the app runs offline with a fixed "now". On a place page, `?demo=heat`, `?demo=polar-night` or `?demo=midnight-sun` shows a recorded scenario. The screenshots above come from `node scripts/render-screenshots.ts` against that mode.
 
+## Embedding
+
+Any place can go on another site as a small card (now, the summary and the umbrella answer, with the attribution):
+
+```html
+<iframe
+	src="https://skysense.akoskappel.dev/embed/48.15,17.11/Bratislava"
+	width="360"
+	height="280"
+	title="Weather in Bratislava"
+></iframe>
+```
+
+Only `/embed/` pages allow framing; every other page sends `frame-ancestors 'none'`.
+
 ## Data and attribution
 
 Weather data by [Open-Meteo.com](https://open-meteo.com/), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Historical data from ERA5 (Copernicus Climate Change Service), forecasts from the national weather services' models that Open-Meteo combines.

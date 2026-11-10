@@ -48,3 +48,16 @@ test('pages describe themselves for link previews', async ({ page }) => {
 		'The weather, made sense of.'
 	);
 });
+
+test('only the embeddable card may be framed by other sites', async ({ page }) => {
+	const embed = await page.goto('/embed/48.15,17.11/Bratislava');
+	expect(embed?.headers()['content-security-policy']).toContain('frame-ancestors *');
+	await expect(page.getByRole('heading', { level: 1, name: 'Bratislava' })).toBeVisible();
+	await expect(page.getByText('Rain until 16:00, then dry.')).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Full forecast on SkySense' })).toHaveAttribute(
+		'target',
+		'_blank'
+	);
+	const place = await page.goto('/p/48.15,17.11/Bratislava');
+	expect(place?.headers()['content-security-policy']).toContain("frame-ancestors 'none'");
+});
