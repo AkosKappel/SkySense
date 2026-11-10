@@ -5,7 +5,16 @@ import { moon } from '#lib/moon.js';
 import { skyKind } from '#lib/sky.js';
 import type { Day, Hour } from '#lib/weather.js';
 
-export const activityIds = ['run', 'cycle', 'walk', 'laundry', 'stars', 'golden'] as const;
+export const activityIds = [
+	'run',
+	'cycle',
+	'walk',
+	'hike',
+	'picnic',
+	'laundry',
+	'stars',
+	'golden'
+] as const;
 export type ActivityId = (typeof activityIds)[number];
 
 /** Why an hour scores low, as a message key in the UI. */
@@ -141,6 +150,32 @@ export const activities: Record<ActivityId, Activity> = {
 			sunburn
 		]
 	},
+	hike: {
+		id: 'hike',
+		hours: 3,
+		// Hours on a trail: daylight is a must, and wet or gusty weather matters more than on a walk.
+		factors: [
+			comfort([-5, 30], [8, 22]),
+			dry(60, 15, 3.5),
+			calm(45, 25),
+			{ ...daylight(0), gate: true },
+			awake,
+			sunburn
+		]
+	},
+	picnic: {
+		id: 'picnic',
+		hours: 2,
+		// Sitting still outside: it has to be warm, dry and fairly calm.
+		factors: [
+			comfort([10, 34], [18, 28], 2.5),
+			dry(40, 10, 4),
+			calm(35, 15),
+			{ ...daylight(0), gate: true },
+			awake,
+			sunburn
+		]
+	},
 	laundry: {
 		id: 'laundry',
 		hours: 4,
@@ -247,7 +282,18 @@ export function scoreHour(activity: Activity, context: Context): HourScore {
 /** From this score an hour is good enough to go. */
 export const GOOD = 60;
 
-export type ActivityWindow = { from: string; until: string; score: number; hours: Hour[] };
+export type ActivityWindow = {
+	from: string;
+	until: string;
+	score: number;
+	hours: Hour[];
+	/** From 80, and only when no factor is poor: a great run is not a cold one. */
+	great?: boolean;
+};
+
+/** From this score a window can be great; a factor below POOR keeps it at good. */
+export const GREAT = 80;
+export const POOR = 0.5;
 
 /** What a result rests on: the window's average, or the best hour when there is no window. */
 export type Detail = { time: string; score: number; factors: FactorValue[] };
@@ -288,7 +334,12 @@ export function bestWindow(
 			id,
 			value: slice.reduce((sum, s) => sum + s.factors[i].value, 0) / length
 		}));
-		return { window: best, reason: null, detail: { time: best.from, score: best.score, factors } };
+		const great = best.score >= GREAT && factors.every((f) => f.value >= POOR);
+		return {
+			window: { ...best, great },
+			reason: null,
+			detail: { time: best.from, score: best.score, factors }
+		};
 	}
 	// Explain with the best hour that meets the requirements (a clear night, not just any night).
 	const open = scores.map((s, i) => ({ ...s, i })).filter((s) => !s.gated);
@@ -297,7 +348,9 @@ export function bestWindow(
 	return {
 		window: null,
 		reason: top.reason,
-		detail: { time: hours[top.i].time, score: top.score, factors: top.factors }
+		// A best hour of 0 explains nothing beyond the reason.
+		detail:
+			top.score > 0 ? { time: hours[top.i].time, score: top.score, factors: top.factors } : null
 	};
 }
 
@@ -305,4 +358,24 @@ function addHours(time: string, n: number): string {
 	const date = new Date(`${time}:00Z`);
 	date.setUTCHours(date.getUTCHours() + n);
 	return date.toISOString().slice(0, 16);
+}
+
+/**
+ * The best window in each day of `hours` (the whole forecast), and the best of those: "Best this
+ * week" (S-03). A day's window may not cross midnight, so each day is judged on its own hours.
+ */
+export function bestDay(
+	activity: Activity,
+	hours: Hour[],
+	days: Day[],
+	shift = 0
+): ActivityWindow | null {
+	let best: ActivityWindow | null = null;
+	for (const day of days) {
+		const dayHours = hours.filter((h) => h.time.startsWith(day.date));
+		if (dayHours.length < activity.hours) continue;
+		const { window } = bestWindow(activity, dayHours, days, shift);
+		if (window && (!best || window.score > best.score)) best = window;
+	}
+	return best;
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import bratislava from '#lib/server/fixtures/forecast-bratislava.json';
 import { toForecast } from '#lib/server/open-meteo.js';
-import { activities, band, bestWindow, comfortShift, scoreHour } from './activities.js';
+import { activities, band, bestDay, bestWindow, comfortShift, scoreHour } from './activities.js';
 import type { Day, Hour } from './weather.js';
 
 const day: Day = {
@@ -176,5 +176,54 @@ describe('comfort profile', () => {
 		expect(at(comfortShift.neutral).score).toBe(at(comfortShift.warm).score);
 		expect(at(comfortShift.cold).score).toBeLessThan(at(comfortShift.neutral).score);
 		expect(at(comfortShift.cold).reason).toBe('cold');
+	});
+});
+
+describe('great windows', () => {
+	it('are never great with a poor factor, whatever the average', () => {
+		const chilly = hours(() => ({ feels: 0 }));
+		const { window, detail } = bestWindow(activities.hike, chilly, [day]);
+		expect(detail!.factors.find((f) => f.id === 'feels')!.value).toBeLessThan(0.5);
+		expect(window?.score).toBeGreaterThanOrEqual(60);
+		expect(window?.great).toBe(false);
+		expect(bestWindow(activities.run, hours(), [day]).window?.great).toBe(true);
+	});
+});
+
+describe('hiking and picnics', () => {
+	it('wants three dry daylight hours for a hike and warmth for a picnic', () => {
+		const mild = hours();
+		expect(bestWindow(activities.hike, mild, [day]).window).toMatchObject({
+			from: '2026-11-10T07:00',
+			until: '2026-11-10T10:00'
+		});
+		expect(score('hike', mild, 20).gated).toBe(true);
+		// 12° is fine for walking but too cool to sit outside.
+		expect(score('picnic', mild, 12).reason).toBe('cold');
+		expect(
+			score(
+				'picnic',
+				hours(() => ({ feels: 23 })),
+				12
+			).score
+		).toBe(100);
+	});
+});
+
+describe('bestDay', () => {
+	it('finds the best day of the forecast for an activity', () => {
+		const days = [day, { ...day, date: '2026-11-11' }];
+		const twoDays = [
+			...hours(() => ({ rainChance: 90 })),
+			...hours().map((h) => ({ ...h, time: h.time.replace('11-10', '11-11') }))
+		];
+		expect(bestDay(activities.run, twoDays, days)?.from.slice(0, 10)).toBe('2026-11-11');
+		expect(
+			bestDay(
+				activities.run,
+				hours(() => ({ rainChance: 90 })),
+				[day]
+			)
+		).toBeNull();
 	});
 });
