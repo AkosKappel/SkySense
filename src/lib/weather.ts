@@ -44,6 +44,8 @@ export type Day = {
 
 export type Forecast = {
 	timezone: string;
+	/** When our server got it from Open-Meteo (UTC ISO); CDN copies keep this time. */
+	fetchedAt: string;
 	current: Current;
 	/** The next 48 hours, starting with the current one. */
 	hours: Hour[];

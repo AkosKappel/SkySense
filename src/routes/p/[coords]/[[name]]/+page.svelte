@@ -9,6 +9,7 @@
 		Sunset,
 		Wind
 	} from '@lucide/svelte';
+	import { invalidateAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import DailyList from '#lib/components/DailyList.svelte';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
@@ -18,6 +19,7 @@
 	import { conditionLabel } from '#lib/components/labels.js';
 	import { darkness } from '#lib/daylight.js';
 	import { formatter, uvLevel, windLevel } from '#lib/format.js';
+	import { age, STALE_AFTER_MS } from '#lib/freshness.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { rememberLastPlace, savedPlaces } from '#lib/places.svelte.js';
@@ -57,6 +59,24 @@
 	);
 
 	$effect(() => rememberLastPlace(place));
+
+	let clock = $state(Date.now());
+	const updated = $derived(age(forecast.fetchedAt, clock, getLocale()));
+
+	$effect(() => {
+		const tick = setInterval(() => (clock = Date.now()), 60_000);
+		// A tab left in the background shows an old forecast; load it again when it comes back.
+		const onVisible = () => {
+			if (document.visibilityState !== 'visible') return;
+			clock = Date.now();
+			if (clock - Date.parse(forecast.fetchedAt) > STALE_AFTER_MS) invalidateAll();
+		};
+		document.addEventListener('visibilitychange', onVisible);
+		return () => {
+			clearInterval(tick);
+			document.removeEventListener('visibilitychange', onVisible);
+		};
+	});
 </script>
 
 <svelte:head>
@@ -120,6 +140,9 @@
 			</div>
 			<p class="mt-8 text-lg text-ink-muted">
 				{m.high_low({ max: f.temp(today.max), min: f.temp(today.min) })}
+			</p>
+			<p class="mt-2 text-sm text-ink-muted">
+				{updated ? m.updated_ago({ ago: updated }) : m.updated_just_now()}
 			</p>
 		</section>
 

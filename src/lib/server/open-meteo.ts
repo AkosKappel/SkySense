@@ -158,6 +158,7 @@ export function toForecast(raw: unknown): Forecast {
 	const c = data.current;
 	return {
 		timezone: data.timezone,
+		fetchedAt: new Date().toISOString(),
 		current: {
 			time: c.time,
 			temp: c.temperature_2m,
