@@ -1,5 +1,6 @@
 <script lang="ts">
 	import './layout.css';
+	import { onNavigate } from '$app/navigation';
 	import { navigating, page } from '$app/state';
 	import favicon from '#lib/assets/favicon.svg';
 	import { m } from '#lib/paraglide/messages.js';
@@ -7,6 +8,20 @@
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
+
+	// Place switches and day views cross-fade (U-08), where the browser supports it and the reader
+	// has not asked for less motion.
+	onNavigate((navigation) => {
+		if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+			return;
+		}
+		return new Promise((resolve) => {
+			document.startViewTransition(async () => {
+				resolve();
+				await navigation.complete;
+			});
+		});
+	});
 </script>
 
 <svelte:head>
