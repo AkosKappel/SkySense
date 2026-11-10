@@ -47,7 +47,7 @@ export type Forecast = {
 	/** When our server got it from Open-Meteo (UTC ISO); CDN copies keep this time. */
 	fetchedAt: string;
 	current: Current;
-	/** The next 48 hours, starting with the current one. */
+	/** Every hour from the current one to the end of the last day (the day view needs them). */
 	hours: Hour[];
 	/** Ten days, starting today. */
 	days: Day[];
@@ -75,6 +75,8 @@ export type RainWindow = {
 	from: string;
 	until: string;
 	startsNow: boolean;
+	/** Still wet at the end of the hours looked at, so `until` is not when it stops. */
+	openEnded: boolean;
 	/** What falls: thunderstorms win over everything, snow only when no hour brings rain. */
 	kind: 'rain' | 'snow' | 'mixed' | 'thunder';
 };
@@ -101,7 +103,13 @@ export function nextRain(hours: Hour[], withinHours = 24): RainWindow | null {
 			: snow
 				? 'snow'
 				: 'rain';
-	return { from: window[start].time, until, startsNow: start === 0, kind };
+	return {
+		from: window[start].time,
+		until,
+		startsNow: start === 0,
+		openEnded: end === window.length - 1,
+		kind
+	};
 }
 
 function addHour(time: string): string {

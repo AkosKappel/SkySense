@@ -6,7 +6,7 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import type { Hour } from '#lib/weather.js';
 
-	let { hours, f }: { hours: Hour[]; f: Formatter } = $props();
+	let { hours, f, fromNow = true }: { hours: Hour[]; f: Formatter; fromNow?: boolean } = $props();
 </script>
 
 <!-- Focusable so keyboard users can scroll the strip (axe: scrollable-region-focusable). -->
@@ -20,12 +20,13 @@
 	<ol class="flex gap-1">
 		{#each hours as hour, i (hour.time)}
 			<li
-				class="relative flex min-w-15 flex-col items-center gap-2 rounded-2xl px-1 py-3 {i === 0
+				class="relative flex min-w-15 flex-col items-center gap-2 rounded-2xl px-1 py-3 {i === 0 &&
+				fromNow
 					? 'bg-white/15 outline-1 outline-white/25'
 					: ''}"
 			>
 				<span class="text-xs font-medium text-ink-muted"
-					>{i === 0 ? m.now() : f.hour(hour.time)}</span
+					>{i === 0 && fromNow ? m.now() : f.hour(hour.time)}</span
 				>
 				<WeatherIcon condition={hour.condition} isDay={hour.isDay} />
 				<span class="sr-only">{conditionLabel(hour.condition, hour.isDay)}</span>

@@ -27,6 +27,16 @@ describe('UmbrellaTile', () => {
 		await expect.element(screen.getByText('No, it should stay dry.')).toBeVisible();
 	});
 
+	it('says when rain goes on past the hours shown', async () => {
+		const screen = render(UmbrellaTile, { hours: hours([10, 10, 70, 80]), f, fromNow: false });
+		await expect.element(screen.getByText('Yes, from 10:00 on.')).toBeVisible();
+	});
+
+	it('says all day when every hour is wet', async () => {
+		const screen = render(UmbrellaTile, { hours: hours([70, 80, 90]), f });
+		await expect.element(screen.getByText('Yes, all day.')).toBeVisible();
+	});
+
 	it('says when rain that is falling stops', async () => {
 		const screen = render(UmbrellaTile, { hours: hours([90, 80, 10]), f });
 		await expect.element(screen.getByText('Yes, until 10:00.')).toBeVisible();

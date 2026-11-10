@@ -13,7 +13,6 @@ export class WeatherServiceError extends Error {}
 
 const FORECAST_URL = 'https://api.open-meteo.com/v1/forecast';
 const GEOCODING_URL = 'https://geocoding-api.open-meteo.com/v1/search';
-const HOURS = 48;
 const DAYS = 10;
 
 const hourly = [
@@ -110,7 +109,7 @@ export function sunTimes(date: string, sunrise: string | null, sunset: string | 
 	return { sunrise, sunset };
 }
 
-/** Turns Open-Meteo's column arrays into hour and day records, from the current hour on. */
+/** Turns Open-Meteo's column arrays into hour and day records, from the current hour to the end of the tenth day. */
 export function toForecast(raw: unknown): Forecast {
 	const parsed = forecastSchema.safeParse(raw);
 	if (!parsed.success) throw new WeatherServiceError('Unexpected forecast response');
@@ -121,7 +120,7 @@ export function toForecast(raw: unknown): Forecast {
 	const currentHour = `${data.current.time.slice(0, 13)}:00`;
 	const first = Math.max(0, h.time.indexOf(currentHour));
 	const hours: Hour[] = [];
-	for (let i = first; i < h.time.length && hours.length < HOURS; i++) {
+	for (let i = first; i < h.time.length; i++) {
 		const temp = h.temperature_2m[i];
 		if (temp === null) break;
 		hours.push({

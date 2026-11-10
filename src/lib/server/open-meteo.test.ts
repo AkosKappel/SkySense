@@ -20,7 +20,8 @@ describe('toForecast', () => {
 	it('starts the hours at the current hour', () => {
 		expect(forecast.current.time).toBe('2026-11-10T10:00');
 		expect(forecast.hours[0].time).toBe('2026-11-10T10:00');
-		expect(forecast.hours).toHaveLength(48);
+		expect(forecast.hours).toHaveLength(240 - 10);
+		expect(forecast.hours.at(-1)?.time).toBe('2026-11-19T23:00');
 	});
 
 	it('keeps ten days with sunrise and sunset', () => {

@@ -50,6 +50,7 @@ describe('nextRain', () => {
 			from: '2026-11-10T10:00',
 			until: '2026-11-10T12:00',
 			startsNow: false,
+			openEnded: false,
 			kind: 'rain'
 		});
 	});
@@ -59,12 +60,14 @@ describe('nextRain', () => {
 			from: '2026-11-10T08:00',
 			until: '2026-11-10T10:00',
 			startsNow: true,
+			openEnded: false,
 			kind: 'rain'
 		});
 	});
 
-	it('ends a stretch at the last hour of the list one hour later', () => {
-		expect(nextRain(day([10, 70]))?.until).toBe('2026-11-10T10:00');
+	it('marks rain that is still falling at the end of the hours looked at', () => {
+		expect(nextRain(day([10, 70]))).toMatchObject({ until: '2026-11-10T10:00', openEnded: true });
+		expect(nextRain(day([10, 70, 70, 10]), 3)?.openEnded).toBe(true);
 	});
 
 	it.each([
