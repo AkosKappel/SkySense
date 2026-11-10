@@ -67,4 +67,11 @@ describe('NowTile', () => {
 		await expect.element(same.getByText('Now · Tue 10:00')).toBeVisible();
 		expect(same.container.textContent).not.toContain('Local time');
 	});
+
+	it('says what to wear, with the extras', async () => {
+		const screen = render(NowTile, { ...props, wear: { layer: 'warm', extras: ['rain'] } });
+		await expect
+			.element(screen.getByText('A warm jacket. Something waterproof too.'))
+			.toBeVisible();
+	});
 });

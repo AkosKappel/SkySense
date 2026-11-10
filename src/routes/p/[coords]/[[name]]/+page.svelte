@@ -30,6 +30,7 @@
 	import SummaryLine from '#lib/components/SummaryLine.svelte';
 	import SkyLayer from '#lib/components/SkyLayer.svelte';
 	import UmbrellaTile from '#lib/components/UmbrellaTile.svelte';
+	import { comfortShift } from '#lib/activities.js';
 	import { airSummary } from '#lib/air.js';
 	import { darkness } from '#lib/daylight.js';
 	import { compass, formatter, STRONG_GUST_KMH, windLevel } from '#lib/format.js';
@@ -41,6 +42,7 @@
 	import { rememberLastPlace, savedPlaces } from '#lib/places.svelte.js';
 	import { precipitation, skyKind } from '#lib/sky.js';
 	import { summarize } from '#lib/summary.js';
+	import { whatToWear } from '#lib/wear.js';
 	import { beaufort } from '#lib/units.js';
 	import type { PageProps } from './$types';
 
@@ -235,6 +237,7 @@
 					{updated}
 					place={name}
 					utcOffsetSeconds={forecast.utcOffsetSeconds}
+					wear={whatToWear(forecast.hours, comfortShift[data.comfort])}
 					bind:selected={scrubbed}
 				/>
 			</section>

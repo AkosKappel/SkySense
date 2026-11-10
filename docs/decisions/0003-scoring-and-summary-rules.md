@@ -33,6 +33,8 @@ Explicit rules, in pure functions under `src/lib/`:
 - **Air and pollen** are shown only when notable: the European Air Quality Index from "moderate" (40) on, pollen from 10 grains per m³ (moderate) and 50 (high). The pollen bands are a rough common scale for every plant; real thresholds differ by species, so tune them when pollen season gives data. Poor air counts against running and cycling (a factor that falls from index 40 to 100), not walking.
 - **The moon** is the mean synodic month from a known new moon (no astronomy library, D-10); it is off by up to half a day, enough for a phase name and brightness. Moonlight lowers stargazing (a full moon caps it at "good").
 
+- **What to wear** follows the coldest feels-like of the next 12 waking hours, minus the comfort shift: a T-shirt from 24 °C, a light layer added from 17, a light jacket from 10, a warm jacket from 3, a winter coat from -5, full winter layers below. It adds something waterproof when rain is likely, windproof from gusts of 60 km/h and sun protection from UV 6.
+
 ## Consequences
 
 - The rules are easy to explain in the UI (S-06) and to test: each threshold has a test with synthetic hours, and the recorded fixtures catch surprises (polar night, heat, snow).

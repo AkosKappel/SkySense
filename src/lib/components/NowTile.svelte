@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { RotateCcw } from '@lucide/svelte';
+	import { RotateCcw, Shirt } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 	import WeatherIcon from '#lib/components/WeatherIcon.svelte';
 	import { conditionLabel } from '#lib/components/labels.js';
@@ -8,6 +8,7 @@
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { hoursAhead } from '#lib/time.js';
 	import type { Current, Day, Hour } from '#lib/weather.js';
+	import type { Extra, Layer } from '#lib/wear.js';
 
 	// The hour scrubber (U-02): a native range input gives the slider role, arrows, Home, End
 	// and Page keys for free. `selected` is bound so the sky behind the page follows it.
@@ -19,6 +20,7 @@
 		updated,
 		place,
 		utcOffsetSeconds,
+		wear = null,
 		selected = $bindable(0)
 	}: {
 		now: Current;
@@ -28,6 +30,8 @@
 		updated: string | null;
 		place: string;
 		utcOffsetSeconds: number;
+		/** What to wear for the next waking hours (X-02), from `whatToWear`. */
+		wear?: { layer: Layer; extras: Extra[] } | null;
 		selected?: number;
 	} = $props();
 
@@ -48,6 +52,20 @@
 		const shown = new Intl.NumberFormat(getLocale()).format(hours);
 		return ahead > 0 ? m.tz_ahead({ place, hours, shown }) : m.tz_behind({ place, hours, shown });
 	});
+
+	const layers: Record<Layer, () => string> = {
+		tshirt: m.wear_tshirt,
+		layer: m.wear_layer,
+		light: m.wear_light,
+		warm: m.wear_warm,
+		winter: m.wear_winter,
+		arctic: m.wear_arctic
+	};
+	const extras: Record<Extra, () => string> = {
+		rain: m.wear_rain,
+		wind: m.wear_wind,
+		sun: m.wear_sun
+	};
 </script>
 
 <div class="flex items-start justify-between gap-4">
@@ -71,6 +89,15 @@
 <p class="mt-6 text-lg text-ink-muted">
 	{m.high_low({ max: f.temp(day.max), min: f.temp(day.min) })}
 </p>
+{#if wear}
+	<p class="mt-2 flex items-start gap-2">
+		<Shirt size={18} class="mt-0.5 shrink-0 text-ink-muted" aria-hidden="true" />
+		<span>
+			<span class="sr-only">{m.wear_label()}</span>
+			{[layers[wear.layer](), ...wear.extras.map((extra) => extras[extra]())].join(' ')}
+		</span>
+	</p>
+{/if}
 
 <div class="mt-4">
 	<div class="flex min-h-11 items-center justify-between gap-2">
