@@ -42,8 +42,15 @@
 
 	const wet = ['drizzle', 'rain', 'showers', 'snow', 'thunder'];
 	const Icon = $derived(icons[condition][isDay ? 0 : 1]);
+	// Amber only where the sun or moon is in the icon; plain cloud and fog stay neutral.
 	const tone = $derived(
-		wet.includes(condition) ? 'text-rain' : isDay ? 'text-sun' : 'text-sun-soft'
+		wet.includes(condition)
+			? 'text-rain'
+			: condition === 'cloudy' || condition === 'fog'
+				? 'text-ink'
+				: isDay
+					? 'text-sun'
+					: 'text-sun-soft'
 	);
 </script>
 
