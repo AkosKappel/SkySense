@@ -10,6 +10,7 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
+	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 </svelte:head>
 
 <!-- A thin bar while a client navigation loads; the old page stays put, so nothing jumps. -->
