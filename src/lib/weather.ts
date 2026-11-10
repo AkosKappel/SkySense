@@ -63,6 +63,8 @@ export type Day = {
 
 export type Forecast = {
 	timezone: string;
+	/** The place's offset from UTC now, for "8 hours ahead of you" (F-13). */
+	utcOffsetSeconds: number;
 	/** When our server got it from Open-Meteo (UTC ISO); CDN copies keep this time. */
 	fetchedAt: string;
 	current: Current;

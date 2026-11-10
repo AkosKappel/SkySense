@@ -254,6 +254,26 @@
 	"today": "Today",
 	"today_details": "Today in detail",
 	"try_again": "Try again",
+	"tz_ahead": [
+		{
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
+			"match": {
+				"hoursPlural=one": "Local time in {place}, {shown} hour ahead of you.",
+				"hoursPlural=*": "Local time in {place}, {shown} hours ahead of you."
+			}
+		}
+	],
+	"tz_behind": [
+		{
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
+			"match": {
+				"hoursPlural=one": "Local time in {place}, {shown} hour behind you.",
+				"hoursPlural=*": "Local time in {place}, {shown} hours behind you."
+			}
+		}
+	],
 	"umbrella_all_day": "Yes, all day.",
 	"umbrella_from": "Yes, from {from} to {until}.",
 	"umbrella_from_on": "Yes, from {from} on.",

@@ -257,6 +257,30 @@
 	"today": "Dnes",
 	"today_details": "Dnes podrobne",
 	"try_again": "Skúsiť znova",
+	"tz_ahead": [
+		{
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
+			"match": {
+				"hoursPlural=one": "Miestny čas: {place}, o {shown} hodinu viac ako u teba.",
+				"hoursPlural=few": "Miestny čas: {place}, o {shown} hodiny viac ako u teba.",
+				"hoursPlural=many": "Miestny čas: {place}, o {shown} hodiny viac ako u teba.",
+				"hoursPlural=*": "Miestny čas: {place}, o {shown} hodín viac ako u teba."
+			}
+		}
+	],
+	"tz_behind": [
+		{
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
+			"match": {
+				"hoursPlural=one": "Miestny čas: {place}, o {shown} hodinu menej ako u teba.",
+				"hoursPlural=few": "Miestny čas: {place}, o {shown} hodiny menej ako u teba.",
+				"hoursPlural=many": "Miestny čas: {place}, o {shown} hodiny menej ako u teba.",
+				"hoursPlural=*": "Miestny čas: {place}, o {shown} hodín menej ako u teba."
+			}
+		}
+	],
 	"umbrella_all_day": "Áno, celý deň.",
 	"umbrella_from": "Áno, od {from} do {until}.",
 	"umbrella_from_on": "Áno, od {from}.",

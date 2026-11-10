@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { darkness } from './daylight.js';
-import { formatHour, formatTime, formatWeekday, intlLocale } from './time.js';
+import { formatHour, formatTime, formatWeekday, hoursAhead, intlLocale } from './time.js';
 import type { Day, Hour } from './weather.js';
 
 describe('local times', () => {
@@ -80,5 +80,15 @@ describe('darkness', () => {
 		expect(darkness('2026-11-10T12:00', noSun, tomorrow, hours(true))).toEqual({
 			kind: 'midnight-sun'
 		});
+	});
+});
+
+describe('hoursAhead', () => {
+	it('compares the place with the reader, in hours', () => {
+		// Singapore (UTC+8) read in Bratislava in winter (UTC+1).
+		expect(hoursAhead(8 * 3600, 60)).toBe(7);
+		expect(hoursAhead(-5 * 3600, 60)).toBe(-6);
+		expect(hoursAhead(19800, 0)).toBe(5.5);
+		expect(hoursAhead(3600, 60)).toBe(0);
 	});
 });

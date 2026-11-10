@@ -31,10 +31,13 @@ const hours: Hour[] = [10, 11, 12].map((h, i) => ({
 	uv: 1
 }));
 const days = [{ date: '2026-11-10', max: 13, min: 4 } as Day];
+// The test browser's own offset, so a place can be put in the same zone or hours away from it.
+const here = -new Date().getTimezoneOffset() * 60;
+const props = { now, hours, days, f, updated: null, place: 'Tokyo', utcOffsetSeconds: here };
 
 describe('NowTile', () => {
 	it('shows the hour under the scrubber and goes back to now', async () => {
-		const screen = render(NowTile, { now, hours, days, f, updated: null });
+		const screen = render(NowTile, props);
 		const slider = screen.getByRole('slider', { name: 'Look ahead' });
 		await expect.element(screen.getByText('Now · Tue 10:00')).toBeVisible();
 
@@ -47,5 +50,21 @@ describe('NowTile', () => {
 		await screen.getByRole('button', { name: 'Back to now' }).click();
 		await expect.element(screen.getByText('Now · Tue 10:00')).toBeVisible();
 		await expect.element(screen.getByText('6°')).toBeVisible();
+	});
+
+	it('says how far ahead or behind the place is, only when it differs', async () => {
+		const ahead = render(NowTile, { ...props, utcOffsetSeconds: here + 8 * 3600 });
+		await expect
+			.element(ahead.getByText('Local time in Tokyo, 8 hours ahead of you.'))
+			.toBeVisible();
+		ahead.unmount();
+
+		const behind = render(NowTile, { ...props, utcOffsetSeconds: here - 3600 });
+		await expect.element(behind.getByText('Local time in Tokyo, 1 hour behind you.')).toBeVisible();
+		behind.unmount();
+
+		const same = render(NowTile, props);
+		await expect.element(same.getByText('Now · Tue 10:00')).toBeVisible();
+		expect(same.container.textContent).not.toContain('Local time');
 	});
 });

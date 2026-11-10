@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { RotateCcw } from '@lucide/svelte';
+	import { onMount } from 'svelte';
 	import WeatherIcon from '#lib/components/WeatherIcon.svelte';
 	import { conditionLabel } from '#lib/components/labels.js';
 	import type { Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
+	import { getLocale } from '#lib/paraglide/runtime.js';
+	import { hoursAhead } from '#lib/time.js';
 	import type { Current, Day, Hour } from '#lib/weather.js';
 
 	// The hour scrubber (U-02): a native range input gives the slider role, arrows, Home, End
@@ -14,6 +17,8 @@
 		days,
 		f,
 		updated,
+		place,
+		utcOffsetSeconds,
 		selected = $bindable(0)
 	}: {
 		now: Current;
@@ -21,6 +26,8 @@
 		days: Day[];
 		f: Formatter;
 		updated: string | null;
+		place: string;
+		utcOffsetSeconds: number;
 		selected?: number;
 	} = $props();
 
@@ -29,6 +36,18 @@
 	const when = $derived(`${f.weekday(shown.time.slice(0, 10))} ${f.time(shown.time)}`);
 	const spoken = (hour: Hour) =>
 		`${f.weekday(hour.time.slice(0, 10))} ${f.time(hour.time)}, ${f.temp(hour.temp)}, ${conditionLabel(hour.condition, hour.isDay)}`;
+
+	// Times are the place's own; say so when they differ from the reader's clock (F-13). Only the
+	// browser knows the reader's time zone, so this appears after the page loads.
+	let readerOffset = $state<number | null>(null);
+	onMount(() => (readerOffset = -new Date().getTimezoneOffset()));
+	const ahead = $derived(readerOffset === null ? 0 : hoursAhead(utcOffsetSeconds, readerOffset));
+	const zoneNote = $derived.by(() => {
+		if (!ahead) return null;
+		const hours = Math.abs(ahead);
+		const shown = new Intl.NumberFormat(getLocale()).format(hours);
+		return ahead > 0 ? m.tz_ahead({ place, hours, shown }) : m.tz_behind({ place, hours, shown });
+	});
 </script>
 
 <div class="flex items-start justify-between gap-4">
@@ -87,3 +106,4 @@
 <p class="mt-2 text-sm text-ink-muted">
 	{updated ? m.updated_ago({ ago: updated }) : m.updated_just_now()}
 </p>
+{#if zoneNote}<p class="mt-1 text-sm text-ink-muted">{zoneNote}</p>{/if}

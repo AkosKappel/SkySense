@@ -63,6 +63,7 @@ const numbers = z.array(z.number().nullable());
 
 const forecastSchema = z.object({
 	timezone: z.string(),
+	utc_offset_seconds: z.number(),
 	current: z.object({
 		time: z.string(),
 		temperature_2m: z.number(),
@@ -166,6 +167,7 @@ export function toForecast(raw: unknown): Forecast {
 	const c = data.current;
 	return {
 		timezone: data.timezone,
+		utcOffsetSeconds: data.utc_offset_seconds,
 		fetchedAt: new Date().toISOString(),
 		current: {
 			time: c.time,

@@ -41,3 +41,11 @@ export function formatDate(date: string, locale: string): string {
 		timeZone: 'UTC'
 	}).format(asUtc(date));
 }
+
+/**
+ * How many hours the place is ahead of the reader (negative: behind). `readerOffsetMinutes` is
+ * east of UTC, the opposite sign of `Date.getTimezoneOffset()`.
+ */
+export function hoursAhead(placeOffsetSeconds: number, readerOffsetMinutes: number): number {
+	return (placeOffsetSeconds / 60 - readerOffsetMinutes) / 60;
+}

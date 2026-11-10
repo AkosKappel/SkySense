@@ -233,6 +233,8 @@
 					days={forecast.days}
 					{f}
 					{updated}
+					place={name}
+					utcOffsetSeconds={forecast.utcOffsetSeconds}
 					bind:selected={scrubbed}
 				/>
 			</section>
