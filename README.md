@@ -6,7 +6,7 @@
 The weather, made sense of. Most weather apps show a grid of numbers and icons and leave the thinking to you. SkySense answers the questions people actually ask, and says how sure the answer is.
 
 <p align="center">
-  <img src="docs/screenshots/mobile-overview.png" alt="Bratislava on a phone: the summary 'Rain until 16:00, then dry.', a moderate air quality notice, 6 degrees with rain, and the umbrella answer 'Yes, until 16:00.'" width="260">
+  <img src="docs/screenshots/mobile-overview.png" alt="Bratislava on a phone: the summary 'Rain until 16:00, then dry.', a moderate air quality notice, and 6 degrees with rain and the advice 'A warm jacket. Something waterproof too.'" width="260">
   <img src="docs/screenshots/mobile-activities.png" alt="The activity tile: a run from 16:00 to 17:00 scored 97 of 100 with a bar for each factor, a walk at the same time, and laundry 'Too cold in the next 24 hours.'" width="260">
   <img src="docs/screenshots/mobile-night.png" alt="Norilsk at night on a phone: 'Dry for the next 24 hours. Some model runs do show rain or snow, though.' and minus 8 degrees" width="260">
 </p>
@@ -15,13 +15,14 @@ The weather, made sense of. Most weather apps show a grid of numbers and icons a
 
 ## What it answers
 
-- **What is the weather doing?** One or two plain sentences on top ("Rain until 16:00, then dry."), then tiles that each answer one question: do I need an umbrella, when does it get dark, how windy is it.
-- **When should I go out?** Every hour is scored for running, cycling, walking, laundry outside, stargazing and golden hour photos. The tile names the best time, or why there is none ("Too wet in the next 24 hours."), and each score opens into the factors behind it. A comfort setting shifts the temperatures for people who get cold or warm easily.
+- **What is the weather doing?** One or two plain sentences on top ("Rain until 16:00, then dry."), what to wear ("A warm jacket. Something waterproof too."), then tiles that each answer one question: do I need an umbrella, when does it get dark, how windy is it.
+- **When should I go out?** Every hour is scored for running, cycling, walking, hiking, a picnic, laundry outside, stargazing and golden hour photos. The tile names the best time today and in the next 10 days, or why there is none ("Too wet in the next 24 hours."), each score opens into the factors behind it, and the good times download as a calendar file. A comfort setting shifts the temperatures for people who get cold or warm easily.
 - **How sure is it?** 51 runs of the ECMWF ensemble give a likely range around the temperature line, "96% of model runs show it right now" under the umbrella answer, and "Less sure" or "Uncertain" on later days. The summary hedges when the runs disagree. Five weather models can be compared side by side.
 - **Is this normal?** Today's high against the 1991 to 2020 climate for the date ("3° colder than usual."), and the same date in each of the last ten years.
-- **Anything else I should know?** Air quality and pollen when they matter, tonight's moon, strong gusts, frost and heat.
+- **Anything else I should know?** Air quality and pollen when they matter, tonight's moon, strong gusts, frost and heat, and how far the place's clock is from yours.
+- **Where is it nicer?** Two saved places side by side, day by day, with the nicer one marked.
 
-Mobile first, installable and usable offline for places opened before. No accounts, no tracking. In English, German, Slovak, Hungarian and Spanish.
+Mobile first, installable and usable offline for places opened before, with a "My location" entry that finds you again. No accounts, no tracking. In English, German, Slovak, Hungarian and Spanish.
 
 ![Five weather models compared for Madrid: temperature lines told apart by colour and dash pattern, and each model's rain for the next 24 hours](docs/screenshots/desktop-models.png)
 
