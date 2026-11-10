@@ -2,7 +2,11 @@
 // for information about these interfaces
 declare global {
 	namespace App {
-		// interface Error {}
+		interface Error {
+			message: string;
+			/** A short id, logged with the error, so a report can be matched with the logs (T-14). */
+			id?: string;
+		}
 		// interface Locals {}
 		// interface PageData {}
 		interface PageState {

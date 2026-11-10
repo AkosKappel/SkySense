@@ -66,6 +66,7 @@
 	"error_generic_title": "Something went wrong.",
 	"error_not_found_body": "Check the link, or search for the place again.",
 	"error_not_found_title": "We can't find that place.",
+	"error_reference": "If you report this, mention the code {id}.",
 	"error_service_body": "Try again in a minute.",
 	"error_service_title": "The weather service isn't answering.",
 	"factor_air": "Air quality",

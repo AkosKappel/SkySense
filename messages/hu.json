@@ -66,6 +66,7 @@
 	"error_generic_title": "Valami hiba történt.",
 	"error_not_found_body": "Ellenőrizd a linket, vagy keresd meg újra a helyet.",
 	"error_not_found_title": "Ezt a helyet nem találjuk.",
+	"error_reference": "Ha jelzed a hibát, add meg ezt a kódot: {id}.",
 	"error_service_body": "Próbáld újra egy perc múlva.",
 	"error_service_title": "Az időjárási szolgáltatás most nem válaszol.",
 	"factor_air": "Levegőminőség",

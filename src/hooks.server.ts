@@ -1,4 +1,4 @@
-import { sequence, type Handle } from '@sveltejs/kit/hooks';
+import { sequence, type Handle, type HandleServerError } from '@sveltejs/kit/hooks';
 import { getTextDirection } from '#lib/paraglide/runtime.js';
 import { paraglideMiddleware } from '#lib/paraglide/server.js';
 
@@ -40,3 +40,15 @@ const handleSecurity: Handle = async ({ event, resolve }) => {
 };
 
 export const handle: Handle = sequence(handleSecurity, handleParaglide);
+
+/**
+ * Unexpected errors get a short id, logged with the route (not the URL, which names a place) and
+ * shown on the error page, so a report can be matched with the Vercel logs.
+ */
+export const handleError: HandleServerError = ({ kind, error, event }) => {
+	// App errors (`error(404, ...)`) and SvelteKit's own (an unknown route) are expected.
+	if (kind !== 'unknown') return;
+	const id = crypto.randomUUID().slice(0, 8);
+	console.error(`[${id}] ${event.request.method} ${event.route.id ?? 'unknown route'}`, error);
+	return { id };
+};

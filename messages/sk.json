@@ -66,6 +66,7 @@
 	"error_generic_title": "Niečo sa pokazilo.",
 	"error_not_found_body": "Skontroluj odkaz alebo miesto vyhľadaj znova.",
 	"error_not_found_title": "Toto miesto sa nedá nájsť.",
+	"error_reference": "Ak to nahlasuješ, uveď kód {id}.",
 	"error_service_body": "Skús to znova o chvíľu.",
 	"error_service_title": "Služba počasia práve neodpovedá.",
 	"factor_air": "Kvalita ovzdušia",

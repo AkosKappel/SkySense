@@ -66,6 +66,7 @@
 	"error_generic_title": "Etwas ist schiefgelaufen.",
 	"error_not_found_body": "Prüfe den Link oder suche den Ort noch einmal.",
 	"error_not_found_title": "Diesen Ort finden wir nicht.",
+	"error_reference": "Wenn du das meldest, nenne den Code {id}.",
 	"error_service_body": "Versuch es in einer Minute noch einmal.",
 	"error_service_title": "Der Wetterdienst antwortet gerade nicht.",
 	"factor_air": "Luftqualität",

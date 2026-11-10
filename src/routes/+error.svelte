@@ -27,6 +27,9 @@
 			<CloudOff size={40} class="text-rain" aria-hidden="true" />
 			<h1 class="mt-4 answer">{m.error_generic_title()}</h1>
 		{/if}
+		{#if page.error?.id}
+			<p class="mt-3 text-sm text-ink-muted">{m.error_reference({ id: page.error.id })}</p>
+		{/if}
 		<div class="mt-6 flex flex-wrap gap-3">
 			{#if !notFound}
 				<button

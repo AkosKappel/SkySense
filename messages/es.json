@@ -66,6 +66,7 @@
 	"error_generic_title": "Algo ha salido mal.",
 	"error_not_found_body": "Revisa el enlace o vuelve a buscar el lugar.",
 	"error_not_found_title": "No encontramos ese lugar.",
+	"error_reference": "Si informas del problema, indica el código {id}.",
 	"error_service_body": "Inténtalo de nuevo en un minuto.",
 	"error_service_title": "El servicio meteorológico no responde.",
 	"factor_air": "Calidad del aire",
