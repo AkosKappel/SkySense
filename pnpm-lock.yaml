@@ -11,9 +11,15 @@ importers:
       '@eslint/js':
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.14.0(jiti@2.7.0))
+      '@fontsource-variable/plus-jakarta-sans':
+        specifier: ^5.3.0
+        version: 5.3.0
       '@inlang/paraglide-js':
         specifier: ^2.18.2
         version: 2.29.3(eslint@10.14.0(jiti@2.7.0))(typescript@6.0.3)(vite@8.3.6(@types/node@24.19.2)(jiti@2.7.0))
+      '@lucide/svelte':
+        specifier: ^1.70.0
+        version: 1.70.0(svelte@5.57.3(@typescript-eslint/types@8.72.1))
       '@playwright/test':
         specifier: ^1.60.0
         version: 1.65.0
@@ -211,6 +217,9 @@ packages:
     resolution: {integrity: sha512-IkO+/KEUvwbVpiURZg+P7zF74z5Jxe0UgJxVni+RtoHQ6IZieXaO02kmadomap/q+l6bc/jdPGGqTjhuZnuz1Q==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
+  '@fontsource-variable/plus-jakarta-sans@5.3.0':
+    resolution: {integrity: sha512-/l/4r0yyWK9JzAlmA0LiYgGgmJe/Gswt4jTJEzr5QhJfwMbvJZDmYWyW0M4X7yCK69BajMVlV/Lx8g7WDc1+sw==}
+
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
     engines: {node: '>=18.18.0'}
@@ -284,6 +293,11 @@ packages:
 
   '@lix-js/sdk@0.20.1':
     resolution: {integrity: sha512-oscOFP8Cr1My6Wh2KVYC9+aJ1mHs+d7vnD+7PPJaA4L+Y1FR37Sm99SrFGfvUizaj/XtRi2GlDF2IOFt9iXMNQ==}
+
+  '@lucide/svelte@1.70.0':
+    resolution: {integrity: sha512-zvx7K/WLxo82c4ZYqbsfcYUPDVFrq4561xH0NHfSHJJbajj0AONTQ14EO095/WnfI4XUEl1tyS/nbjQNNiNxdQ==}
+    peerDependencies:
+      svelte: ^5
 
   '@mapbox/node-pre-gyp@2.0.3':
     resolution: {integrity: sha512-uwPAhccfFJlsfCxMYTwOdVfOz3xqyj8xYL3zJj8f0pb30tLohnnFPhLuqp4/qoEz8sNxe4SESZedcBojRefIzg==}
@@ -1912,6 +1926,8 @@ snapshots:
       '@eslint/core': 1.2.1
       levn: 0.4.1
 
+  '@fontsource-variable/plus-jakarta-sans@5.3.0': {}
+
   '@humanfs/core@0.19.2':
     dependencies:
       '@humanfs/types': 0.15.0
@@ -1992,6 +2008,10 @@ snapshots:
       '@bytecodealliance/jco-transpile': 0.13.0
       binaryen: 130.0.0
       fflate: 0.8.3
+
+  '@lucide/svelte@1.70.0(svelte@5.57.3(@typescript-eslint/types@8.72.1))':
+    dependencies:
+      svelte: 5.57.3(@typescript-eslint/types@8.72.1)
 
   '@mapbox/node-pre-gyp@2.0.3':
     dependencies:

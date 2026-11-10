@@ -48,6 +48,7 @@ Run `lint`, `check`, `test` and `build` before committing; CI runs the same plus
 - Charts always have a text equivalent; color is never the only signal.
 - Anything animated respects `prefers-reduced-motion`.
 - Colors and spacing are Tailwind tokens in `src/routes/layout.css`; no hard-coded hex values in components.
+- The visual direction is "Aurora answers" (`docs/design.md`): frosted `glass` tiles over a sky gradient, each tile a `question` line plus an `answer` line, Plus Jakarta Sans (self-hosted), Lucide icons.
 
 ## Data source
 
