@@ -23,6 +23,7 @@
 	import CompareWith from '#lib/components/CompareWith.svelte';
 	import DayFacts from '#lib/components/DayFacts.svelte';
 	import ModelCompare from '#lib/components/ModelCompare.svelte';
+	import YearView from '#lib/components/YearView.svelte';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
 	import NowTile from '#lib/components/NowTile.svelte';
 	import PlaceSheet from '#lib/components/PlaceSheet.svelte';
@@ -73,12 +74,15 @@
 	// `?day=2026-11-12` shows one day; anything not in the forecast shows the overview.
 	const day = $derived(forecast.days.find((d) => d.date === page.url.searchParams.get('day')));
 	const comparing = $derived(page.url.searchParams.has('models'));
+	const pastYear = $derived(page.url.searchParams.has('year'));
 	const title = $derived(
-		comparing
-			? m.compare_title({ place: name })
-			: day
-				? m.weather_on({ place: name, date: f.date(day.date) })
-				: m.weather_in({ place: name })
+		pastYear
+			? m.year_title({ place: name })
+			: comparing
+				? m.compare_title({ place: name })
+				: day
+					? m.weather_on({ place: name, date: f.date(day.date) })
+					: m.weather_in({ place: name })
 	);
 	const dayHours = $derived(day ? forecast.hours.filter((h) => h.time.startsWith(day.date)) : []);
 
@@ -246,7 +250,9 @@
 		</div>
 	</header>
 
-	{#if comparing}
+	{#if pastYear}
+		<YearView year={data.year} place={name} {f} />
+	{:else if comparing}
 		<ModelCompare runs={data.models} from={forecast.hours[0].time} {f} />
 	{:else if day}
 		<DayDetail {day} hours={dayHours} isToday={day.date === today.date} {f} />
@@ -368,7 +374,13 @@
 				<DayFacts day={today} {f} humidity={now.humidity} />
 			</section>
 
-			<ClimateTiles coordinates={data.coordinates} date={today.date} max={today.max} {f} />
+			<ClimateTiles
+				coordinates={data.coordinates}
+				date={today.date}
+				max={today.max}
+				place={name}
+				{f}
+			/>
 		</div>
 	{/if}
 

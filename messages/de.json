@@ -103,7 +103,7 @@
 	"feature_answers": "Zuerst klare Antworten: ein Satz zu den nächsten 24 Stunden, was du anziehen solltest, ob du einen Schirm brauchst, wann es dunkel wird und wie windig es ist.",
 	"feature_comfort": "Eine Einstellung für alle, denen schnell kalt oder warm ist; sie verschiebt die idealen Temperaturen der Aktivitäten.",
 	"feature_confidence": "Wie sicher die Vorhersage ist: der wahrscheinliche Bereich aus 51 Läufen des ECMWF-Modells, Hinweise an unsicheren Tagen und fünf Wettermodelle im Vergleich.",
-	"feature_normal": "Wie heute im Vergleich zu den Jahren 1991 bis 2020 ist, und wie dieses Datum in jedem der letzten zehn Jahre war.",
+	"feature_normal": "Wie heute im Vergleich zu den Jahren 1991 bis 2020 ist, wie dieses Datum in jedem der letzten zehn Jahre war, und die Rekorde des letzten Jahres Monat für Monat.",
 	"feature_offline": "Lässt sich als App installieren und zeigt offline die Orte, die du schon geöffnet hast.",
 	"feature_places": "Orte, die du speichern, umbenennen und sortieren kannst, ein Eintrag „Mein Standort“, der dich beim Öffnen neu findet, zwei Orte im Vergleich Tag für Tag, eine Suche in deiner Sprache und ein Link zum Teilen jedes Ortes.",
 	"feature_settings": "Deine Einheiten, 12- oder 24-Stunden-Zeit und fünf Sprachen.",
@@ -354,5 +354,18 @@
 	"window_great": "Ideal",
 	"window_range": "{from} bis {until}",
 	"window_range_on": "{day} {from} bis {until}",
-	"year": "Jahr"
+	"year": "Jahr",
+	"year_chart_note": "Balken: Niederschlag pro Monat. Zahlen: mittleres Maximum.",
+	"year_coldest": "Kälteste Nacht",
+	"year_mean_max": "Mittleres Maximum",
+	"year_month": "Monat",
+	"year_question": "Wie war das letzte Jahr?",
+	"year_rain_answer": "Insgesamt {rain} Niederschlag; an {days} Tagen mindestens {threshold}.",
+	"year_rain_days": "Regentage",
+	"year_range": "Vom {from} bis {until}.",
+	"year_title": "Das letzte Jahr in {place}",
+	"year_unavailable": "Das letzte Jahr ist gerade nicht verfügbar.",
+	"year_warmest": "Wärmster Tag",
+	"year_wettest": "Nassester Tag",
+	"year_windiest": "Stärkste Böe"
 }

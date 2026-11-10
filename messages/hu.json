@@ -103,7 +103,7 @@
 	"feature_answers": "Először egyszerű válaszok: egy mondat a következő 24 óráról, mit vegyél fel, kell-e esernyő, mikor sötétedik és mennyire fúj a szél.",
 	"feature_comfort": "Beállítás azoknak, akik könnyen fáznak vagy melegük lesz; eltolja a tevékenységek ideális hőmérsékletét.",
 	"feature_confidence": "Mennyire biztos az előrejelzés: az ECMWF modell 51 futásából számolt valószínű tartomány, a bizonytalan napok jelölése és öt időjárási modell egymás mellett.",
-	"feature_normal": "Milyen a mai nap az 1991 és 2020 közötti évekhez képest, és milyen volt ez a dátum az elmúlt tíz év mindegyikében.",
+	"feature_normal": "Milyen a mai nap az 1991 és 2020 közötti évekhez képest, milyen volt ez a dátum az elmúlt tíz év mindegyikében, és az elmúlt év rekordjai hónapról hónapra.",
 	"feature_offline": "Alkalmazásként telepíthető, és offline is megmutatja a korábban megnyitott helyeket.",
 	"feature_places": "Helyek, amelyeket elmenthetsz, átnevezhetsz és sorba rendezhetsz, egy „Saját helyzetem” elem, amely megnyitáskor újra megtalál, két hely összehasonlítása napról napra, keresés a saját nyelveden, és bármely hely megosztható linkje.",
 	"feature_settings": "A saját mértékegységeid, 12 vagy 24 órás idő és öt nyelv.",
@@ -309,5 +309,18 @@
 	"window_great": "Kiváló",
 	"window_range": "{from} – {until}",
 	"window_range_on": "{day} {from} – {until}",
-	"year": "Év"
+	"year": "Év",
+	"year_chart_note": "Oszlopok: havi csapadék. Számok: átlagos legmagasabb hőmérséklet.",
+	"year_coldest": "Leghidegebb éjszaka",
+	"year_mean_max": "Átlagos legmagasabb",
+	"year_month": "Hónap",
+	"year_question": "Milyen volt az elmúlt év?",
+	"year_rain_answer": "Összesen {rain} csapadék; {days} napon legalább {threshold}.",
+	"year_rain_days": "Esős napok",
+	"year_range": "{from} és {until} között.",
+	"year_title": "Az elmúlt év: {place}",
+	"year_unavailable": "Az elmúlt év most nem érhető el.",
+	"year_warmest": "Legmelegebb nap",
+	"year_wettest": "Legcsapadékosabb nap",
+	"year_windiest": "Legerősebb széllökés"
 }

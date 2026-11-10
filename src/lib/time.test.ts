@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { darkness } from './daylight.js';
-import { formatHour, formatTime, formatWeekday, hoursAhead, intlLocale } from './time.js';
+import {
+	formatHour,
+	formatMonth,
+	formatPastDate,
+	formatTime,
+	formatWeekday,
+	hoursAhead,
+	intlLocale
+} from './time.js';
 import type { Day, Hour } from './weather.js';
 
 describe('local times', () => {
@@ -90,5 +98,14 @@ describe('hoursAhead', () => {
 		expect(hoursAhead(-5 * 3600, 60)).toBe(-6);
 		expect(hoursAhead(19800, 0)).toBe(5.5);
 		expect(hoursAhead(3600, 60)).toBe(0);
+	});
+});
+
+describe('past dates and months', () => {
+	it('names the year for past dates and can leave it off months', () => {
+		expect(formatPastDate('2025-07-20', 'en-GB')).toBe('20 July 2025');
+		expect(formatPastDate('2025-07-20', 'de')).toBe('20. Juli 2025');
+		expect(formatMonth('2025-07', 'en-GB')).toBe('Jul');
+		expect(formatMonth('2025-12', 'en-GB', true)).toBe('Dec 2025');
 	});
 });

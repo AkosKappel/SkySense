@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { CalendarClock, Droplets, History } from '@lucide/svelte';
+	import { CalendarClock, ChevronRight, Droplets, History } from '@lucide/svelte';
+	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 	import { compareToNormal, forDate, type Climate } from '#lib/climate.js';
 	import type { Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
@@ -9,8 +11,10 @@
 		coordinates,
 		date,
 		max,
+		place,
 		f
-	}: { coordinates: Coordinates; date: string; max: number; f: Formatter } = $props();
+	}: { coordinates: Coordinates; date: string; max: number; place: string; f: Formatter } =
+		$props();
 
 	// Loaded in the browser, not with the page: the history is extra, and the browser's request
 	// reaches the CDN, which keeps a place's month of history for 30 days.
@@ -106,5 +110,13 @@
 				</tbody>
 			</table>
 		</div>
+		<a
+			href="{resolve('/p/[coords]/[[name]]', {
+				coords: page.params.coords ?? '',
+				name: encodeURIComponent(page.params.name ?? '')
+			})}?year"
+			class="mt-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
+			>{m.year_title({ place })} <ChevronRight size={16} aria-hidden="true" /></a
+		>
 	</section>
 {/if}

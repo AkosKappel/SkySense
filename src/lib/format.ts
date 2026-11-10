@@ -1,4 +1,12 @@
-import { formatDate, formatHour, formatTime, formatWeekday, intlLocale } from '#lib/time.js';
+import {
+	formatDate,
+	formatHour,
+	formatMonth,
+	formatPastDate,
+	formatTime,
+	formatWeekday,
+	intlLocale
+} from '#lib/time.js';
 import { formatRain, formatWind, temperature, type Units } from '#lib/units.js';
 
 /** Formatting bound to the reader's language and units, for components. */
@@ -13,6 +21,8 @@ export function formatter(locale: string, units: Units) {
 		hour: (local: string) => formatHour(local, intl, units.clock),
 		weekday: (date: string) => formatWeekday(date, intl),
 		date: (date: string) => formatDate(date, intl),
+		pastDate: (date: string) => formatPastDate(date, intl),
+		month: (month: string, withYear = false) => formatMonth(month, intl, withYear),
 		wind: (kmh: number) => formatWind(kmh, units),
 		rain: (mm: number) => formatRain(mm, units),
 		percent: (value: number) =>

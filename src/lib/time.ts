@@ -33,6 +33,25 @@ export function formatWeekday(date: string, locale: string, style: 'short' | 'lo
 	return new Intl.DateTimeFormat(locale, { weekday: style, timeZone: 'UTC' }).format(asUtc(date));
 }
 
+/** "20 July 2025": a past date, where the year matters and the weekday does not. */
+export function formatPastDate(date: string, locale: string): string {
+	return new Intl.DateTimeFormat(locale, {
+		day: 'numeric',
+		month: 'long',
+		year: 'numeric',
+		timeZone: 'UTC'
+	}).format(asUtc(date));
+}
+
+/** "Jul" or "Jul 2025" for month axes and tables. */
+export function formatMonth(month: string, locale: string, withYear = false): string {
+	return new Intl.DateTimeFormat(locale, {
+		month: 'short',
+		...(withYear && { year: 'numeric' }),
+		timeZone: 'UTC'
+	}).format(asUtc(`${month}-01`));
+}
+
 export function formatDate(date: string, locale: string): string {
 	return new Intl.DateTimeFormat(locale, {
 		weekday: 'long',

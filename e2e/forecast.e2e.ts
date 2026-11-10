@@ -258,6 +258,17 @@ test('steps through saved places with previous and next', async ({ page }) => {
 	await expectAccessible(page);
 });
 
+test('shows the past year from the "past years" tile', async ({ page }) => {
+	await page.goto('/p/48.15,17.11/Bratislava');
+	await page.getByRole('link', { name: 'The past year in Bratislava' }).click();
+	await expect(page).toHaveURL(/\?year$/);
+	await expect(
+		page.getByRole('heading', { level: 1, name: 'The past year in Bratislava' })
+	).toBeVisible();
+	await expect(page.getByRole('definition').filter({ hasText: '29 June 2026' })).toBeVisible();
+	await expect(page.getByText(/of rain in total; \d+ days had at least 1\.0 mm\./)).toBeVisible();
+});
+
 test('settings change units and language', async ({ page }) => {
 	await page.goto('/settings');
 	await expectAccessible(page);

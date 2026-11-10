@@ -12,6 +12,7 @@ import {
 } from '#lib/weather.js';
 import type { Climate, Normal } from '#lib/climate.js';
 import { modelIds, type ModelRun } from '#lib/models.js';
+import { summarizeYear, type YearInWeather } from '#lib/year.js';
 
 export class WeatherServiceError extends Error {}
 
@@ -419,6 +420,58 @@ const addMonth = (date: string) => {
 	d.setUTCMonth(d.getUTCMonth() + 1);
 	return d.toISOString().slice(0, 10);
 };
+
+const yearSchema = z.object({
+	daily: z.object({
+		time: z.array(z.string()),
+		temperature_2m_max: numbers,
+		temperature_2m_min: numbers,
+		precipitation_sum: numbers,
+		wind_gusts_10m_max: numbers
+	})
+});
+
+/** A year of ERA5 days, gaps dropped, reduced to records and months (X-13). */
+export function toYear(raw: unknown): YearInWeather | null {
+	const parsed = yearSchema.safeParse(raw);
+	if (!parsed.success) throw new WeatherServiceError('Unexpected archive response');
+	const d = parsed.data.daily;
+	return summarizeYear(
+		d.time.flatMap((date, i) => {
+			const max = d.temperature_2m_max[i];
+			const min = d.temperature_2m_min[i];
+			if (max === null || min === null) return [];
+			return [
+				{ date, max, min, rain: d.precipitation_sum[i] ?? 0, gust: d.wind_gusts_10m_max[i] ?? 0 }
+			];
+		})
+	);
+}
+
+/** The twelve full months before `month` ("2026-11" gives November 2025 to October 2026). */
+export async function fetchYear(
+	coordinates: Coordinates,
+	month: string,
+	fetchFn: typeof fetch = fetch
+): Promise<YearInWeather | null> {
+	const { lat, lon } = roundCoordinates(coordinates);
+	if (useFixtures()) {
+		return toYear(fixtures[`./fixtures/year-${nearestFixture({ lat, lon })}.json`].default);
+	}
+	const end = addDays(`${month}-01`, -1);
+	const start = `${Number(month.slice(0, 4)) - 1}${month.slice(4)}-01`;
+	const url = new URL(ARCHIVE_URL);
+	url.search = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		start_date: start,
+		end_date: end,
+		daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum,wind_gusts_10m_max',
+		models: 'era5',
+		timezone: 'auto'
+	}).toString();
+	return toYear(await getJson(url, fetchFn));
+}
 
 export type Place = {
 	id: number;

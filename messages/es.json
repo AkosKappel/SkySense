@@ -103,7 +103,7 @@
 	"feature_answers": "Primero, respuestas claras: una frase sobre las próximas 24 horas, qué ponerte, si necesitas paraguas, cuándo oscurece y cuánto viento hace.",
 	"feature_comfort": "Un ajuste para quien se enfría o se acalora fácilmente, que desplaza las temperaturas ideales de las actividades.",
 	"feature_confidence": "Cuánta seguridad hay: el rango probable de 51 ejecuciones del modelo ECMWF, avisos en los días inciertos y cinco modelos meteorológicos lado a lado.",
-	"feature_normal": "Cómo es hoy comparado con los años 1991 a 2020, y cómo fue esta fecha en cada uno de los últimos diez años.",
+	"feature_normal": "Cómo es hoy comparado con los años 1991 a 2020, cómo fue esta fecha en cada uno de los últimos diez años, y los récords del último año mes a mes.",
 	"feature_offline": "Se instala como una app y muestra sin conexión los lugares que ya abriste.",
 	"feature_places": "Lugares que puedes guardar, renombrar y ordenar, una entrada «Mi ubicación» que te vuelve a encontrar al abrirla, dos lugares comparados día a día, una búsqueda en tu idioma y un enlace para compartir cualquier lugar.",
 	"feature_settings": "Tus unidades, formato de 12 o 24 horas y cinco idiomas.",
@@ -354,5 +354,18 @@
 	"window_great": "Ideal",
 	"window_range": "De {from} a {until}",
 	"window_range_on": "{day}, de {from} a {until}",
-	"year": "Año"
+	"year": "Año",
+	"year_chart_note": "Barras: lluvia por mes. Números: la máxima media.",
+	"year_coldest": "Noche más fría",
+	"year_mean_max": "Máxima media",
+	"year_month": "Mes",
+	"year_question": "¿Cómo fue el último año?",
+	"year_rain_answer": "{rain} de lluvia en total; {days} días tuvieron al menos {threshold}.",
+	"year_rain_days": "Días de lluvia",
+	"year_range": "Del {from} al {until}.",
+	"year_title": "El último año en {place}",
+	"year_unavailable": "El último año no está disponible ahora.",
+	"year_warmest": "Día más cálido",
+	"year_wettest": "Día más lluvioso",
+	"year_windiest": "Racha más fuerte"
 }

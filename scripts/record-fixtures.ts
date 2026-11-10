@@ -1,6 +1,6 @@
 // Records Open-Meteo responses into src/lib/server/fixtures for tests, e2e and demos (T-08, T-10).
 // Each live forecast gets its ensemble (`ensemble-*`), model comparison (`models-*`), climate
-// history (`climate-*`) and air quality (`air-*`) for the same days.
+// history (`climate-*`), air quality (`air-*`) and the past year (`year-*`) for the same days.
 // Run: node scripts/record-fixtures.ts [name ...]   (no names records all of them)
 //
 // Live forecasts are recorded as they are today. Past scenarios (polar night, midnight sun, a heat
@@ -105,6 +105,7 @@ async function record(name: string, { lat, lon, past }: Fixture) {
 		await recordModels(name.replace('forecast-', 'models-'), lat, lon, first);
 		await recordClimate(name.replace('forecast-', 'climate-'), lat, lon, first);
 		await recordAir(name.replace('forecast-', 'air-'), lat, lon, first);
+		await recordYear(name.replace('forecast-', 'year-'), lat, lon, first);
 	}
 	const codes = [...new Set(data.hourly.weather_code.slice(0, 48))].sort((a, b) => a - b);
 	console.log(
@@ -197,6 +198,26 @@ async function recordAir(name: string, lat: number, lon: number, firstHour: stri
 		end_date: addDays(start, 4)
 	});
 	const response = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?${params}`);
+	if (!response.ok) throw new Error(`${name}: ${response.status} ${await response.text()}`);
+	writeFileSync(
+		new URL(`../src/lib/server/fixtures/${name}.json`, import.meta.url),
+		JSON.stringify(await response.json()) + '\n'
+	);
+}
+
+// The twelve full months before the recorded date (X-13), daily ERA5.
+async function recordYear(name: string, lat: number, lon: number, firstHour: string) {
+	const month = firstHour.slice(0, 7);
+	const params = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		start_date: `${Number(month.slice(0, 4)) - 1}${month.slice(4)}-01`,
+		end_date: addDays(`${month}-01`, -1),
+		daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum,wind_gusts_10m_max',
+		models: 'era5',
+		timezone: 'auto'
+	});
+	const response = await fetch(`https://archive-api.open-meteo.com/v1/archive?${params}`);
 	if (!response.ok) throw new Error(`${name}: ${response.status} ${await response.text()}`);
 	writeFileSync(
 		new URL(`../src/lib/server/fixtures/${name}.json`, import.meta.url),

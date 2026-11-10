@@ -103,7 +103,7 @@
 	"feature_answers": "Plain answers first: a sentence about the next 24 hours, what to wear, whether you need an umbrella, when it gets dark and how windy it is.",
 	"feature_comfort": "A setting for people who get cold or warm easily, which moves the ideal temperatures for activities.",
 	"feature_confidence": "How sure the forecast is: the likely range from 51 runs of the ECMWF model, marks on uncertain days, and five weather models side by side.",
-	"feature_normal": "How today compares with the years 1991 to 2020, and what this date was like in each of the last ten years.",
+	"feature_normal": "How today compares with the years 1991 to 2020, what this date was like in each of the last ten years, and the past year's records month by month.",
 	"feature_offline": "Installs as an app, and shows places you opened before when you are offline.",
 	"feature_places": "Places you can save, rename and reorder, a \"My location\" entry that finds you again when opened, two places compared day by day, a search in your language, and a link to share any place.",
 	"feature_settings": "Your units, 12 or 24-hour time and five languages.",
@@ -354,5 +354,18 @@
 	"window_great": "Great",
 	"window_range": "{from} to {until}",
 	"window_range_on": "{day} {from} to {until}",
-	"year": "Year"
+	"year": "Year",
+	"year_chart_note": "Bars: rain per month. Numbers: the average high.",
+	"year_coldest": "Coldest night",
+	"year_mean_max": "Average high",
+	"year_month": "Month",
+	"year_question": "What was the past year like?",
+	"year_rain_answer": "{rain} of rain in total; {days} days had at least {threshold}.",
+	"year_rain_days": "Rain days",
+	"year_range": "From {from} to {until}.",
+	"year_title": "The past year in {place}",
+	"year_unavailable": "The past year is not available right now.",
+	"year_warmest": "Warmest day",
+	"year_wettest": "Wettest day",
+	"year_windiest": "Strongest gust"
 }

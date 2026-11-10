@@ -103,7 +103,7 @@
 	"feature_answers": "Najprv jasné odpovede: veta o najbližších 24 hodinách, čo si obliecť, či potrebuješ dáždnik, kedy sa zotmie a aký je vietor.",
 	"feature_comfort": "Nastavenie pre tých, ktorým je ľahko zima alebo teplo; posunie ideálne teploty pre aktivity.",
 	"feature_confidence": "Nakoľko je predpoveď istá: pravdepodobný rozsah z 51 behov modelu ECMWF, označenie neistých dní a päť meteorologických modelov vedľa seba.",
-	"feature_normal": "Aký je dnešok v porovnaní s rokmi 1991 až 2020 a aký bol tento dátum v každom z posledných desiatich rokov.",
+	"feature_normal": "Aký je dnešok v porovnaní s rokmi 1991 až 2020, aký bol tento dátum v každom z posledných desiatich rokov, a rekordy posledného roka mesiac po mesiaci.",
 	"feature_offline": "Dá sa nainštalovať ako aplikácia a bez pripojenia ukáže miesta, ktoré si už otvoril.",
 	"feature_places": "Miesta, ktoré si môžeš uložiť, premenovať a zoradiť, položka „Moja poloha“, ktorá ťa pri otvorení znova nájde, porovnanie dvoch miest deň po dni, vyhľadávanie v tvojom jazyku a odkaz na zdieľanie ktoréhokoľvek miesta.",
 	"feature_settings": "Tvoje jednotky, 12- alebo 24-hodinový čas a päť jazykov.",
@@ -361,5 +361,18 @@
 	"window_great": "Ideálne",
 	"window_range": "{from} až {until}",
 	"window_range_on": "{day} {from} až {until}",
-	"year": "Rok"
+	"year": "Rok",
+	"year_chart_note": "Stĺpce: zrážky za mesiac. Čísla: priemerné maximum.",
+	"year_coldest": "Najchladnejšia noc",
+	"year_mean_max": "Priemerné maximum",
+	"year_month": "Mesiac",
+	"year_question": "Aký bol posledný rok?",
+	"year_rain_answer": "Spolu {rain} zrážok; {days} dní malo aspoň {threshold}.",
+	"year_rain_days": "Dni s dažďom",
+	"year_range": "Od {from} do {until}.",
+	"year_title": "Posledný rok: {place}",
+	"year_unavailable": "Posledný rok momentálne nie je dostupný.",
+	"year_warmest": "Najteplejší deň",
+	"year_wettest": "Najdaždivejší deň",
+	"year_windiest": "Najsilnejší náraz vetra"
 }
