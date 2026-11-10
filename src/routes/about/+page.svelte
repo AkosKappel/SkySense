@@ -7,7 +7,6 @@
 
 <svelte:head>
 	<title>{m.about()} · SkySense</title>
-	<meta name="description" content={m.tagline()} />
 </svelte:head>
 
 <main class="mx-auto flex min-h-dvh max-w-xl flex-col px-4 pt-4">

@@ -9,6 +9,7 @@
 </script>
 
 <svelte:head>
+	<meta name="description" content={m.tagline()} />
 	<link rel="icon" href={favicon} />
 	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 	<link rel="manifest" href="/manifest.webmanifest" />
