@@ -14,7 +14,25 @@ export default defineConfig({
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
-			adapter: adapter()
+			adapter: adapter(),
+			csp: {
+				mode: 'auto',
+				directives: {
+					'default-src': ['self'],
+					'script-src': ['self'],
+					// Svelte writes style attributes (bar heights, positions); 'unsafe-inline' here also
+					// tells SvelteKit not to add nonces for styles, which would disable it.
+					'style-src': ['self', 'unsafe-inline'],
+					'img-src': ['self', 'data:'],
+					// Vite inlines small font subsets as data: URLs.
+					'font-src': ['self', 'data:'],
+					'connect-src': ['self'],
+					'form-action': ['self'],
+					'frame-ancestors': ['none'],
+					'base-uri': ['self'],
+					'object-src': ['none']
+				}
+			}
 		}),
 
 		paraglideVitePlugin({
