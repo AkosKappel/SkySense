@@ -31,6 +31,7 @@ test('finds a place and shows its forecast', async ({ page }) => {
 	await expect(page.getByText('Do I need an umbrella?')).toBeVisible();
 	await expect(page.getByText('When does it get dark?')).toBeVisible();
 	await expect(page.getByText('Updated just now')).toBeVisible();
+	await expect(page.getByText(/From the east · 12 km\/h/)).toBeVisible();
 	await expect(page.getByText(/^16:\d\d$/).first()).toBeVisible();
 	await expectAccessible(page);
 });

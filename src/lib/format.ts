@@ -34,3 +34,14 @@ export function uvLevel(index: number): 'low' | 'moderate' | 'high' | 'veryHigh'
 	if (index < 11) return 'veryHigh';
 	return 'extreme';
 }
+
+export const compassPoints = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'] as const;
+
+/** The compass point a wind comes from, from its direction in degrees (meteorological: 0 is north). */
+export function compass(degrees: number): (typeof compassPoints)[number] {
+	const normalized = ((degrees % 360) + 360) % 360;
+	return compassPoints[Math.round(normalized / 45) % 8];
+}
+
+/** Gusts from this speed get a warning line. */
+export const STRONG_GUST_KMH = 60;

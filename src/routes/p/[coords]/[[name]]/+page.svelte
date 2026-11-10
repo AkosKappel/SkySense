@@ -1,5 +1,14 @@
 <script lang="ts">
-	import { ChevronDown, MapPin, Navigation, Plus, Settings, Sunset, Wind } from '@lucide/svelte';
+	import {
+		ChevronDown,
+		MapPin,
+		Navigation,
+		Plus,
+		Settings,
+		Sunset,
+		TriangleAlert,
+		Wind
+	} from '@lucide/svelte';
 	import { invalidateAll } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
@@ -12,7 +21,7 @@
 	import WeatherIcon from '#lib/components/WeatherIcon.svelte';
 	import { conditionLabel } from '#lib/components/labels.js';
 	import { darkness } from '#lib/daylight.js';
-	import { formatter, windLevel } from '#lib/format.js';
+	import { compass, formatter, STRONG_GUST_KMH, windLevel } from '#lib/format.js';
 	import { age, STALE_AFTER_MS } from '#lib/freshness.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
@@ -44,6 +53,22 @@
 	// `?day=2026-11-12` shows one day; anything not in the forecast shows the overview.
 	const day = $derived(forecast.days.find((d) => d.date === page.url.searchParams.get('day')));
 	const dayHours = $derived(day ? forecast.hours.filter((h) => h.time.startsWith(day.date)) : []);
+
+	const direction = $derived(
+		{
+			n: m.wind_from_n,
+			ne: m.wind_from_ne,
+			e: m.wind_from_e,
+			se: m.wind_from_se,
+			s: m.wind_from_s,
+			sw: m.wind_from_sw,
+			w: m.wind_from_w,
+			nw: m.wind_from_nw
+		}[compass(now.windDirection)]()
+	);
+	const strongestGust = $derived(
+		Math.max(now.gust, ...forecast.hours.slice(0, 12).map((h) => h.gust))
+	);
 
 	$effect(() => rememberLastPlace(place));
 
@@ -172,8 +197,14 @@
 						aria-hidden="true"
 						style="transform: rotate({now.windDirection + 180}deg)"
 					/>
-					{m.wind_detail({ speed: f.wind(now.wind), gust: f.wind(now.gust) })}
+					{direction} · {m.wind_detail({ speed: f.wind(now.wind), gust: f.wind(now.gust) })}
 				</p>
+				{#if strongestGust >= STRONG_GUST_KMH}
+					<p class="mt-3 flex items-start gap-1.5 text-sm font-semibold text-sun">
+						<TriangleAlert size={16} class="mt-0.5 shrink-0" aria-hidden="true" />
+						{m.wind_gust_warning({ gust: f.wind(strongestGust) })}
+					</p>
+				{/if}
 			</section>
 
 			<section class="glass p-5 md:col-span-4">
