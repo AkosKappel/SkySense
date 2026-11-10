@@ -211,15 +211,31 @@ function nearestFixture({ lat, lon }: Coordinates): unknown {
 
 const useFixtures = () => SKYSENSE_FIXTURES;
 
+const RETRY_DELAY_MS = 300;
+
+/**
+ * One retry for network errors and 5xx answers, which are usually a brief blip; 4xx answers
+ * (including 429, the free tier's rate limit) are final.
+ */
 async function getJson(url: URL, fetchFn: typeof fetch): Promise<unknown> {
-	let response: Response;
-	try {
-		response = await fetchFn(url, { signal: AbortSignal.timeout(8000) });
-	} catch (cause) {
-		throw new WeatherServiceError('Weather service unreachable', { cause });
+	for (let attempt = 1; ; attempt++) {
+		let response: Response;
+		try {
+			response = await fetchFn(url, { signal: AbortSignal.timeout(8000) });
+		} catch (cause) {
+			if (attempt < 2) {
+				await new Promise((done) => setTimeout(done, RETRY_DELAY_MS));
+				continue;
+			}
+			throw new WeatherServiceError('Weather service unreachable', { cause });
+		}
+		if (response.ok) return response.json();
+		if (response.status >= 500 && attempt < 2) {
+			await new Promise((done) => setTimeout(done, RETRY_DELAY_MS));
+			continue;
+		}
+		throw new WeatherServiceError(`Weather service answered ${response.status}`);
 	}
-	if (!response.ok) throw new WeatherServiceError(`Weather service answered ${response.status}`);
-	return response.json();
 }
 
 export async function fetchForecast(

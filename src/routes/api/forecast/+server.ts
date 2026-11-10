@@ -13,7 +13,8 @@ export const GET: RequestHandler = async ({ url, fetch, setHeaders }) => {
 		const forecast = await fetchForecast(coordinates, fetch);
 		// Open-Meteo updates hourly; 15 minutes keeps "now" fresh while the CDN absorbs repeats.
 		setHeaders({
-			'cache-control': 'public, max-age=300, s-maxage=900, stale-while-revalidate=600'
+			'cache-control':
+				'public, max-age=300, s-maxage=900, stale-while-revalidate=600, stale-if-error=86400'
 		});
 		return json(forecast);
 	} catch (cause) {

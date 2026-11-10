@@ -75,16 +75,33 @@ describe('requests', () => {
 		expect(url.searchParams.get('timezone')).toBe('auto');
 	});
 
-	it('turns an error status into a WeatherServiceError', async () => {
+	it('retries a server error once and then gives up', async () => {
 		const fetchFn = vi.fn(async () => new Response('busy', { status: 503 }));
 		await expect(fetchForecast({ lat: 1, lon: 1 }, fetchFn)).rejects.toThrow(WeatherServiceError);
+		expect(fetchFn).toHaveBeenCalledTimes(2);
 	});
 
-	it('turns a network failure into a WeatherServiceError', async () => {
+	it('recovers when the retry succeeds', async () => {
+		const fetchFn = vi
+			.fn<typeof fetch>()
+			.mockResolvedValueOnce(new Response('busy', { status: 502 }))
+			.mockResolvedValueOnce(Response.json(bratislava));
+		const forecast = await fetchForecast({ lat: 48.15, lon: 17.11 }, fetchFn);
+		expect(forecast.current.time).toBe('2026-11-10T10:00');
+	});
+
+	it('does not retry when the rate limit is hit', async () => {
+		const fetchFn = vi.fn(async () => new Response('slow down', { status: 429 }));
+		await expect(fetchForecast({ lat: 1, lon: 1 }, fetchFn)).rejects.toThrow('answered 429');
+		expect(fetchFn).toHaveBeenCalledTimes(1);
+	});
+
+	it('turns a network failure into a WeatherServiceError after one retry', async () => {
 		const fetchFn = vi.fn(async () => {
 			throw new TypeError('fetch failed');
 		});
 		await expect(searchPlaces('Bratislava', 'sk', fetchFn)).rejects.toThrow(WeatherServiceError);
+		expect(fetchFn).toHaveBeenCalledTimes(2);
 	});
 
 	it('searches in the reader’s language', async () => {

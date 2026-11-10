@@ -11,7 +11,7 @@ export const GET: RequestHandler = async ({ url, fetch, setHeaders }) => {
 
 	try {
 		const places = await searchPlaces(query, language, fetch);
-		setHeaders({ 'cache-control': 'public, max-age=3600, s-maxage=86400' });
+		setHeaders({ 'cache-control': 'public, max-age=3600, s-maxage=86400, stale-if-error=604800' });
 		return json(places);
 	} catch (cause) {
 		if (cause instanceof WeatherServiceError) error(502, 'Place search unavailable');
