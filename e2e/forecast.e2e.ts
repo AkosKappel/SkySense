@@ -183,6 +183,13 @@ test('a place saved in one tab shows up in another', async ({ context }) => {
 	await expect(home.getByRole('link', { name: /Bratislava/ }).first()).toBeVisible();
 });
 
+test('the status bar colour follows the sky', async ({ page }) => {
+	await page.goto('/p/69.35,88.2/Norilsk');
+	await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#111827');
+	await page.goto('/settings');
+	await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#1e1b4b');
+});
+
 test('settings change units and language', async ({ page }) => {
 	await page.goto('/settings');
 	await expectAccessible(page);

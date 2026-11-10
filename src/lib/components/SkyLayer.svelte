@@ -1,11 +1,22 @@
 <script lang="ts">
-	import { skyBackground, type SkyKind } from '#lib/sky.js';
+	import { skies, skyBackground, type SkyKind } from '#lib/sky.js';
 
 	// The place's sky behind the tiles, plus falling rain or snow. Particles stay off under
 	// reduced motion and pause while the tab is hidden.
 	let { kind, falling }: { kind: SkyKind; falling: 'rain' | 'snow' | null } = $props();
 
 	let canvas = $state<HTMLCanvasElement>();
+
+	// The phone's status bar takes the top of the sky (U-05), and the default again on leaving.
+	$effect(() => {
+		const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+		if (!meta) return;
+		const before = meta.content;
+		meta.content = skies[kind].stops[0];
+		return () => {
+			meta.content = before;
+		};
+	});
 
 	$effect(() => {
 		if (!canvas || !falling || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
