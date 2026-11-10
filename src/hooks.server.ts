@@ -7,6 +7,14 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 		return resolve(
 			{ ...event, request },
 			{
+				// The Latin subset is on every page, so fetch it with the HTML instead of after the CSS;
+				// Slovak and Hungarian also need Latin Extended (č, ő). Other subsets load on demand.
+				preload: ({ type, path }) =>
+					type === 'js' ||
+					type === 'css' ||
+					(type === 'font' &&
+						(path.includes('-latin-wght') ||
+							((locale === 'sk' || locale === 'hu') && path.includes('-latin-ext-wght')))),
 				transformPageChunk: ({ html }) =>
 					html
 						.replace('%paraglide.lang%', locale)

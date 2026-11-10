@@ -1,16 +1,22 @@
 import { error, json } from '@sveltejs/kit';
 import { fetchForecast, WeatherServiceError } from '#lib/server/open-meteo.js';
-import { parseCoordinates } from '#lib/weather.js';
+import { memo } from '#lib/server/memo.js';
+import { parseCoordinates, roundCoordinates } from '#lib/weather.js';
 import type { RequestHandler } from './$types';
 
+const MINUTE = 60_000;
+
 export const GET: RequestHandler = async ({ url, fetch, setHeaders }) => {
-	const coordinates = parseCoordinates(
+	const parsed = parseCoordinates(
 		`${url.searchParams.get('lat') ?? ''},${url.searchParams.get('lon') ?? ''}`
 	);
-	if (!coordinates) error(400, 'lat and lon must be valid coordinates');
+	if (!parsed) error(400, 'lat and lon must be valid coordinates');
+	const coordinates = roundCoordinates(parsed);
 
 	try {
-		const forecast = await fetchForecast(coordinates, fetch);
+		const forecast = await memo(`forecast:${coordinates.lat},${coordinates.lon}`, 10 * MINUTE, () =>
+			fetchForecast(coordinates, fetch)
+		);
 		// Open-Meteo updates hourly; 15 minutes keeps "now" fresh while the CDN absorbs repeats.
 		setHeaders({
 			'cache-control':

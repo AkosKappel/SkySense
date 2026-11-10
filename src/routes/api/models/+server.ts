@@ -1,16 +1,22 @@
 import { error, json } from '@sveltejs/kit';
 import { fetchModels, WeatherServiceError } from '#lib/server/open-meteo.js';
-import { parseCoordinates } from '#lib/weather.js';
+import { memo } from '#lib/server/memo.js';
+import { parseCoordinates, roundCoordinates } from '#lib/weather.js';
 import type { RequestHandler } from './$types';
 
+const MINUTE = 60_000;
+
 export const GET: RequestHandler = async ({ url, fetch, setHeaders }) => {
-	const coordinates = parseCoordinates(
+	const parsed = parseCoordinates(
 		`${url.searchParams.get('lat') ?? ''},${url.searchParams.get('lon') ?? ''}`
 	);
-	if (!coordinates) error(400, 'lat and lon must be valid coordinates');
+	if (!parsed) error(400, 'lat and lon must be valid coordinates');
+	const coordinates = roundCoordinates(parsed);
 
 	try {
-		const runs = await fetchModels(coordinates, fetch);
+		const runs = await memo(`models:${coordinates.lat},${coordinates.lon}`, 10 * MINUTE, () =>
+			fetchModels(coordinates, fetch)
+		);
 		setHeaders({
 			'cache-control':
 				'public, max-age=300, s-maxage=900, stale-while-revalidate=600, stale-if-error=86400'
