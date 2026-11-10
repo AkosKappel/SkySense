@@ -57,6 +57,13 @@ class SavedPlaces {
 		this.save();
 	}
 
+	rename(index: number, name: string) {
+		const trimmed = name.trim().slice(0, 80);
+		if (!trimmed || !this.list[index]) return;
+		this.list[index].name = trimmed;
+		this.save();
+	}
+
 	move(index: number, by: -1 | 1) {
 		const target = index + by;
 		if (target < 0 || target >= this.list.length) return;

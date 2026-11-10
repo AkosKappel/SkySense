@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { ArrowDown, ArrowUp, CloudSun, MapPin, Settings, X } from '@lucide/svelte';
+	import { tick } from 'svelte';
+	import { ArrowDown, ArrowUp, CloudSun, MapPin, Pencil, Settings, X } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import PlaceSearch from '#lib/components/PlaceSearch.svelte';
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
@@ -8,6 +9,19 @@
 	import { formatCoordinates } from '#lib/weather.js';
 
 	let removed = $state<{ place: SavedPlace; index: number } | null>(null);
+	let renaming = $state(-1);
+
+	function finishRename(event: Event & { currentTarget: HTMLInputElement }, index: number) {
+		if (renaming !== index) return;
+		savedPlaces.rename(index, event.currentTarget.value);
+		renaming = -1;
+	}
+
+	/** After Enter or Escape, focus goes back to the Rename button instead of the page. */
+	async function refocusRename(index: number) {
+		await tick();
+		document.getElementById(`rename-${index}`)?.focus();
+	}
 
 	function remove(index: number) {
 		const place = savedPlaces.remove(index);
@@ -52,21 +66,48 @@
 			<ul class="mt-3 space-y-2">
 				{#each savedPlaces.list as place, i (formatCoordinates(place))}
 					<li class="flex items-center gap-1 rounded-2xl bg-white/5 outline-1 outline-white/10">
-						<a
-							href={resolve('/p/[coords]/[[name]]', {
-								coords: formatCoordinates(place),
-								name: encodeURIComponent(place.name)
-							})}
-							class="flex min-h-14 min-w-0 flex-1 items-center gap-3 px-4"
+						{#if renaming === i}
+							<!-- svelte-ignore a11y_autofocus -->
+							<input
+								aria-label={m.place_name()}
+								value={place.name}
+								maxlength="80"
+								autofocus
+								class="mx-2 h-11 min-w-0 flex-1 rounded-xl bg-white/10 px-3 font-semibold outline-1 outline-white/30"
+								onblur={(event) => finishRename(event, i)}
+								onkeydown={(event) => {
+									if (event.key !== 'Enter' && event.key !== 'Escape') return;
+									// Without this, the Enter would also press the Rename button focused next.
+									event.preventDefault();
+									if (event.key === 'Enter') finishRename(event, i);
+									else renaming = -1;
+									refocusRename(i);
+								}}
+							/>
+						{:else}
+							<a
+								href={resolve('/p/[coords]/[[name]]', {
+									coords: formatCoordinates(place),
+									name: encodeURIComponent(place.name)
+								})}
+								class="flex min-h-14 min-w-0 flex-1 items-center gap-3 px-4"
+							>
+								<MapPin size={18} class="shrink-0 text-ink-muted" aria-hidden="true" />
+								<span class="min-w-0">
+									<span class="block truncate font-semibold">{place.name}</span>
+									{#if place.detail}<span class="block truncate text-sm text-ink-muted"
+											>{place.detail}</span
+										>{/if}
+								</span>
+							</a>
+						{/if}
+						<button
+							type="button"
+							id="rename-{i}"
+							class="icon-button"
+							aria-label={m.rename_place({ name: place.name })}
+							onclick={() => (renaming = i)}><Pencil size={18} aria-hidden="true" /></button
 						>
-							<MapPin size={18} class="shrink-0 text-ink-muted" aria-hidden="true" />
-							<span class="min-w-0">
-								<span class="block truncate font-semibold">{place.name}</span>
-								{#if place.detail}<span class="block truncate text-sm text-ink-muted"
-										>{place.detail}</span
-									>{/if}
-							</span>
-						</a>
 						<button
 							type="button"
 							class="icon-button"
