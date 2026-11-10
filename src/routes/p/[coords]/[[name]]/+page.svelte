@@ -180,9 +180,9 @@
 		<h1 class="sr-only">{m.weather_in({ place: name })}</h1>
 
 		<div
-			class="mt-5 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-flow-dense md:grid-cols-4 [&>*]:min-w-0"
+			class="mt-5 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-flow-dense md:grid-cols-2 lg:grid-cols-4 [&>*]:min-w-0"
 		>
-			<section class="glass p-6 md:col-span-2 md:row-span-2 md:p-8">
+			<section class="glass p-6 md:col-span-2 md:p-8 lg:row-span-2">
 				<NowTile
 					{now}
 					hours={forecast.hours.slice(0, 49)}
@@ -235,21 +235,21 @@
 				{/if}
 			</section>
 
-			<section class="glass p-5 md:col-span-4">
+			<section class="glass p-5 md:col-span-2 lg:col-span-4">
 				<h2 class="question">{m.next_hours()}</h2>
 				<HourlyStrip hours={forecast.hours.slice(0, 24)} {f} />
 			</section>
 
-			<section class="glass p-6 md:col-span-4">
+			<section class="glass p-6 md:col-span-2 lg:col-span-4">
 				<TempChart hours={forecast.hours.slice(0, 25)} {f} />
 			</section>
 
-			<section class="glass p-6 md:col-span-2 md:row-span-2">
+			<section class="glass p-6 lg:col-span-2 lg:row-span-2">
 				<h2 class="question">{m.ten_days()}</h2>
 				<DailyList days={forecast.days} {f} />
 			</section>
 
-			<section class="glass p-6 md:col-span-2 md:row-span-2">
+			<section class="glass p-6 lg:col-span-2 lg:row-span-2">
 				<h2 class="question">{m.today_details()}</h2>
 				<DayFacts day={today} {f} humidity={now.humidity} />
 			</section>
