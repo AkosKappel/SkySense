@@ -23,15 +23,20 @@ Run `lint`, `check`, `test` and `build` before committing; CI runs the same plus
 - **Data flow:** the browser calls only this app's `/api/` routes; `src/lib/server/` calls Open-Meteo. Never call Open-Meteo from client code: the server rounds coordinates to 2 decimals (privacy and cache hits) and sets `Cache-Control: s-maxage` so Vercel's CDN absorbs repeat requests.
 - **Validate at the boundary:** Open-Meteo responses are parsed and validated once in `src/lib/server/`; the rest of the app works with typed hour and day records, not the API's column arrays.
 - **Pure logic, outside components:** the summary, activity scoring, windows, confidence and normals are pure functions in `src/lib/` (no Svelte imports), unit tested with the recorded fixtures. Components only display their results.
-- **No backend state:** no database, no accounts. Saved places and settings are in `localStorage`, wrapped so a private window or blocked storage never breaks the page.
-- **Tests never hit the network:** unit tests and e2e use recorded responses (`src/lib/server/fixtures/`).
+- **No backend state:** no database, no accounts. Saved places are in `localStorage` (`src/lib/places.svelte.ts`), wrapped so a private window or blocked storage never breaks the page. Units are a cookie (`skysense_units`, read in `+layout.server.ts`) so the server renders the first paint in them; the last place opened is a cookie too (`skysense_last`), so `/` redirects to it (`/?choose` shows the picker).
+- **Routes:** `/p/[coords]/[[name]]` is a place (`/p/48.15,17.11/Bratislava`, coordinates rounded to 2 decimals, the name URI-encoded into the segment). Its universal load fetches `/api/forecast`; `/api/places` searches. Both API routes set `Cache-Control` for Vercel's CDN.
+- **Forecast model:** `src/lib/weather.ts` holds the `Forecast` types and pure helpers (`conditionOf` for WMO codes, `nextRain`, coordinate parsing). Times are the place's wall-clock time without an offset; `src/lib/time.ts` formats them by reading them as UTC, never with the reader's zone. Values are metric; `src/lib/units.ts` converts when formatting, through `formatter()` in `src/lib/format.ts`.
+- **Tests never hit the network:** unit tests and e2e use recorded responses (`src/lib/server/fixtures/`). `SKYSENSE_FIXTURES=1` (declared in `src/env.ts`, read from `$app/env/private`) makes the server answer from them; Playwright sets it. Re-record them with the request in `fetchForecast` when the fields change.
 
 ## Svelte
 
 - Svelte 5 runes only (`$state`, `$derived`, `$props`, `$effect`); runes mode is forced for project files in `vite.config.ts`. Shared reactive state goes in `.svelte.ts` modules.
-- Imports from `src/lib` use the `#lib` alias (`#lib/units`), as `package.json` `imports` defines.
+- Imports from `src/lib` use the `#lib` alias with the file extension (`#lib/units.js`, `#lib/places.svelte.js`, `#lib/components/Tile.svelte`), as `package.json` `imports` maps paths literally.
+- Links and `goto` call `resolve()` inline (the `svelte/no-navigation-without-resolve` rule); route params are encoded by the caller (`encodeURIComponent(name)`), since `resolve` does not encode.
+- Environment variables are declared in `src/env.ts` (`defineEnvVars`) and imported from `$app/env/private` or `$app/env/public`; SvelteKit 3 has no `$env/*` modules.
 - Component tests are `*.svelte.test.ts` and run in Chromium with `vitest-browser-svelte`; plain unit tests are `*.test.ts` in node.
-- E2E tests are `*.e2e.ts`.
+- E2E tests are `e2e/*.e2e.ts`: desktop Chrome and Pixel 7 against `pnpm build && pnpm preview` with fixtures, axe on every main page.
+- Visually hidden text (`sr-only`) inside a scrolling container needs a positioned ancestor (`relative`) inside it, or it widens the page.
 
 ## Languages
 

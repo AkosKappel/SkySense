@@ -29,9 +29,19 @@
 
 body {
 	min-height: 100dvh;
-	background: var(--sky-dusk) fixed;
+	background-color: #1e1b4b;
 	color: var(--color-ink);
 	font-family: var(--font-sans);
+}
+
+/* The sky stays put while the tiles scroll. A fixed layer instead of `background-attachment: fixed`,
+   which iOS Safari ignores. */
+body::before {
+	content: '';
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	background: var(--sky-dusk);
 }
 
 /* A frosted tile: the one surface of the app. */
@@ -43,6 +53,44 @@ body {
 		inset 0 1px 0 rgb(255 255 255 / 0.18),
 		0 10px 30px rgb(0 0 0 / 0.15);
 	outline: 1px solid rgb(255 255 255 / 0.14);
+}
+
+/* Round glass buttons in headers and lists; 44 px at least. */
+@utility pill {
+	cursor: pointer;
+	border-radius: 9999px;
+	background: rgb(255 255 255 / 0.1);
+	outline: 1px solid rgb(255 255 255 / 0.2);
+	backdrop-filter: blur(20px);
+	transition: background-color 150ms;
+	&:hover {
+		background: rgb(255 255 255 / 0.2);
+	}
+}
+
+@utility icon-button {
+	display: grid;
+	place-items: center;
+	width: 2.75rem;
+	height: 2.75rem;
+	flex-shrink: 0;
+	cursor: pointer;
+	border-radius: 9999px;
+	color: var(--color-ink-muted);
+	transition: background-color 150ms;
+	&:hover:not(:disabled) {
+		background: rgb(255 255 255 / 0.12);
+		color: var(--color-ink);
+	}
+	&:disabled {
+		cursor: default;
+		opacity: 0.35;
+	}
+}
+
+:focus-visible {
+	outline: 2px solid white;
+	outline-offset: 2px;
 }
 
 /* A tile's question line (small, muted, with an icon) and its answer (large, bold). */

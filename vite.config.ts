@@ -26,8 +26,6 @@ export default defineConfig({
 	],
 	test: {
 		expect: { requireAssertions: true },
-		// Until the first unit and component tests land in phase 1.
-		passWithNoTests: true,
 		projects: [
 			{
 				extends: './vite.config.ts',
