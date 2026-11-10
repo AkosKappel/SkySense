@@ -56,7 +56,7 @@
 </script>
 
 <div
-	class="pointer-events-none fixed inset-0 -z-1"
+	class="pointer-events-none fixed inset-0 -z-1 forced-colors:hidden"
 	style:background={skyBackground(kind)}
 	data-sky={kind}
 >

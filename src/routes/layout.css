@@ -108,3 +108,35 @@ body::before {
 	font-weight: 800;
 	letter-spacing: -0.02em;
 }
+
+/* U-09. Forced colours (Windows high contrast) drop the sky and the translucency; tiles get
+   real borders in the system colours. `prefers-contrast: more` keeps the look but darkens the
+   glass and makes muted text fully white. */
+@media (forced-colors: active) {
+	body::before {
+		display: none;
+	}
+	.glass,
+	.pill {
+		backdrop-filter: none;
+		border: 1px solid CanvasText;
+	}
+	svg {
+		color: CanvasText;
+		filter: none !important;
+	}
+}
+
+@media (prefers-contrast: more) {
+	:root {
+		--color-ink-muted: #ffffff;
+	}
+	.glass {
+		background: rgb(0 0 0 / 0.45);
+		outline-color: rgb(255 255 255 / 0.6);
+	}
+	.pill {
+		background: rgb(0 0 0 / 0.45);
+		outline-color: rgb(255 255 255 / 0.7);
+	}
+}

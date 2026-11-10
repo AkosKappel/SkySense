@@ -62,7 +62,10 @@
 	{#each day as hour, i (hour.time)}
 		<div class="flex flex-1 flex-col items-center gap-1">
 			<div
-				class="w-full rounded-sm {hour.condition === 'snow' ? 'bg-ink' : 'bg-rain'}"
+				class="w-full rounded-sm forced-color-adjust-none forced-colors:bg-[CanvasText] {hour.condition ===
+				'snow'
+					? 'bg-ink'
+					: 'bg-rain'}"
 				style="height: {Math.max(3, hour.rainChance * 0.5)}px; opacity: {hour.rainChance >=
 				RAIN_LIKELY
 					? 1

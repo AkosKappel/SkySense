@@ -71,13 +71,15 @@
 
 <ul class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-muted" aria-hidden="true">
 	<li class="flex items-center gap-1.5">
-		<span class="h-0.75 w-5 rounded bg-sun"></span>{m.temperature_line()}
+		<span class="h-0.75 w-5 rounded bg-sun forced-color-adjust-none forced-colors:bg-[CanvasText]"
+		></span>{m.temperature_line()}
 	</li>
 	<li class="flex items-center gap-1.5">
 		<span class="w-5 border-t-2 border-dashed border-ink-muted"></span>{m.feels_like_line()}
 	</li>
 	<li class="flex items-center gap-1.5">
-		<span class="h-3 w-2 bg-rain/50"></span>{m.rain_chance_label()}
+		<span class="h-3 w-2 bg-rain/50 forced-color-adjust-none forced-colors:bg-[CanvasText]"
+		></span>{m.rain_chance_label()}
 	</li>
 </ul>
 

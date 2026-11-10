@@ -37,7 +37,7 @@
 				</span>
 				<span class="relative h-1.5 rounded-full bg-white/10" aria-hidden="true">
 					<span
-						class="absolute inset-y-0 rounded-full bg-linear-to-r from-cold to-warm"
+						class="absolute inset-y-0 rounded-full bg-linear-to-r from-cold to-warm forced-color-adjust-none forced-colors:bg-[CanvasText]"
 						style="left: {position(day.min)}%; right: {100 - position(day.max)}%"
 					></span>
 				</span>
