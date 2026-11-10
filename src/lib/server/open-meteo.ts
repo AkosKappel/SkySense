@@ -9,6 +9,7 @@ import {
 	type Hour,
 	type Spread
 } from '#lib/weather.js';
+import { modelIds, type ModelRun } from '#lib/models.js';
 
 export class WeatherServiceError extends Error {}
 
@@ -230,6 +231,51 @@ export function withSpread(forecast: Forecast, spread: Record<string, Spread>): 
 		...forecast,
 		hours: forecast.hours.map((h) => (spread[h.time] ? { ...h, spread: spread[h.time] } : h))
 	};
+}
+
+const modelsSchema = z.object({
+	hourly: z.object({ time: z.array(z.string()) }).catchall(z.array(z.number().nullable()))
+});
+/** Today and the next three days: past that, Météo-France and others run out. */
+const MODEL_DAYS = 4;
+
+/** One run per model, each cut where its range ends; a model with no data is left out. */
+export function toModelRuns(raw: unknown): ModelRun[] {
+	const parsed = modelsSchema.safeParse(raw);
+	if (!parsed.success) throw new WeatherServiceError('Unexpected models response');
+	const { time, ...columns } = parsed.data.hourly;
+	return modelIds.flatMap((id) => {
+		const temps = columns[`temperature_2m_${id}`];
+		const rain = columns[`precipitation_${id}`] ?? [];
+		if (!temps) return [];
+		const end = temps.findIndex((t) => t === null);
+		const hours = time.slice(0, end === -1 ? time.length : end).map((t, i) => ({
+			time: t,
+			temp: temps[i] as number,
+			rain: rain[i] ?? 0
+		}));
+		return hours.length ? [{ id, hours }] : [];
+	});
+}
+
+export async function fetchModels(
+	coordinates: Coordinates,
+	fetchFn: typeof fetch = fetch
+): Promise<ModelRun[]> {
+	const { lat, lon } = roundCoordinates(coordinates);
+	if (useFixtures()) {
+		return toModelRuns(fixtures[`./fixtures/models-${nearestFixture({ lat, lon })}.json`].default);
+	}
+	const url = new URL(FORECAST_URL);
+	url.search = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		hourly: 'temperature_2m,precipitation',
+		models: modelIds.join(','),
+		timezone: 'auto',
+		forecast_days: String(MODEL_DAYS)
+	}).toString();
+	return toModelRuns(await getJson(url, fetchFn));
 }
 
 export type Place = {

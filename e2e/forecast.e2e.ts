@@ -128,6 +128,19 @@ test('marks the days the model runs disagree on', async ({ page }) => {
 	await expect(page.getByText('100% of model runs show it right now.')).toBeVisible();
 });
 
+test('compares weather models behind a link', async ({ page }) => {
+	await page.goto('/p/48.15,17.11/Bratislava');
+	await page.getByRole('link', { name: 'Compare weather models' }).click();
+	await expect(
+		page.getByRole('heading', { level: 1, name: 'Compare weather models' })
+	).toBeVisible();
+	await expect(page.getByText(/At most \d+° apart in the next 24 hours/)).toBeVisible();
+	await expect(page.getByRole('term').filter({ hasText: 'Météo-France' })).toBeVisible();
+	await expectAccessible(page);
+	await page.getByRole('link', { name: 'Back to the forecast' }).click();
+	await expect(page.getByText('Rain until 16:00, then dry.')).toBeVisible();
+});
+
 test('settings change units and language', async ({ page }) => {
 	await page.goto('/settings');
 	await expectAccessible(page);

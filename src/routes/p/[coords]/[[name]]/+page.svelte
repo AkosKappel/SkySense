@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		ChevronDown,
+		ChevronRight,
 		MapPin,
 		Navigation,
 		Plus,
@@ -16,6 +17,7 @@
 	import DailyList from '#lib/components/DailyList.svelte';
 	import DayDetail from '#lib/components/DayDetail.svelte';
 	import DayFacts from '#lib/components/DayFacts.svelte';
+	import ModelCompare from '#lib/components/ModelCompare.svelte';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
 	import NowTile from '#lib/components/NowTile.svelte';
 	import PlaceSheet from '#lib/components/PlaceSheet.svelte';
@@ -60,8 +62,13 @@
 
 	// `?day=2026-11-12` shows one day; anything not in the forecast shows the overview.
 	const day = $derived(forecast.days.find((d) => d.date === page.url.searchParams.get('day')));
+	const comparing = $derived(page.url.searchParams.has('models'));
 	const title = $derived(
-		day ? m.weather_on({ place: name, date: f.date(day.date) }) : m.weather_in({ place: name })
+		comparing
+			? m.compare_title({ place: name })
+			: day
+				? m.weather_on({ place: name, date: f.date(day.date) })
+				: m.weather_in({ place: name })
 	);
 	const dayHours = $derived(day ? forecast.hours.filter((h) => h.time.startsWith(day.date)) : []);
 
@@ -177,7 +184,9 @@
 		</div>
 	</header>
 
-	{#if day}
+	{#if comparing}
+		<ModelCompare runs={data.models} from={forecast.hours[0].time} {f} />
+	{:else if day}
 		<DayDetail {day} hours={dayHours} isToday={day.date === today.date} {f} />
 	{:else}
 		<h1 class="sr-only">{m.weather_in({ place: name })}</h1>
@@ -258,6 +267,14 @@
 
 			<section class="glass p-6 md:col-span-2 lg:col-span-4">
 				<TempChart hours={forecast.hours.slice(0, 25)} {f} />
+				<a
+					href="{resolve('/p/[coords]/[[name]]', {
+						coords: page.params.coords ?? '',
+						name: encodeURIComponent(page.params.name ?? '')
+					})}?models"
+					class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
+					>{m.compare_models()} <ChevronRight size={16} aria-hidden="true" /></a
+				>
 			</section>
 
 			<section class="glass p-6 lg:col-span-2 lg:row-span-2">

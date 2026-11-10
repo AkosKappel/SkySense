@@ -6,6 +6,9 @@ export function formatter(locale: string, units: Units) {
 	const intl = intlLocale(locale, units.clock);
 	return {
 		temp: (celsius: number) => `${temperature(celsius, units)}°`,
+		/** A difference between two temperatures: scaled, not shifted, for Fahrenheit. */
+		tempDelta: (celsius: number) =>
+			`${Math.round(units.temperature === 'f' ? celsius * 1.8 : celsius)}°`,
 		time: (local: string) => formatTime(local, intl, units.clock),
 		hour: (local: string) => formatHour(local, intl, units.clock),
 		weekday: (date: string) => formatWeekday(date, intl),
