@@ -370,12 +370,21 @@ export function bestDay(
 	days: Day[],
 	shift = 0
 ): ActivityWindow | null {
-	let best: ActivityWindow | null = null;
-	for (const day of days) {
+	const windows = dailyWindows(activity, hours, days, shift);
+	return windows.reduce<ActivityWindow | null>((a, b) => (!a || b.score > a.score ? b : a), null);
+}
+
+/** The best window of each day that has one, in order: for the calendar export (X-11). */
+export function dailyWindows(
+	activity: Activity,
+	hours: Hour[],
+	days: Day[],
+	shift = 0
+): ActivityWindow[] {
+	return days.flatMap((day) => {
 		const dayHours = hours.filter((h) => h.time.startsWith(day.date));
-		if (dayHours.length < activity.hours) continue;
+		if (dayHours.length < activity.hours) return [];
 		const { window } = bestWindow(activity, dayHours, days, shift);
-		if (window && (!best || window.score > best.score)) best = window;
-	}
-	return best;
+		return window ? [window] : [];
+	});
 }

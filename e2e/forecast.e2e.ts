@@ -192,6 +192,21 @@ test('the status bar colour follows the sky', async ({ page }) => {
 	await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#1e1b4b');
 });
 
+test('downloads the good times for an activity as a calendar file', async ({ page }) => {
+	await page.goto('/p/48.15,17.11/Bratislava');
+	const tile = page.locator('section', { hasText: 'When should I go out?' });
+	await tile.getByRole('listitem').filter({ hasText: 'Run' }).getByText('16:00 to 17:00').click();
+	const download = page.waitForEvent('download');
+	await tile.getByRole('button', { name: 'Add the good times to your calendar' }).first().click();
+	const file = await download;
+	expect(file.suggestedFilename()).toBe('skysense-run.ics');
+	const text = await (await file.createReadStream()).toArray();
+	const ics = Buffer.concat(text).toString();
+	expect(ics).toContain('SUMMARY:Run in Bratislava');
+	// 16:00 in Bratislava (UTC+1) is 15:00 UTC.
+	expect(ics).toContain('DTSTART:20261110T150000Z');
+});
+
 test('settings change units and language', async ({ page }) => {
 	await page.goto('/settings');
 	await expectAccessible(page);

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		Bike,
+		CalendarPlus,
 		Camera,
 		Check,
 		ChevronDown,
@@ -17,6 +18,7 @@
 		activityIds,
 		bestDay,
 		bestWindow,
+		dailyWindows,
 		comfortShift,
 		POOR,
 		type ActivityId,
@@ -25,6 +27,7 @@
 		type Reason
 	} from '#lib/activities.js';
 	import { activityChoice } from '#lib/activity-choice.svelte.js';
+	import { toIcs } from '#lib/calendar.js';
 	import type { Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import type { Day, Hour } from '#lib/weather.js';
@@ -32,6 +35,8 @@
 	let {
 		hours,
 		week = [],
+		place = '',
+		utcOffsetSeconds = 0,
 		days,
 		f,
 		comfort = 'neutral'
@@ -40,6 +45,9 @@
 		hours: Hour[];
 		/** The whole forecast, for the best day this week. */
 		week?: Hour[];
+		/** For the calendar export: the event titles and the conversion to UTC. */
+		place?: string;
+		utcOffsetSeconds?: number;
 		days: Day[];
 		f: Formatter;
 		comfort?: Comfort;
@@ -107,6 +115,23 @@
 		return from.startsWith(today)
 			? m.window_range(times)
 			: m.window_range_on({ day: f.weekday(from.slice(0, 10)), ...times });
+	}
+
+	function downloadCalendar(id: ActivityId) {
+		const windows = dailyWindows(activities[id], week, days, comfortShift[comfort]);
+		const events = windows.map((w) => ({
+			start: w.from,
+			end: w.until,
+			title: m.calendar_event({ activity: names[id](), place }),
+			description: m.calendar_description({ score: w.score })
+		}));
+		const file = new Blob([toIcs(events, utcOffsetSeconds, id)], { type: 'text/calendar' });
+		const link = document.createElement('a');
+		link.href = URL.createObjectURL(file);
+		link.download = `skysense-${id}.ics`;
+		link.click();
+		// Revoked after the download has started; at once, some browsers cancel it.
+		setTimeout(() => URL.revokeObjectURL(link.href), 1000);
 	}
 
 	/** Always with the day, as the best day this week can be any of them. */
@@ -178,6 +203,14 @@
 								<p class="mt-3 text-sm">
 									{m.best_this_week({ range: weekRange(row.week.from, row.week.until) })}
 								</p>
+								<button
+									type="button"
+									class="mt-2 flex min-h-11 cursor-pointer items-center gap-2 text-sm font-semibold underline-offset-4 hover:underline"
+									onclick={() => downloadCalendar(row.id)}
+								>
+									<CalendarPlus size={16} aria-hidden="true" />
+									{m.add_to_calendar()}
+								</button>
 							{/if}
 						</div>
 					{/if}
