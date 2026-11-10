@@ -22,8 +22,13 @@
 		if (!open && dialog.open) dialog.close();
 	});
 
-	// Escape, the close button and a backdrop tap all end here; step back out of the sheet entry.
-	// The close event fires a task later, so a sheet opened again in between is left alone.
+	// Escape, the close button and a backdrop tap only step back; the effect above closes the
+	// dialog once history has moved, so a quick reopen cannot be undone by a late Back.
+	const dismiss = () => history.back();
+
+	// A close that did not come through history (the browser can refuse to cancel a repeated
+	// Escape) still leaves the sheet entry; the close event fires a task later, so a sheet opened
+	// again in between is left alone.
 	function onclose() {
 		if (page.state.placeSheet && !dialog.open) history.back();
 	}
@@ -32,7 +37,11 @@
 <dialog
 	bind:this={dialog}
 	{onclose}
-	onclick={(event) => event.target === dialog && dialog.close()}
+	oncancel={(event) => {
+		event.preventDefault();
+		dismiss();
+	}}
+	onclick={(event) => event.target === dialog && dismiss()}
 	aria-labelledby="place-sheet-title"
 	class="mx-0 mt-auto mb-0 max-h-[85dvh] w-full max-w-none rounded-t-tile bg-indigo-950 text-ink shadow-2xl outline-1 outline-white/15 backdrop:bg-black/50 md:mx-auto md:mb-auto md:max-w-lg md:rounded-tile"
 >
@@ -40,11 +49,8 @@
 		<div class="p-6">
 			<div class="flex items-center justify-between gap-4">
 				<h2 id="place-sheet-title" class="answer">{m.change_place()}</h2>
-				<button
-					type="button"
-					class="icon-button"
-					aria-label={m.close()}
-					onclick={() => dialog.close()}><X size={20} aria-hidden="true" /></button
+				<button type="button" class="icon-button" aria-label={m.close()} onclick={dismiss}
+					><X size={20} aria-hidden="true" /></button
 				>
 			</div>
 
