@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		ChevronDown,
+		ChevronLeft,
 		ChevronRight,
 		MapPin,
 		Moon,
@@ -45,6 +46,7 @@
 	import { summarize } from '#lib/summary.js';
 	import { whatToWear } from '#lib/wear.js';
 	import { beaufort } from '#lib/units.js';
+	import { formatCoordinates } from '#lib/weather.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -139,6 +141,27 @@
 
 	$effect(() => rememberLastPlace(place));
 
+	// Previous and next saved place (F-21), in the list's order and round the end.
+	const neighbours = $derived.by(() => {
+		const list = savedPlaces.list;
+		const at = list.findIndex((p) => formatCoordinates(p) === formatCoordinates(place));
+		if (at === -1 || list.length < 2) return null;
+		const link = (p: (typeof list)[number]) => {
+			const label = p.live ? m.my_location() : p.name;
+			return {
+				label,
+				href: resolve('/p/[coords]/[[name]]', {
+					coords: formatCoordinates(p),
+					name: encodeURIComponent(label)
+				})
+			};
+		};
+		return {
+			previous: link(list[(at - 1 + list.length) % list.length]),
+			next: link(list[(at + 1) % list.length])
+		};
+	});
+
 	let clock = $state(Date.now());
 	const updated = $derived(age(forecast.fetchedAt, clock, getLocale()));
 
@@ -190,6 +213,20 @@
 			<ChevronDown size={16} class="shrink-0" aria-hidden="true" />
 		</a>
 		<div class="flex gap-2">
+			{#if neighbours}
+				<a
+					href={neighbours.previous.href}
+					aria-label={m.previous_place({ name: neighbours.previous.label })}
+					class="grid size-11 pill place-items-center"
+					><ChevronLeft size={18} aria-hidden="true" /></a
+				>
+				<a
+					href={neighbours.next.href}
+					aria-label={m.next_place({ name: neighbours.next.label })}
+					class="grid size-11 pill place-items-center"
+					><ChevronRight size={18} aria-hidden="true" /></a
+				>
+			{/if}
 			{#if !savedPlaces.has(place)}
 				<button
 					type="button"

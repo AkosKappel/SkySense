@@ -245,6 +245,19 @@ test('compares two saved places day by day', async ({ page }) => {
 	await expectAccessible(page);
 });
 
+test('steps through saved places with previous and next', async ({ page }) => {
+	await page.goto('/p/40.42,-3.7/Madrid');
+	await savePlace(page);
+	await page.goto('/p/69.65,18.96/Troms%C3%B8');
+	await savePlace(page);
+	// Saved newest first: Tromsø, Madrid.
+	await page.getByRole('link', { name: 'Next place: Madrid' }).click();
+	await expect(page).toHaveURL(/\/p\/40\.42,-3\.7\/Madrid$/);
+	await page.getByRole('link', { name: 'Next place: Tromsø' }).click();
+	await expect(page).toHaveURL(/Troms%C3%B8$/);
+	await expectAccessible(page);
+});
+
 test('settings change units and language', async ({ page }) => {
 	await page.goto('/settings');
 	await expectAccessible(page);
