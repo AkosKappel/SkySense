@@ -47,15 +47,15 @@ test('reopens the last place and keeps saved places', async ({ page }) => {
 
 	await page.goto('/?choose');
 	await expect(page.getByRole('link', { name: 'Madrid' })).toBeVisible();
+	await page.getByRole('button', { name: 'Edit' }).click();
 	await page.getByRole('button', { name: 'Remove Madrid' }).click();
-	await expect(page.getByRole('link', { name: 'Madrid' })).toHaveCount(0);
+	await expect(page.getByRole('textbox', { name: 'Rename Madrid' })).toHaveCount(0);
 	await page.getByRole('button', { name: 'Undo' }).click();
-	await expect(page.getByRole('link', { name: 'Madrid' })).toBeVisible();
 
-	await page.getByRole('button', { name: 'Rename Madrid' }).click();
-	await page.getByRole('textbox', { name: 'Name' }).fill('Home');
+	await page.getByRole('textbox', { name: 'Rename Madrid' }).fill('Home');
 	await page.keyboard.press('Enter');
-	await expect(page.getByRole('button', { name: 'Rename Home' })).toBeFocused();
+	await expect(page.getByRole('textbox', { name: 'Rename Home' })).toBeAttached();
+	await page.getByRole('button', { name: 'Done' }).click();
 	await page.getByRole('link', { name: 'Home' }).click();
 	await expect(page).toHaveURL(/\/p\/40\.42,-3\.7\/Home$/);
 	await page.goto('/?choose');

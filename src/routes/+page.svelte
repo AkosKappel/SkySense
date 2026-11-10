@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { tick } from 'svelte';
-	import { ArrowDown, ArrowUp, CloudSun, MapPin, Pencil, Settings, X } from '@lucide/svelte';
+	import { ArrowDown, ArrowUp, CloudSun, MapPin, Settings, X } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import PlaceSearch from '#lib/components/PlaceSearch.svelte';
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
@@ -9,19 +8,8 @@
 	import { formatCoordinates } from '#lib/weather.js';
 
 	let removed = $state<{ place: SavedPlace; index: number } | null>(null);
-	let renaming = $state(-1);
-
-	function finishRename(event: Event & { currentTarget: HTMLInputElement }, index: number) {
-		if (renaming !== index) return;
-		savedPlaces.rename(index, event.currentTarget.value);
-		renaming = -1;
-	}
-
-	/** After Enter or Escape, focus goes back to the Rename button instead of the page. */
-	async function refocusRename(index: number) {
-		await tick();
-		document.getElementById(`rename-${index}`)?.focus();
-	}
+	// Rename, reorder and remove live behind Edit, so a phone row has room for the whole name.
+	let editing = $state(false);
 
 	function remove(index: number) {
 		const place = savedPlaces.remove(index);
@@ -62,29 +50,19 @@
 
 	{#if savedPlaces.list.length}
 		<section class="mt-4 glass p-6">
-			<h2 class="question">{m.saved_places()}</h2>
+			<div class="flex items-center justify-between gap-4">
+				<h2 class="question">{m.saved_places()}</h2>
+				<button
+					type="button"
+					class="-my-2 min-h-11 cursor-pointer px-2 font-semibold underline-offset-4 hover:underline"
+					aria-pressed={editing}
+					onclick={() => (editing = !editing)}>{editing ? m.done() : m.edit()}</button
+				>
+			</div>
 			<ul class="mt-3 space-y-2">
 				{#each savedPlaces.list as place, i (formatCoordinates(place))}
 					<li class="flex items-center gap-1 rounded-2xl bg-white/5 outline-1 outline-white/10">
-						{#if renaming === i}
-							<!-- svelte-ignore a11y_autofocus -->
-							<input
-								aria-label={m.place_name()}
-								value={place.name}
-								maxlength="80"
-								autofocus
-								class="mx-2 h-11 min-w-0 flex-1 rounded-xl bg-white/10 px-3 font-semibold outline-1 outline-white/30"
-								onblur={(event) => finishRename(event, i)}
-								onkeydown={(event) => {
-									if (event.key !== 'Enter' && event.key !== 'Escape') return;
-									// Without this, the Enter would also press the Rename button focused next.
-									event.preventDefault();
-									if (event.key === 'Enter') finishRename(event, i);
-									else renaming = -1;
-									refocusRename(i);
-								}}
-							/>
-						{:else}
+						{#if !editing}
 							<a
 								href={resolve('/p/[coords]/[[name]]', {
 									coords: formatCoordinates(place),
@@ -100,36 +78,39 @@
 										>{/if}
 								</span>
 							</a>
+						{:else}
+							<input
+								aria-label={m.rename_place({ name: place.name })}
+								value={place.name}
+								maxlength="80"
+								enterkeyhint="done"
+								class="my-1.5 ml-1.5 h-11 min-w-0 flex-1 rounded-xl bg-white/10 px-3 font-semibold outline-1 outline-white/30 focus:outline-2 focus:outline-white"
+								onchange={(event) => savedPlaces.rename(i, event.currentTarget.value)}
+								onkeydown={(event) => event.key === 'Enter' && event.currentTarget.blur()}
+							/>
+							<button
+								type="button"
+								class="icon-button"
+								aria-label={m.move_up({ name: place.name })}
+								disabled={i === 0}
+								onclick={() => savedPlaces.move(i, -1)}
+								><ArrowUp size={18} aria-hidden="true" /></button
+							>
+							<button
+								type="button"
+								class="icon-button"
+								aria-label={m.move_down({ name: place.name })}
+								disabled={i === savedPlaces.list.length - 1}
+								onclick={() => savedPlaces.move(i, 1)}
+								><ArrowDown size={18} aria-hidden="true" /></button
+							>
+							<button
+								type="button"
+								class="mr-1 icon-button"
+								aria-label={m.remove_place({ name: place.name })}
+								onclick={() => remove(i)}><X size={18} aria-hidden="true" /></button
+							>
 						{/if}
-						<button
-							type="button"
-							id="rename-{i}"
-							class="icon-button"
-							aria-label={m.rename_place({ name: place.name })}
-							onclick={() => (renaming = i)}><Pencil size={18} aria-hidden="true" /></button
-						>
-						<button
-							type="button"
-							class="icon-button"
-							aria-label={m.move_up({ name: place.name })}
-							disabled={i === 0}
-							onclick={() => savedPlaces.move(i, -1)}
-							><ArrowUp size={18} aria-hidden="true" /></button
-						>
-						<button
-							type="button"
-							class="icon-button"
-							aria-label={m.move_down({ name: place.name })}
-							disabled={i === savedPlaces.list.length - 1}
-							onclick={() => savedPlaces.move(i, 1)}
-							><ArrowDown size={18} aria-hidden="true" /></button
-						>
-						<button
-							type="button"
-							class="mr-1 icon-button"
-							aria-label={m.remove_place({ name: place.name })}
-							onclick={() => remove(i)}><X size={18} aria-hidden="true" /></button
-						>
 					</li>
 				{/each}
 			</ul>
