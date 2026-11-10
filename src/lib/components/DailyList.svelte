@@ -40,11 +40,11 @@
 				<WeatherIcon condition={day.condition} size={20} />
 				<span class="text-xs text-rain-soft tabular-nums">
 					{#if day.rainChance >= 20}
-						<span class="sr-only">{m.rain_chance_label()} </span>{f.percent(day.rainChance)}
+						<span class="sr-only">{`${m.rain_chance_label()} `}</span>{f.percent(day.rainChance)}
 					{/if}
 				</span>
 				<span class="text-right text-ink-muted tabular-nums">
-					<span class="sr-only">{m.low()} </span>{f.temp(day.min)}
+					<span class="sr-only">{`${m.low()} `}</span>{f.temp(day.min)}
 				</span>
 				<span class="relative h-1.5 rounded-full bg-white/10" aria-hidden="true">
 					<span
@@ -53,7 +53,7 @@
 					></span>
 				</span>
 				<span class="font-semibold tabular-nums">
-					<span class="sr-only">{m.high()} </span>{f.temp(day.max)}
+					<span class="sr-only">{`${m.high()} `}</span>{f.temp(day.max)}
 				</span>
 				<span class="sr-only">{conditionLabel(day.condition)}</span>
 				<ChevronRight
