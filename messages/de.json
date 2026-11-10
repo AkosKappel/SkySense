@@ -187,13 +187,8 @@
 	"summary_rain_all": "Regen in den nächsten 24 Stunden.",
 	"summary_rain_later": [
 		{
-			"declarations": [
-				"input hours",
-				"local hoursPlural = hours: plural"
-			],
-			"selectors": [
-				"hoursPlural"
-			],
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
 			"match": {
 				"hoursPlural=one": "Trocken bis {from}, dann etwa eine Stunde Regen.",
 				"hoursPlural=*": "Trocken bis {from}, dann etwa {hours} Stunden Regen."
@@ -205,13 +200,8 @@
 	"summary_snow_all": "Schnee in den nächsten 24 Stunden.",
 	"summary_snow_later": [
 		{
-			"declarations": [
-				"input hours",
-				"local hoursPlural = hours: plural"
-			],
-			"selectors": [
-				"hoursPlural"
-			],
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
 			"match": {
 				"hoursPlural=one": "Trocken bis {from}, dann etwa eine Stunde Schnee.",
 				"hoursPlural=*": "Trocken bis {from}, dann etwa {hours} Stunden Schnee."
@@ -223,13 +213,8 @@
 	"summary_thunder_all": "Gewitter in den nächsten 24 Stunden.",
 	"summary_thunder_later": [
 		{
-			"declarations": [
-				"input hours",
-				"local hoursPlural = hours: plural"
-			],
-			"selectors": [
-				"hoursPlural"
-			],
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
 			"match": {
 				"hoursPlural=one": "Trocken bis {from}, dann etwa eine Stunde Gewitter.",
 				"hoursPlural=*": "Trocken bis {from}, dann etwa {hours} Stunden Gewitter."

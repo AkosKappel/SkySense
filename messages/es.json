@@ -187,13 +187,8 @@
 	"summary_rain_all": "Lluvia durante las próximas 24 horas.",
 	"summary_rain_later": [
 		{
-			"declarations": [
-				"input hours",
-				"local hoursPlural = hours: plural"
-			],
-			"selectors": [
-				"hoursPlural"
-			],
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
 			"match": {
 				"hoursPlural=one": "Seco hasta las {from}, luego cerca de una hora de lluvia.",
 				"hoursPlural=*": "Seco hasta las {from}, luego unas {hours} horas de lluvia."
@@ -205,13 +200,8 @@
 	"summary_snow_all": "Nieve durante las próximas 24 horas.",
 	"summary_snow_later": [
 		{
-			"declarations": [
-				"input hours",
-				"local hoursPlural = hours: plural"
-			],
-			"selectors": [
-				"hoursPlural"
-			],
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
 			"match": {
 				"hoursPlural=one": "Seco hasta las {from}, luego cerca de una hora de nieve.",
 				"hoursPlural=*": "Seco hasta las {from}, luego unas {hours} horas de nieve."
@@ -223,13 +213,8 @@
 	"summary_thunder_all": "Tormentas durante las próximas 24 horas.",
 	"summary_thunder_later": [
 		{
-			"declarations": [
-				"input hours",
-				"local hoursPlural = hours: plural"
-			],
-			"selectors": [
-				"hoursPlural"
-			],
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
 			"match": {
 				"hoursPlural=one": "Seco hasta las {from}, luego cerca de una hora de tormentas.",
 				"hoursPlural=*": "Seco hasta las {from}, luego unas {hours} horas de tormentas."

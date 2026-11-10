@@ -187,13 +187,8 @@
 	"summary_rain_all": "Bude pršať počas nasledujúcich 24 hodín.",
 	"summary_rain_later": [
 		{
-			"declarations": [
-				"input hours",
-				"local hoursPlural = hours: plural"
-			],
-			"selectors": [
-				"hoursPlural"
-			],
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
 			"match": {
 				"hoursPlural=one": "Do {from} sucho, potom bude asi hodinu pršať.",
 				"hoursPlural=few": "Do {from} sucho, potom bude asi {hours} hodiny pršať.",
@@ -206,13 +201,8 @@
 	"summary_snow_all": "Bude snežiť počas nasledujúcich 24 hodín.",
 	"summary_snow_later": [
 		{
-			"declarations": [
-				"input hours",
-				"local hoursPlural = hours: plural"
-			],
-			"selectors": [
-				"hoursPlural"
-			],
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
 			"match": {
 				"hoursPlural=one": "Do {from} sucho, potom bude asi hodinu snežiť.",
 				"hoursPlural=few": "Do {from} sucho, potom bude asi {hours} hodiny snežiť.",
@@ -225,13 +215,8 @@
 	"summary_thunder_all": "Búrky počas nasledujúcich 24 hodín.",
 	"summary_thunder_later": [
 		{
-			"declarations": [
-				"input hours",
-				"local hoursPlural = hours: plural"
-			],
-			"selectors": [
-				"hoursPlural"
-			],
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
 			"match": {
 				"hoursPlural=one": "Do {from} sucho, potom asi hodinu búrky.",
 				"hoursPlural=few": "Do {from} sucho, potom asi {hours} hodiny búrky.",
