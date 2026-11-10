@@ -6,7 +6,8 @@ declare global {
 		// interface Locals {}
 		// interface PageData {}
 		interface PageState {
-			placeSheet?: boolean;
+			/** `search` opens it with the search field focused, for the `/` shortcut. */
+			placeSheet?: true | 'search';
 		}
 		// interface Platform {}
 	}

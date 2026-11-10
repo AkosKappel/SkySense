@@ -12,10 +12,13 @@
 	let { current }: { current: Coordinates } = $props();
 
 	let dialog: HTMLDialogElement;
-	const open = $derived(page.state.placeSheet === true);
+	const open = $derived(Boolean(page.state.placeSheet));
 
 	$effect(() => {
-		if (open && !dialog.open) dialog.showModal();
+		if (open && !dialog.open) {
+			dialog.showModal();
+			if (page.state.placeSheet === 'search') document.getElementById('place-search')?.focus();
+		}
 		if (!open && dialog.open) dialog.close();
 	});
 

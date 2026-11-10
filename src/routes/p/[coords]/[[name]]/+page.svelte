@@ -98,7 +98,7 @@
 		// With the sheet open, the search inside it takes the shortcut.
 		if (page.state.placeSheet || !isSearchShortcut(event)) return;
 		event.preventDefault();
-		pushState('', { placeSheet: true });
+		pushState('', { placeSheet: 'search' });
 	}}
 />
 
