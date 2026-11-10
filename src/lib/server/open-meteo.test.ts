@@ -2,6 +2,10 @@ import { describe, expect, it, vi } from 'vitest';
 import bratislava from './fixtures/forecast-bratislava.json';
 import places from './fixtures/places-bratisl.json';
 import tromso from './fixtures/forecast-tromso.json';
+import heat from './fixtures/scenario-heat.json';
+import midnightSun from './fixtures/scenario-midnight-sun.json';
+import polarNight from './fixtures/scenario-polar-night.json';
+import { darkness } from '../daylight.js';
 import {
 	fetchForecast,
 	searchPlaces,
@@ -38,6 +42,28 @@ describe('toForecast', () => {
 
 	it('refuses a response of the wrong shape', () => {
 		expect(() => toForecast({ hourly: {} })).toThrow(WeatherServiceError);
+	});
+
+	it('reads polar night from the recorded December forecast', () => {
+		const f = toForecast(polarNight);
+		expect(f.days[0]).toMatchObject({ sunrise: null, sunset: null });
+		expect(darkness(f.current.time, f.days[0], f.days[1], f.hours)).toEqual({
+			kind: 'polar-night'
+		});
+	});
+
+	it('reads the midnight sun from the recorded June forecast', () => {
+		const f = toForecast(midnightSun);
+		expect(f.days[0]).toMatchObject({ sunrise: null, sunset: null });
+		expect(darkness(f.current.time, f.days[0], f.days[1], f.hours)).toEqual({
+			kind: 'midnight-sun'
+		});
+	});
+
+	it('keeps ordinary sunrise and sunset in a heat wave', () => {
+		const f = toForecast(heat);
+		expect(f.days[0]).toMatchObject({ sunrise: '2026-07-10T05:53', sunset: '2026-07-10T20:46' });
+		expect(f.days[0].max).toBeGreaterThan(30);
 	});
 
 	it('treats missing sunrise and sunset as null', () => {

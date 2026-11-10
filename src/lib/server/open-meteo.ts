@@ -93,6 +93,23 @@ const forecastSchema = z.object({
 
 type ForecastResponse = z.infer<typeof forecastSchema>;
 
+/**
+ * Open-Meteo has no "never" for the sun: in polar night it gives sunrise and sunset both at the
+ * day's midnight, under the midnight sun midnight to the next midnight. Both mean the sun does not
+ * cross the horizon that day, so both become null; the day's hours tell which case it is.
+ */
+export function sunTimes(date: string, sunrise: string | null, sunset: string | null) {
+	const midnight = `${date}T00:00`;
+	if (
+		!sunrise ||
+		!sunset ||
+		(sunrise === midnight && (sunset === midnight || sunset > `${date}T23:59`))
+	) {
+		return { sunrise: null, sunset: null };
+	}
+	return { sunrise, sunset };
+}
+
 /** Turns Open-Meteo's column arrays into hour and day records, from the current hour on. */
 export function toForecast(raw: unknown): Forecast {
 	const parsed = forecastSchema.safeParse(raw);
@@ -133,8 +150,7 @@ export function toForecast(raw: unknown): Forecast {
 			min,
 			rainChance: d.precipitation_probability_max[i] ?? 0,
 			rain: d.precipitation_sum[i] ?? 0,
-			sunrise: d.sunrise[i] || null,
-			sunset: d.sunset[i] || null,
+			...sunTimes(d.time[i], d.sunrise[i], d.sunset[i]),
 			uvMax: d.uv_index_max[i] ?? 0
 		});
 	}
@@ -199,7 +215,9 @@ const fixtures = import.meta.glob<{ default: unknown }>('./fixtures/*.json', { e
 const fixturePlaces: Record<string, Coordinates> = {
 	bratislava: { lat: 48.15, lon: 17.11 },
 	madrid: { lat: 40.42, lon: -3.7 },
-	tromso: { lat: 69.65, lon: 18.96 }
+	tromso: { lat: 69.65, lon: 18.96 },
+	norilsk: { lat: 69.35, lon: 88.2 },
+	singapore: { lat: 1.29, lon: 103.85 }
 };
 
 function nearestFixture({ lat, lon }: Coordinates): unknown {
