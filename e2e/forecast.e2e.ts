@@ -109,7 +109,9 @@ test('suggests times for the chosen activities and remembers the choice', async 
 	await expect(tile.getByRole('term').filter({ hasText: 'Feels like' }).first()).toBeVisible();
 
 	await tile.getByText('Choose activities').click();
-	await tile.getByRole('checkbox', { name: 'Stargazing' }).check({ force: true });
+	// The chip people tap; the checkbox inside it is visually hidden.
+	await tile.locator('label', { hasText: 'Stargazing' }).click();
+	await expect(tile.getByRole('checkbox', { name: 'Stargazing' })).toBeChecked();
 	await expect(tile.getByRole('listitem').filter({ hasText: 'Stargazing' })).toBeVisible();
 	await page.reload();
 	await expect(tile.getByRole('listitem').filter({ hasText: 'Stargazing' })).toBeVisible();

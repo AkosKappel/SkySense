@@ -141,3 +141,21 @@ body::before {
 		outline-color: rgb(255 255 255 / 0.7);
 	}
 }
+
+/* Disclosures open smoothly (U-07) where the browser can animate to `auto` height; elsewhere
+   they open at once, as before. Nothing moves for readers who ask for less motion. */
+@media (prefers-reduced-motion: no-preference) {
+	:root {
+		interpolate-size: allow-keywords;
+	}
+	details::details-content {
+		height: 0;
+		overflow: clip;
+		transition:
+			height 200ms ease-out,
+			content-visibility 200ms allow-discrete;
+	}
+	details[open]::details-content {
+		height: auto;
+	}
+}
