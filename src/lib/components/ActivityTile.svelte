@@ -57,7 +57,8 @@
 		daylight: m.reason_daylight,
 		clouds: m.reason_clouds,
 		notGolden: m.reason_notGolden,
-		uv: m.reason_uv
+		uv: m.reason_uv,
+		moon: m.reason_moon
 	};
 
 	const factorNames: Record<FactorId, () => string> = {
@@ -67,7 +68,8 @@
 		wind: m.factor_wind,
 		light: m.factor_light,
 		uv: m.factor_uv,
-		clouds: m.factor_clouds
+		clouds: m.factor_clouds,
+		moon: m.factor_moon
 	};
 	const level = (value: number) =>
 		value >= 0.9 ? m.level_ideal() : value >= 0.5 ? m.level_ok() : m.level_poor();

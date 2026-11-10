@@ -3,6 +3,7 @@
 		ChevronDown,
 		ChevronRight,
 		MapPin,
+		Moon,
 		Navigation,
 		Plus,
 		Settings,
@@ -16,6 +17,7 @@
 	import ActivityTile from '#lib/components/ActivityTile.svelte';
 	import DailyList from '#lib/components/DailyList.svelte';
 	import DayDetail from '#lib/components/DayDetail.svelte';
+	import ClimateTiles from '#lib/components/ClimateTiles.svelte';
 	import DayFacts from '#lib/components/DayFacts.svelte';
 	import ModelCompare from '#lib/components/ModelCompare.svelte';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
@@ -33,6 +35,7 @@
 	import { isSearchShortcut } from '#lib/keys.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
+	import { moon } from '#lib/moon.js';
 	import { rememberLastPlace, savedPlaces } from '#lib/places.svelte.js';
 	import { precipitation, skyKind } from '#lib/sky.js';
 	import { summarize } from '#lib/summary.js';
@@ -94,6 +97,21 @@
 	);
 	const sky = $derived(
 		skyKind(skyAt, forecast.days.find((d) => skyAt.time.startsWith(d.date)) ?? today)
+	);
+
+	// Tonight's moon, at 22:00 local time (H-05).
+	const tonight = $derived(moon(`${today.date}T22:00`));
+	const moonPhase = $derived(
+		{
+			new: m.moon_new,
+			waxingCrescent: m.moon_waxingCrescent,
+			firstQuarter: m.moon_firstQuarter,
+			waxingGibbous: m.moon_waxingGibbous,
+			full: m.moon_full,
+			waningGibbous: m.moon_waningGibbous,
+			lastQuarter: m.moon_lastQuarter,
+			waningCrescent: m.moon_waningCrescent
+		}[tonight.phase]()
 	);
 
 	const direction = $derived(
@@ -230,6 +248,10 @@
 				{:else}
 					<p class="mt-2 answer">{m.midnight_sun()}</p>
 				{/if}
+				<p class="mt-2 flex items-center gap-1.5 text-sm text-ink-muted">
+					<Moon size={14} aria-hidden="true" />
+					{m.moon_line({ phase: moonPhase, percent: f.percent(tonight.illumination * 100) })}
+				</p>
 			</section>
 
 			<section class="glass p-6">
@@ -286,6 +308,8 @@
 				<h2 class="question">{m.today_details()}</h2>
 				<DayFacts day={today} {f} humidity={now.humidity} />
 			</section>
+
+			<ClimateTiles coordinates={data.coordinates} date={today.date} max={today.max} {f} />
 		</div>
 	{/if}
 

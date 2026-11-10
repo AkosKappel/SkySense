@@ -9,6 +9,7 @@ import {
 	type Hour,
 	type Spread
 } from '#lib/weather.js';
+import type { Climate, Normal } from '#lib/climate.js';
 import { modelIds, type ModelRun } from '#lib/models.js';
 
 export class WeatherServiceError extends Error {}
@@ -17,6 +18,7 @@ const FORECAST_URL = 'https://api.open-meteo.com/v1/forecast';
 const ENSEMBLE_URL = 'https://ensemble-api.open-meteo.com/v1/ensemble';
 /** 51 members, global, 15 days: one model everywhere keeps the confidence comparable between places. */
 const ENSEMBLE_MODEL = 'ecmwf_ifs025_ensemble';
+const ARCHIVE_URL = 'https://archive-api.open-meteo.com/v1/archive';
 const GEOCODING_URL = 'https://geocoding-api.open-meteo.com/v1/search';
 const DAYS = 10;
 
@@ -277,6 +279,107 @@ export async function fetchModels(
 	}).toString();
 	return toModelRuns(await getJson(url, fetchFn));
 }
+
+const archiveSchema = z.object({
+	daily: z.object({
+		time: z.array(z.string()),
+		temperature_2m_max: numbers,
+		temperature_2m_min: numbers,
+		precipitation_sum: numbers
+	})
+});
+const NORMAL_YEARS = [1991, 2020] as const;
+const NORMAL_WINDOW_DAYS = 7;
+const PAST_YEARS = 10;
+
+/** Day of the year in a common year, so 29 February sits next to 1 March. */
+const dayOfYear = (date: string) =>
+	(Date.UTC(2001, Number(date.slice(5, 7)) - 1, Number(date.slice(8, 10))) - Date.UTC(2001, 0, 1)) /
+	86_400_000;
+const daysApart = (a: string, b: string) => {
+	const d = Math.abs(dayOfYear(a) - dayOfYear(b));
+	return Math.min(d, 365 - d);
+};
+const deciles = (values: number[]) => {
+	const sorted = values.toSorted((a, b) => a - b);
+	return Array.from({ length: 11 }, (_, i) => tenth(quantile(sorted, i / 10)));
+};
+const addDays = (date: string, n: number) => {
+	const d = new Date(`${date}T00:00:00Z`);
+	d.setUTCDate(d.getUTCDate() + n);
+	return d.toISOString().slice(0, 10);
+};
+
+/**
+ * From daily ERA5 history, for every day of `month` ("2026-11"): the 1991 to 2020 normal (all days
+ * within a week of it, in all 30 years) and the same day in each of the last ten years.
+ */
+export function toClimate(raw: unknown, month: string): Climate {
+	const parsed = archiveSchema.safeParse(raw);
+	if (!parsed.success) throw new WeatherServiceError('Unexpected archive response');
+	const d = parsed.data.daily;
+	const rows = d.time.flatMap((time, i) => {
+		const max = d.temperature_2m_max[i];
+		const min = d.temperature_2m_min[i];
+		return max === null || min === null
+			? []
+			: [{ date: time, max, min, rain: d.precipitation_sum[i] ?? 0 }];
+	});
+	const year = Number(month.slice(0, 4));
+	const inNormal = rows.filter((r) => {
+		const y = Number(r.date.slice(0, 4));
+		return y >= NORMAL_YEARS[0] && y <= NORMAL_YEARS[1];
+	});
+
+	const normals: Normal[] = [];
+	for (let day = `${month}-01`; day.startsWith(month); day = addDays(day, 1)) {
+		const near = inNormal.filter((r) => daysApart(r.date, day) <= NORMAL_WINDOW_DAYS);
+		if (near.length) {
+			normals.push({
+				date: day,
+				max: deciles(near.map((r) => r.max)),
+				min: deciles(near.map((r) => r.min))
+			});
+		}
+	}
+	const monthPart = month.slice(4);
+	const past = rows.filter((r) => {
+		const y = Number(r.date.slice(0, 4));
+		return y >= year - PAST_YEARS && y < year && r.date.slice(4, 7) === monthPart;
+	});
+	return { normals, past };
+}
+
+/** One request covers both: 1991 up to the end of the same month last year. */
+export async function fetchClimate(
+	coordinates: Coordinates,
+	month: string,
+	fetchFn: typeof fetch = fetch
+): Promise<Climate> {
+	const { lat, lon } = roundCoordinates(coordinates);
+	if (useFixtures()) {
+		const name = nearestFixture({ lat, lon });
+		return toClimate(fixtures[`./fixtures/climate-${name}.json`].default, month);
+	}
+	const lastYear = `${Number(month.slice(0, 4)) - 1}${month.slice(4)}-01`;
+	const url = new URL(ARCHIVE_URL);
+	url.search = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		start_date: `${NORMAL_YEARS[0]}-01-01`,
+		end_date: addDays(addMonth(lastYear), -1),
+		daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum',
+		models: 'era5',
+		timezone: 'auto'
+	}).toString();
+	return toClimate(await getJson(url, fetchFn), month);
+}
+
+const addMonth = (date: string) => {
+	const d = new Date(`${date}T00:00:00Z`);
+	d.setUTCMonth(d.getUTCMonth() + 1);
+	return d.toISOString().slice(0, 10);
+};
 
 export type Place = {
 	id: number;

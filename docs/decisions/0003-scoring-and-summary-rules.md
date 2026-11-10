@@ -29,6 +29,9 @@ Explicit rules, in pure functions under `src/lib/`:
 - **Hedging:** the summary adds "The timing is uncertain." when fewer than half the runs show rain in the hour it is said to start, and "Some model runs do show rain or snow, though." when a dry day has an hour where 40% of runs are wet.
 - **The band is the ensemble, the line is not:** the main forecast uses Open-Meteo's best model for the place, the band ECMWF's ensemble. The line can leave the band; that is a real disagreement between models, not a bug.
 
+- **Compared to normal:** today's forecast high against the median high of every day within a week of the date in 1991 to 2020 (ERA5). From 1.5 °C off it is "warmer" or "colder"; beyond the 10th or 90th percentile the tile also says what share of those days it beats. History comes from one archive request per place and month (`/api/climate?month=`), cached 30 days on the CDN, as 30 years of daily data weighs like a few hundred forecast calls against Open-Meteo's limits.
+- **The moon** is the mean synodic month from a known new moon (no astronomy library, D-10); it is off by up to half a day, enough for a phase name and brightness. Moonlight lowers stargazing (a full moon caps it at "good").
+
 ## Consequences
 
 - The rules are easy to explain in the UI (S-06) and to test: each threshold has a test with synthetic hours, and the recorded fixtures catch surprises (polar night, heat, snow).

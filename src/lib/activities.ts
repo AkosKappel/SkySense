@@ -1,6 +1,7 @@
 // Activity scoring and windows (S-02, S-03). Each activity is a set of factors; a factor maps one
 // hour to 0..1, and the hour's score is their weighted geometric mean, so one bad factor (rain
 // for laundry) sinks the score instead of being averaged away. Thresholds: docs/decisions/0003.
+import { moon } from '#lib/moon.js';
 import { skyKind } from '#lib/sky.js';
 import type { Day, Hour } from '#lib/weather.js';
 
@@ -9,14 +10,14 @@ export type ActivityId = (typeof activityIds)[number];
 
 /** Why an hour scores low, as a message key in the UI. */
 export type Reason =
-	'cold' | 'hot' | 'rain' | 'wind' | 'dark' | 'daylight' | 'clouds' | 'notGolden' | 'uv';
+	'cold' | 'hot' | 'rain' | 'wind' | 'dark' | 'daylight' | 'clouds' | 'notGolden' | 'uv' | 'moon';
 
 /** How someone feels temperature (S-05): the comfort ranges move by this many °C. */
 export const comfortShift = { cold: 3, neutral: 0, warm: -3 } as const;
 export type Comfort = keyof typeof comfortShift;
 
 /** What a factor measures, as a label in the "why this score" breakdown (S-06). */
-export type FactorId = 'feels' | 'temp' | 'rain' | 'wind' | 'light' | 'uv' | 'clouds';
+export type FactorId = 'feels' | 'temp' | 'rain' | 'wind' | 'light' | 'uv' | 'clouds' | 'moon';
 
 type Context = { hours: Hour[]; index: number; days: Day[]; shift: number };
 type Factor = {
@@ -150,6 +151,13 @@ export const activities: Record<ActivityId, Activity> = {
 				weight: 3,
 				reason: 'clouds',
 				value: (h) => (h.condition === 'clear' ? 1 : h.condition === 'partly' ? 0.4 : 0)
+			},
+			// A full moon washes out all but the brightest stars: at most "good", never "great".
+			{
+				id: 'moon',
+				weight: 1.5,
+				reason: 'moon',
+				value: (h) => 1 - 0.8 * moon(h.time).illumination
 			},
 			dry(40, 10, 1)
 		]

@@ -83,6 +83,11 @@ describe('scoreHour', () => {
 		expect(score('stars', list, 21).score).toBe(100);
 		expect(score('stars', list, 22).reason).toBe('clouds');
 		expect(score('stars', list, 12).reason).toBe('daylight');
+		// Around the full moon of 24 November the sky is too bright for a great night.
+		const fullMoon = list.map((h) => ({ ...h, time: h.time.replace('11-10', '11-24') }));
+		expect(score('stars', fullMoon, 21).score).toBeLessThan(80);
+		expect(score('stars', fullMoon, 21).score).toBeGreaterThanOrEqual(60);
+		expect(score('stars', fullMoon, 21).reason).toBe('moon');
 		expect(score('golden', list, 16).score).toBeGreaterThan(90);
 		expect(score('golden', list, 12).reason).toBe('notGolden');
 	});

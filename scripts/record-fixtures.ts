@@ -1,6 +1,6 @@
 // Records Open-Meteo responses into src/lib/server/fixtures for tests, e2e and demos (T-08, T-10).
-// Each live forecast gets its ensemble (`ensemble-*`) and model comparison (`models-*`) for the
-// same days.
+// Each live forecast gets its ensemble (`ensemble-*`), model comparison (`models-*`) and climate
+// history (`climate-*`) for the same days.
 // Run: node scripts/record-fixtures.ts [name ...]   (no names records all of them)
 //
 // Live forecasts are recorded as they are today. Past scenarios (polar night, midnight sun, a heat
@@ -103,6 +103,7 @@ async function record(name: string, { lat, lon, past }: Fixture) {
 		const first = data.hourly.time[0];
 		await recordEnsemble(name.replace('forecast-', 'ensemble-'), lat, lon, first);
 		await recordModels(name.replace('forecast-', 'models-'), lat, lon, first);
+		await recordClimate(name.replace('forecast-', 'climate-'), lat, lon, first);
 	}
 	const codes = [...new Set(data.hourly.weather_code.slice(0, 48))].sort((a, b) => a - b);
 	console.log(
@@ -147,6 +148,38 @@ async function recordModels(name: string, lat: number, lon: number, firstHour: s
 	writeFileSync(
 		new URL(`../src/lib/server/fixtures/${name}.json`, import.meta.url),
 		JSON.stringify(await response.json()) + '\n'
+	);
+}
+
+// ERA5 history for normals and "on this day" (H-01, H-02), trimmed to the weeks around the
+// recorded date in every year: the full 30 years would be 300 KB per place.
+async function recordClimate(name: string, lat: number, lon: number, firstHour: string) {
+	const date = firstHour.slice(0, 10);
+	const params = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		start_date: '1991-01-01',
+		end_date: `${Number(date.slice(0, 4)) - 1}${date.slice(4)}`,
+		daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum',
+		models: 'era5',
+		timezone: 'auto'
+	});
+	const response = await fetch(`https://archive-api.open-meteo.com/v1/archive?${params}`);
+	if (!response.ok) throw new Error(`${name}: ${response.status} ${await response.text()}`);
+	const data = await response.json();
+	const dayOfYear = (d: string) =>
+		(Date.UTC(2001, Number(d.slice(5, 7)) - 1, Number(d.slice(8, 10))) - Date.UTC(2001, 0, 1)) /
+		86_400_000;
+	const keep = data.daily.time.map((t: string) => {
+		const apart = Math.abs(dayOfYear(t) - dayOfYear(date));
+		return Math.min(apart, 365 - apart) <= 25;
+	});
+	for (const key of Object.keys(data.daily)) {
+		data.daily[key] = data.daily[key].filter((_: unknown, i: number) => keep[i]);
+	}
+	writeFileSync(
+		new URL(`../src/lib/server/fixtures/${name}.json`, import.meta.url),
+		JSON.stringify(data) + '\n'
 	);
 }
 

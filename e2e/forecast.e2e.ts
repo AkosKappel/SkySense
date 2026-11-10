@@ -141,6 +141,17 @@ test('compares weather models behind a link', async ({ page }) => {
 	await expect(page.getByText('Rain until 16:00, then dry.')).toBeVisible();
 });
 
+test('compares today with the climate and past years', async ({ page }) => {
+	await page.goto('/p/48.15,17.11/Bratislava');
+	const normal = page.locator('section', { hasText: 'Is this normal for the time of year?' });
+	await expect(normal.getByText(/than usual\.|About normal/)).toBeVisible();
+	await expect(normal.getByText(/\(1991 to 2020\)/)).toBeVisible();
+	const past = page.locator('section', { hasText: 'What was this day like in past years?' });
+	await expect(past.getByRole('rowheader', { name: '2025' })).toBeVisible();
+	await expect(past.getByRole('rowheader', { name: '2016' })).toBeVisible();
+	await expectAccessible(page);
+});
+
 test('settings change units and language', async ({ page }) => {
 	await page.goto('/settings');
 	await expectAccessible(page);
