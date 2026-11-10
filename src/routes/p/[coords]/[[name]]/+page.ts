@@ -8,9 +8,11 @@ export const load: PageLoad = async ({ params, fetch, url }) => {
 	if (!coordinates) error(404, 'Unknown place');
 
 	const query = `lat=${coordinates.lat}&lon=${coordinates.lon}`;
+	// `?demo=heat` shows a recorded scenario for screenshots; the server ignores it without fixtures.
+	const demo = url.searchParams.get('demo');
 	// `?models` compares weather models (C-04); without it, nothing extra is fetched.
 	const [response, models] = await Promise.all([
-		fetch(`/api/forecast?${query}`),
+		fetch(`/api/forecast?${query}${demo ? `&demo=${encodeURIComponent(demo)}` : ''}`),
 		url.searchParams.has('models')
 			? fetch(`/api/models?${query}`).then((r) => (r.ok ? (r.json() as Promise<ModelRun[]>) : null))
 			: null

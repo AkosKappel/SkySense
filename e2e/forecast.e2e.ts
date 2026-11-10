@@ -167,6 +167,13 @@ test('installs and shows a place opened before when offline', async ({ page, con
 	await context.setOffline(false);
 });
 
+test('shows recorded scenarios for screenshots with ?demo=', async ({ page }) => {
+	await page.goto('/p/40.42,-3.7/Madrid?demo=heat');
+	await expect(page.getByText(/Hot, up to 35° around 16:00\./)).toBeVisible();
+	await page.goto('/p/69.65,18.96/Troms%C3%B8?demo=polar-night');
+	await expect(page.getByText("The sun doesn't rise today.")).toBeVisible();
+});
+
 test('settings change units and language', async ({ page }) => {
 	await page.goto('/settings');
 	await expectAccessible(page);

@@ -506,11 +506,18 @@ async function getJson(url: URL, fetchFn: typeof fetch): Promise<unknown> {
 	}
 }
 
+/** Recorded situations for screenshots (T-11), picked with `?demo=` when fixtures are on. */
+export const demoScenarios = ['heat', 'polar-night', 'midnight-sun'] as const;
+export type DemoScenario = (typeof demoScenarios)[number];
+
 export async function fetchForecast(
 	coordinates: Coordinates,
-	fetchFn: typeof fetch = fetch
+	fetchFn: typeof fetch = fetch,
+	demo?: DemoScenario
 ): Promise<Forecast> {
 	const { lat, lon } = roundCoordinates(coordinates);
+	if (useFixtures() && demo)
+		return toForecast(fixtures[`./fixtures/scenario-${demo}.json`].default);
 	if (useFixtures()) {
 		const name = nearestFixture({ lat, lon });
 		return withAir(
