@@ -91,6 +91,65 @@
 	"settings_saved": "Settings saved.",
 	"share": "Share",
 	"show_table": "Show as a table",
+	"summary_dry": "Dry for the next 24 hours.",
+	"summary_frost": "Frost from {time}, down to {min}.",
+	"summary_gusts": "Gusts up to {gust} around {time}.",
+	"summary_heat": "Hot, up to {max} around {time}.",
+	"summary_label": "Summary",
+	"summary_rain_all": "Rain for the next 24 hours.",
+	"summary_rain_later": [
+		{
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
+			"match": {
+				"hoursPlural=one": "Dry until {from}, then about an hour of rain.",
+				"hoursPlural=*": "Dry until {from}, then about {hours} hours of rain."
+			}
+		}
+	],
+	"summary_rain_now": "Rain until {until}, then dry.",
+	"summary_rain_rest": "Dry until {from}, then rain for the rest of the day.",
+	"summary_snow_all": "Snow for the next 24 hours.",
+	"summary_snow_later": [
+		{
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
+			"match": {
+				"hoursPlural=one": "Dry until {from}, then about an hour of snow.",
+				"hoursPlural=*": "Dry until {from}, then about {hours} hours of snow."
+			}
+		}
+	],
+	"summary_snow_now": "Snow until {until}, then dry.",
+	"summary_snow_rest": "Dry until {from}, then snow for the rest of the day.",
+	"summary_thunder_all": "Thunderstorms for the next 24 hours.",
+	"summary_thunder_later": [
+		{
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
+			"match": {
+				"hoursPlural=one": "Dry until {from}, then about an hour of thunderstorms.",
+				"hoursPlural=*": "Dry until {from}, then about {hours} hours of thunderstorms."
+			}
+		}
+	],
+	"summary_thunder_now": "Thunderstorms until {until}, then dry.",
+	"summary_thunder_rest": "Dry until {from}, then thunderstorms for the rest of the day.",
 	"sunrise": "Sunrise",
 	"sunrise_at": "Sunrise at {time}.",
 	"sunrise_was": "The sun rose at {time}.",

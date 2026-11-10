@@ -21,6 +21,7 @@
 	import ShareButton from '#lib/components/ShareButton.svelte';
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
 	import TempChart from '#lib/components/TempChart.svelte';
+	import SummaryLine from '#lib/components/SummaryLine.svelte';
 	import SkyLayer from '#lib/components/SkyLayer.svelte';
 	import UmbrellaTile from '#lib/components/UmbrellaTile.svelte';
 	import { darkness } from '#lib/daylight.js';
@@ -31,6 +32,7 @@
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { rememberLastPlace, savedPlaces } from '#lib/places.svelte.js';
 	import { precipitation, skyKind } from '#lib/sky.js';
+	import { summarize } from '#lib/summary.js';
 	import { beaufort } from '#lib/units.js';
 	import type { PageProps } from './$types';
 
@@ -178,6 +180,10 @@
 		<DayDetail {day} hours={dayHours} isToday={day.date === today.date} {f} />
 	{:else}
 		<h1 class="sr-only">{m.weather_in({ place: name })}</h1>
+
+		<section class="mt-5 px-1" aria-label={m.summary_label()}>
+			<SummaryLine sentences={summarize(forecast.hours, now.temp)} {f} />
+		</section>
 
 		<div
 			class="mt-5 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-flow-dense md:grid-cols-2 lg:grid-cols-4 [&>*]:min-w-0"

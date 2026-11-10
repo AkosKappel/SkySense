@@ -91,6 +91,68 @@
 	"settings_saved": "Nastavenia sú uložené.",
 	"share": "Zdieľať",
 	"show_table": "Zobraziť ako tabuľku",
+	"summary_dry": "Nasledujúcich 24 hodín sucho.",
+	"summary_frost": "Od {time} mráz, až {min}.",
+	"summary_gusts": "Nárazy vetra do {gust} okolo {time}.",
+	"summary_heat": "Horúco, okolo {time} až {max}.",
+	"summary_label": "Zhrnutie",
+	"summary_rain_all": "Bude pršať počas nasledujúcich 24 hodín.",
+	"summary_rain_later": [
+		{
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
+			"match": {
+				"hoursPlural=one": "Do {from} sucho, potom bude asi hodinu pršať.",
+				"hoursPlural=few": "Do {from} sucho, potom bude asi {hours} hodiny pršať.",
+				"hoursPlural=*": "Do {from} sucho, potom bude asi {hours} hodín pršať."
+			}
+		}
+	],
+	"summary_rain_now": "Prší do {until}, potom bude sucho.",
+	"summary_rain_rest": "Do {from} sucho, potom bude pršať až do konca dňa.",
+	"summary_snow_all": "Bude snežiť počas nasledujúcich 24 hodín.",
+	"summary_snow_later": [
+		{
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
+			"match": {
+				"hoursPlural=one": "Do {from} sucho, potom bude asi hodinu snežiť.",
+				"hoursPlural=few": "Do {from} sucho, potom bude asi {hours} hodiny snežiť.",
+				"hoursPlural=*": "Do {from} sucho, potom bude asi {hours} hodín snežiť."
+			}
+		}
+	],
+	"summary_snow_now": "Sneží do {until}, potom bude sucho.",
+	"summary_snow_rest": "Do {from} sucho, potom bude snežiť až do konca dňa.",
+	"summary_thunder_all": "Búrky počas nasledujúcich 24 hodín.",
+	"summary_thunder_later": [
+		{
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
+			"match": {
+				"hoursPlural=one": "Do {from} sucho, potom asi hodinu búrky.",
+				"hoursPlural=few": "Do {from} sucho, potom asi {hours} hodiny búrky.",
+				"hoursPlural=*": "Do {from} sucho, potom asi {hours} hodín búrky."
+			}
+		}
+	],
+	"summary_thunder_now": "Búrky do {until}, potom sucho.",
+	"summary_thunder_rest": "Do {from} sucho, potom až do konca dňa búrky.",
 	"sunrise": "Východ slnka",
 	"sunrise_at": "Východ slnka o {time}.",
 	"sunrise_was": "Slnko vyšlo o {time}.",

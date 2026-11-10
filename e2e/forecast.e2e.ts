@@ -28,6 +28,7 @@ test('finds a place and shows its forecast', async ({ page }) => {
 		page.getByRole('heading', { level: 1, name: 'Weather in Bratislava' })
 	).toBeAttached();
 	await expect(page.getByText('6°', { exact: true }).first()).toBeVisible();
+	await expect(page.getByText('Rain until 16:00, then dry.')).toBeVisible();
 	await expect(page.getByText('Do I need an umbrella?')).toBeVisible();
 	await expect(page.getByText('When does it get dark?')).toBeVisible();
 	await expect(page.getByText('Updated just now')).toBeVisible();

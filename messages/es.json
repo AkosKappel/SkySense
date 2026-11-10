@@ -91,6 +91,65 @@
 	"settings_saved": "Ajustes guardados.",
 	"share": "Compartir",
 	"show_table": "Ver como tabla",
+	"summary_dry": "Seco durante las próximas 24 horas.",
+	"summary_frost": "Helada desde las {time}, hasta {min}.",
+	"summary_gusts": "Rachas de hasta {gust} hacia las {time}.",
+	"summary_heat": "Calor, hasta {max} hacia las {time}.",
+	"summary_label": "Resumen",
+	"summary_rain_all": "Lluvia durante las próximas 24 horas.",
+	"summary_rain_later": [
+		{
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
+			"match": {
+				"hoursPlural=one": "Seco hasta las {from}, luego cerca de una hora de lluvia.",
+				"hoursPlural=*": "Seco hasta las {from}, luego unas {hours} horas de lluvia."
+			}
+		}
+	],
+	"summary_rain_now": "Lluvia hasta las {until}, luego seco.",
+	"summary_rain_rest": "Seco hasta las {from}, luego lluvia el resto del día.",
+	"summary_snow_all": "Nieve durante las próximas 24 horas.",
+	"summary_snow_later": [
+		{
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
+			"match": {
+				"hoursPlural=one": "Seco hasta las {from}, luego cerca de una hora de nieve.",
+				"hoursPlural=*": "Seco hasta las {from}, luego unas {hours} horas de nieve."
+			}
+		}
+	],
+	"summary_snow_now": "Nieve hasta las {until}, luego seco.",
+	"summary_snow_rest": "Seco hasta las {from}, luego nieve el resto del día.",
+	"summary_thunder_all": "Tormentas durante las próximas 24 horas.",
+	"summary_thunder_later": [
+		{
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
+			"match": {
+				"hoursPlural=one": "Seco hasta las {from}, luego cerca de una hora de tormentas.",
+				"hoursPlural=*": "Seco hasta las {from}, luego unas {hours} horas de tormentas."
+			}
+		}
+	],
+	"summary_thunder_now": "Tormentas hasta las {until}, luego seco.",
+	"summary_thunder_rest": "Seco hasta las {from}, luego tormentas el resto del día.",
 	"sunrise": "Amanecer",
 	"sunrise_at": "Amanece a las {time}.",
 	"sunrise_was": "El sol salió a las {time}.",

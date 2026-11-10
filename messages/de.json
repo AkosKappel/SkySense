@@ -91,6 +91,65 @@
 	"settings_saved": "Einstellungen gespeichert.",
 	"share": "Teilen",
 	"show_table": "Als Tabelle zeigen",
+	"summary_dry": "Trocken in den nächsten 24 Stunden.",
+	"summary_frost": "Frost ab {time}, bis {min}.",
+	"summary_gusts": "Böen bis {gust} gegen {time}.",
+	"summary_heat": "Heiß, bis {max} gegen {time}.",
+	"summary_label": "Zusammenfassung",
+	"summary_rain_all": "Regen in den nächsten 24 Stunden.",
+	"summary_rain_later": [
+		{
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
+			"match": {
+				"hoursPlural=one": "Trocken bis {from}, dann etwa eine Stunde Regen.",
+				"hoursPlural=*": "Trocken bis {from}, dann etwa {hours} Stunden Regen."
+			}
+		}
+	],
+	"summary_rain_now": "Regen bis {until}, dann trocken.",
+	"summary_rain_rest": "Trocken bis {from}, danach Regen für den Rest des Tages.",
+	"summary_snow_all": "Schnee in den nächsten 24 Stunden.",
+	"summary_snow_later": [
+		{
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
+			"match": {
+				"hoursPlural=one": "Trocken bis {from}, dann etwa eine Stunde Schnee.",
+				"hoursPlural=*": "Trocken bis {from}, dann etwa {hours} Stunden Schnee."
+			}
+		}
+	],
+	"summary_snow_now": "Schnee bis {until}, dann trocken.",
+	"summary_snow_rest": "Trocken bis {from}, danach Schnee für den Rest des Tages.",
+	"summary_thunder_all": "Gewitter in den nächsten 24 Stunden.",
+	"summary_thunder_later": [
+		{
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
+			"match": {
+				"hoursPlural=one": "Trocken bis {from}, dann etwa eine Stunde Gewitter.",
+				"hoursPlural=*": "Trocken bis {from}, dann etwa {hours} Stunden Gewitter."
+			}
+		}
+	],
+	"summary_thunder_now": "Gewitter bis {until}, dann trocken.",
+	"summary_thunder_rest": "Trocken bis {from}, danach Gewitter für den Rest des Tages.",
 	"sunrise": "Sonnenaufgang",
 	"sunrise_at": "Sonnenaufgang um {time}.",
 	"sunrise_was": "Die Sonne ist um {time} aufgegangen.",
