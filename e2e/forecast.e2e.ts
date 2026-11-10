@@ -269,6 +269,22 @@ test('shows the past year from the "past years" tile', async ({ page }) => {
 	await expect(page.getByText(/of rain in total; \d+ days had at least 1\.0 mm\./)).toBeVisible();
 });
 
+test('shares today as a picture, or downloads it where sharing files is not possible', async ({
+	page
+}) => {
+	await page.goto('/p/48.15,17.11/Bratislava');
+	await placeReady(page);
+	const download = page.waitForEvent('download');
+	await page.getByRole('button', { name: 'Share today as a picture' }).click();
+	const file = await download;
+	expect(file.suggestedFilename()).toBe('skysense-2026-11-10.png');
+	const png = Buffer.concat(await (await file.createReadStream()).toArray());
+	// A PNG of 1080 × 1080 (width and height sit at bytes 16 to 23).
+	expect(png.subarray(1, 4).toString()).toBe('PNG');
+	expect(png.readUInt32BE(16)).toBe(1080);
+	expect(png.readUInt32BE(20)).toBe(1080);
+});
+
 test('settings change units and language', async ({ page }) => {
 	await page.goto('/settings');
 	await expectAccessible(page);

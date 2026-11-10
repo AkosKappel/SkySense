@@ -27,6 +27,7 @@
 		type Reason
 	} from '#lib/activities.js';
 	import { activityChoice } from '#lib/activity-choice.svelte.js';
+	import { activityLabel } from '#lib/components/labels.js';
 	import { toIcs } from '#lib/calendar.js';
 	import type { Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
@@ -62,16 +63,6 @@
 		laundry: Shirt,
 		stars: Telescope,
 		golden: Camera
-	};
-	const names: Record<ActivityId, () => string> = {
-		run: m.activity_run,
-		cycle: m.activity_cycle,
-		walk: m.activity_walk,
-		hike: m.activity_hike,
-		picnic: m.activity_picnic,
-		laundry: m.activity_laundry,
-		stars: m.activity_stars,
-		golden: m.activity_golden
 	};
 	const reasons: Record<Reason, () => string> = {
 		cold: m.reason_cold,
@@ -122,7 +113,7 @@
 		const events = windows.map((w) => ({
 			start: w.from,
 			end: w.until,
-			title: m.calendar_event({ activity: names[id](), place }),
+			title: m.calendar_event({ activity: activityLabel(id), place }),
 			description: m.calendar_description({ score: w.score })
 		}));
 		const file = new Blob([toIcs(events, utcOffsetSeconds, id)], { type: 'text/calendar' });
@@ -152,7 +143,7 @@
 					<summary class="flex cursor-pointer list-none items-center gap-3 px-4 py-3">
 						<Icon size={20} class="shrink-0 text-ink-muted" aria-hidden="true" />
 						<div class="min-w-0 flex-1">
-							<p class="font-semibold">{names[row.id]()}</p>
+							<p class="font-semibold">{activityLabel(row.id)}</p>
 							{#if row.window}
 								<p class="text-lg font-bold tabular-nums">
 									{range(row.window.from, row.window.until)}
@@ -238,7 +229,7 @@
 					onchange={() => activityChoice.toggle(id)}
 				/>
 				{#if activityChoice.list.includes(id)}<Check size={16} aria-hidden="true" />{/if}
-				{names[id]()}
+				{activityLabel(id)}
 			</label>
 		{/each}
 	</div>

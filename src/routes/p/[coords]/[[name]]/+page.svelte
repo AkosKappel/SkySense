@@ -30,10 +30,15 @@
 	import ShareButton from '#lib/components/ShareButton.svelte';
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
 	import TempChart from '#lib/components/TempChart.svelte';
+	import ShareCardButton from '#lib/components/ShareCardButton.svelte';
 	import SummaryLine from '#lib/components/SummaryLine.svelte';
+	import { summaryText } from '#lib/components/summary-text.js';
 	import SkyLayer from '#lib/components/SkyLayer.svelte';
 	import UmbrellaTile from '#lib/components/UmbrellaTile.svelte';
-	import { comfortShift } from '#lib/activities.js';
+	import { activities, bestWindow, comfortShift } from '#lib/activities.js';
+	import { activityChoice } from '#lib/activity-choice.svelte.js';
+	import { activityLabel, conditionLabel } from '#lib/components/labels.js';
+	import type { ShareCard } from '#lib/share-card.js';
 	import { airSummary } from '#lib/air.js';
 	import { darkness } from '#lib/daylight.js';
 	import { compass, formatter, STRONG_GUST_KMH, windLevel } from '#lib/format.js';
@@ -43,7 +48,7 @@
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { moon } from '#lib/moon.js';
 	import { rememberLastPlace, savedPlaces } from '#lib/places.svelte.js';
-	import { precipitation, skyKind } from '#lib/sky.js';
+	import { precipitation, skies, skyKind } from '#lib/sky.js';
 	import { summarize } from '#lib/summary.js';
 	import { whatToWear } from '#lib/wear.js';
 	import { beaufort } from '#lib/units.js';
@@ -111,6 +116,36 @@
 	);
 
 	const air = $derived(airSummary(forecast.hours.slice(0, 24)));
+
+	// "Share today as a picture" (X-04): what the page says, in one square.
+	function shareCard(): ShareCard {
+		const first = activityChoice.list[0];
+		const best = first
+			? bestWindow(
+					activities[first],
+					forecast.hours.slice(0, 24),
+					forecast.days,
+					comfortShift[data.comfort]
+				).window
+			: null;
+		return {
+			place: name,
+			date: f.date(today.date),
+			temp: f.temp(now.temp),
+			condition: conditionLabel(now.condition, now.isDay),
+			highLow: m.high_low({ max: f.temp(today.max), min: f.temp(today.min) }),
+			summary: summaryText(summarize(forecast.hours, now.temp), f),
+			best:
+				first && best
+					? m.share_best({
+							activity: activityLabel(first),
+							range: m.window_range({ from: f.time(best.from), until: f.time(best.until) })
+						})
+					: null,
+			footer: m.share_footer(),
+			sky: skies[skyKind(now, today)].stops
+		};
+	}
 
 	// Tonight's moon, at 22:00 local time (H-05).
 	const tonight = $derived(moon(`${today.date}T22:00`));
@@ -261,6 +296,7 @@
 
 		<section class="mt-5 px-1" aria-label={m.summary_label()}>
 			<SummaryLine sentences={summarize(forecast.hours, now.temp)} {f} />
+			<ShareCardButton card={shareCard} filename="skysense-{today.date}.png" />
 		</section>
 
 		<div
