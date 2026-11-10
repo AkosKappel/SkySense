@@ -131,6 +131,7 @@
 	"normal_warmer": "O {diff} teplejšie ako zvyčajne.",
 	"now": "Teraz",
 	"now_at": "Teraz · {time}",
+	"og_image_alt": "Logo SkySense, slnko za oblakom na večernej oblohe.",
 	"past_answer": "Najteplejšie v roku {warmYear} ({warm}), najchladnejšie v roku {coldYear} ({cold}).",
 	"past_question": "Aký bol tento deň v minulých rokoch?",
 	"place_removed": "Miesto {name} bolo odstránené.",

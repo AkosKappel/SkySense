@@ -28,3 +28,23 @@ test('API responses send the security headers too', async ({ request }) => {
 	expect(response.ok()).toBe(true);
 	expect(response.headers()['x-content-type-options']).toBe('nosniff');
 });
+
+test('robots.txt and the sitemap point crawlers at the public pages only', async ({ request }) => {
+	const robots = await (await request.get('/robots.txt')).text();
+	expect(robots).toContain('Sitemap: http://localhost:4173/sitemap.xml');
+	const sitemap = await (await request.get('/sitemap.xml')).text();
+	expect(sitemap).toContain('<loc>http://localhost:4173/about</loc>');
+	expect(sitemap).not.toContain('/p/');
+});
+
+test('pages describe themselves for link previews', async ({ page }) => {
+	await page.goto('/about');
+	await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+		'content',
+		'http://localhost:4173/og.png'
+	);
+	await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+		'content',
+		'The weather, made sense of.'
+	);
+});

@@ -131,6 +131,7 @@
 	"normal_warmer": "{diff}-kal melegebb a szokásosnál.",
 	"now": "Most",
 	"now_at": "Most · {time}",
+	"og_image_alt": "A SkySense logója, egy felhő mögötti nap esti égbolton.",
 	"past_answer": "A legmelegebb év: {warmYear} ({warm}), a leghidegebb: {coldYear} ({cold}).",
 	"past_question": "Milyen volt ez a nap az elmúlt években?",
 	"place_removed": "{name} törölve.",

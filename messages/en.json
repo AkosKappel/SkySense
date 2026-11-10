@@ -131,6 +131,7 @@
 	"normal_warmer": "{diff} warmer than usual.",
 	"now": "Now",
 	"now_at": "Now · {time}",
+	"og_image_alt": "The SkySense logo, a sun behind a cloud, on an evening sky.",
 	"past_answer": "Warmest in {warmYear} at {warm}, coldest in {coldYear} at {cold}.",
 	"past_question": "What was this day like in past years?",
 	"place_removed": "{name} removed.",

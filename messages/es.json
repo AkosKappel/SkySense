@@ -131,6 +131,7 @@
 	"normal_warmer": "{diff} más cálido de lo habitual.",
 	"now": "Ahora",
 	"now_at": "Ahora · {time}",
+	"og_image_alt": "El logotipo de SkySense, un sol detrás de una nube sobre un cielo de atardecer.",
 	"past_answer": "El más cálido fue {warmYear} con {warm}, el más frío {coldYear} con {cold}.",
 	"past_question": "¿Cómo fue este día en años anteriores?",
 	"place_removed": "Se eliminó {name}.",
