@@ -4,6 +4,7 @@
 	import { page } from '$app/state';
 	import DayFacts from '#lib/components/DayFacts.svelte';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
+	import TempChart from '#lib/components/TempChart.svelte';
 	import UmbrellaTile from '#lib/components/UmbrellaTile.svelte';
 	import WeatherIcon from '#lib/components/WeatherIcon.svelte';
 	import { conditionLabel } from '#lib/components/labels.js';
@@ -49,6 +50,12 @@
 		<h2 class="question">{m.hour_by_hour()}</h2>
 		<HourlyStrip {hours} {f} fromNow={isToday} />
 	</section>
+
+	{#if hours.length > 1}
+		<section class="glass p-6 md:col-span-2">
+			<TempChart {hours} {f} />
+		</section>
+	{/if}
 
 	<section class="glass p-6 md:col-span-2">
 		<h2 class="question">{m.details()}</h2>

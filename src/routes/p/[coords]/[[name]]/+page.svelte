@@ -20,6 +20,7 @@
 	import PlaceSheet from '#lib/components/PlaceSheet.svelte';
 	import ShareButton from '#lib/components/ShareButton.svelte';
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
+	import TempChart from '#lib/components/TempChart.svelte';
 	import SkyLayer from '#lib/components/SkyLayer.svelte';
 	import UmbrellaTile from '#lib/components/UmbrellaTile.svelte';
 	import { darkness } from '#lib/daylight.js';
@@ -237,6 +238,10 @@
 			<section class="glass p-5 md:col-span-4">
 				<h2 class="question">{m.next_hours()}</h2>
 				<HourlyStrip hours={forecast.hours.slice(0, 24)} {f} />
+			</section>
+
+			<section class="glass p-6 md:col-span-4">
+				<TempChart hours={forecast.hours.slice(0, 25)} {f} />
 			</section>
 
 			<section class="glass p-6 md:col-span-2 md:row-span-2">
