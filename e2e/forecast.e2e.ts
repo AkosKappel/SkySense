@@ -76,6 +76,11 @@ test('switches places in a sheet that Back and Escape close', async ({ page }) =
 	await expect(sheet).toBeHidden();
 	await expect(page).toHaveURL(/Bratislava$/);
 
+	await page.keyboard.press('/');
+	await expect(sheet.getByRole('combobox', { name: 'Search for a place' })).toBeFocused();
+	await page.keyboard.press('Escape');
+	await expect(sheet).toBeHidden();
+
 	await change.click();
 	await sheet.getByRole('link', { name: /Madrid/ }).click();
 	await expect(page.getByRole('heading', { level: 1, name: 'Weather in Madrid' })).toBeAttached();

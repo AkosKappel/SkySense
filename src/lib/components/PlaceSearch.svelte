@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { LoaderCircle, LocateFixed, MapPin, Search } from '@lucide/svelte';
+	import { LoaderCircle, LocateFixed, MapPin, Search, X } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { isSearchShortcut } from '#lib/keys.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { savedPlaces, type SavedPlace } from '#lib/places.svelte.js';
@@ -20,6 +21,7 @@
 	let locationError = $state('');
 	let timer: ReturnType<typeof setTimeout> | undefined;
 	let latest = 0;
+	let input: HTMLInputElement;
 
 	const open = $derived(results.length > 0);
 
@@ -35,7 +37,9 @@
 			const request = ++latest;
 			status = 'searching';
 			try {
-				const params = new URLSearchParams({ q, lang: getLocale() });
+				// The browser's region ("SK" in "sk-SK") moves that country's places up.
+				const country = new Intl.Locale(navigator.language).region;
+				const params = new URLSearchParams({ q, lang: getLocale(), ...(country && { country }) });
 				const response = await fetch(`/api/places?${params}`);
 				if (!response.ok) throw new Error(String(response.status));
 				const found: Result[] = await response.json();
@@ -64,6 +68,18 @@
 
 	function choose(result: Result) {
 		openPlace({ name: result.name, detail: result.detail, lat: result.lat, lon: result.lon });
+	}
+
+	function clear() {
+		query = '';
+		search();
+		input.focus();
+	}
+
+	function onWindowKeydown(event: KeyboardEvent) {
+		if (!isSearchShortcut(event)) return;
+		event.preventDefault();
+		input.focus();
 	}
 
 	function onkeydown(event: KeyboardEvent) {
@@ -105,6 +121,8 @@
 	}
 </script>
 
+<svelte:window onkeydown={onWindowKeydown} />
+
 <div class="relative">
 	<label for="place-search" class="mb-2 question">{m.search_label()}</label>
 	<div class="relative">
@@ -119,6 +137,7 @@
 			autocomplete="off"
 			spellcheck="false"
 			placeholder={m.search_placeholder()}
+			bind:this={input}
 			bind:value={query}
 			oninput={search}
 			{onkeydown}
@@ -135,6 +154,13 @@
 				class="absolute top-1/2 right-4 -translate-y-1/2 animate-spin text-ink-muted motion-reduce:animate-none"
 				aria-hidden="true"
 			/>
+		{:else if query}
+			<button
+				type="button"
+				class="absolute top-1/2 right-1.5 icon-button -translate-y-1/2"
+				aria-label={m.clear_search()}
+				onclick={clear}><X size={20} aria-hidden="true" /></button
+			>
 		{/if}
 	</div>
 

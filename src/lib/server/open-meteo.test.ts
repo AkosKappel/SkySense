@@ -87,6 +87,12 @@ describe('toPlaces', () => {
 		});
 	});
 
+	it("moves the reader's country up and keeps the order otherwise", () => {
+		const names = toPlaces(places, 'SI').map((p) => p.name);
+		expect(names[0]).toBe('Bratislavci');
+		expect(names.slice(1, 3)).toEqual(['Bratislava', 'Bratislava - Rača']);
+	});
+
 	it('returns no places when there are no results', () => {
 		expect(toPlaces({})).toEqual([]);
 	});
@@ -127,13 +133,15 @@ describe('requests', () => {
 		const fetchFn = vi.fn(async () => {
 			throw new TypeError('fetch failed');
 		});
-		await expect(searchPlaces('Bratislava', 'sk', fetchFn)).rejects.toThrow(WeatherServiceError);
+		await expect(searchPlaces('Bratislava', 'sk', undefined, fetchFn)).rejects.toThrow(
+			WeatherServiceError
+		);
 		expect(fetchFn).toHaveBeenCalledTimes(2);
 	});
 
 	it('searches in the reader’s language', async () => {
 		const fetchFn = vi.fn(async () => Response.json(places));
-		await searchPlaces('Bratisl', 'hu', fetchFn);
+		await searchPlaces('Bratisl', 'hu', undefined, fetchFn);
 		const url = new URL(String((fetchFn.mock.calls[0] as unknown[])[0]));
 		expect(url.searchParams.get('language')).toBe('hu');
 	});

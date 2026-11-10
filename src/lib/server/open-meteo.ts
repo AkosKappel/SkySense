@@ -192,22 +192,28 @@ const placesSchema = z.object({
 				latitude: z.number(),
 				longitude: z.number(),
 				country: z.string().optional(),
+				country_code: z.string().optional(),
 				admin1: z.string().optional()
 			})
 		)
 		.optional()
 });
 
-export function toPlaces(raw: unknown): Place[] {
+/** `country` (ISO 3166-1 alpha-2) moves the reader's own country's places up, keeping the order otherwise. */
+export function toPlaces(raw: unknown, country?: string): Place[] {
 	const parsed = placesSchema.safeParse(raw);
 	if (!parsed.success) throw new WeatherServiceError('Unexpected geocoding response');
-	return (parsed.data.results ?? []).map((r) => ({
-		id: r.id,
-		name: r.name,
-		detail: [r.admin1, r.country].filter((part) => part && part !== r.name).join(', '),
-		lat: r.latitude,
-		lon: r.longitude
-	}));
+	const results = parsed.data.results ?? [];
+	const local = (r: (typeof results)[number]) => (r.country_code === country ? 0 : 1);
+	return results
+		.toSorted((a, b) => local(a) - local(b))
+		.map((r) => ({
+			id: r.id,
+			name: r.name,
+			detail: [r.admin1, r.country].filter((part) => part && part !== r.name).join(', '),
+			lat: r.latitude,
+			lon: r.longitude
+		}));
 }
 
 // Recorded responses (T-08) for tests, e2e and screenshots: set SKYSENSE_FIXTURES=1.
@@ -279,10 +285,11 @@ export async function fetchForecast(
 export async function searchPlaces(
 	query: string,
 	language: string,
+	country?: string,
 	fetchFn: typeof fetch = fetch
 ): Promise<Place[]> {
 	if (useFixtures()) {
-		const all = toPlaces(fixtures['./fixtures/places-bratisl.json'].default);
+		const all = toPlaces(fixtures['./fixtures/places-bratisl.json'].default, country);
 		return all.filter((p) => p.name.toLowerCase().startsWith(query.toLowerCase().slice(0, 3)));
 	}
 	const url = new URL(GEOCODING_URL);
@@ -292,5 +299,5 @@ export async function searchPlaces(
 		language,
 		format: 'json'
 	}).toString();
-	return toPlaces(await getJson(url, fetchFn));
+	return toPlaces(await getJson(url, fetchFn), country);
 }

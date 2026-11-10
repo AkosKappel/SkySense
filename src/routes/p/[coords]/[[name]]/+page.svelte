@@ -24,6 +24,7 @@
 	import { darkness } from '#lib/daylight.js';
 	import { compass, formatter, STRONG_GUST_KMH, windLevel } from '#lib/format.js';
 	import { age, STALE_AFTER_MS } from '#lib/freshness.js';
+	import { isSearchShortcut } from '#lib/keys.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { rememberLastPlace, savedPlaces } from '#lib/places.svelte.js';
@@ -91,6 +92,15 @@
 		};
 	});
 </script>
+
+<svelte:window
+	onkeydown={(event) => {
+		// With the sheet open, the search inside it takes the shortcut.
+		if (page.state.placeSheet || !isSearchShortcut(event)) return;
+		event.preventDefault();
+		pushState('', { placeSheet: true });
+	}}
+/>
 
 <svelte:head>
 	<title

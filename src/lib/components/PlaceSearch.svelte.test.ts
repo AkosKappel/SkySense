@@ -25,6 +25,22 @@ describe('PlaceSearch', () => {
 		goto.mockReset();
 	});
 
+	it('clears the field with its button and focuses it with /', async () => {
+		answer(Response.json(places));
+		const screen = render(PlaceSearch);
+		const field = screen.getByRole('combobox', { name: 'Search for a place' });
+
+		await field.fill('Bratisl');
+		await screen.getByRole('button', { name: 'Clear the search' }).click();
+		await expect.element(field).toHaveValue('');
+		await expect.element(screen.getByRole('option')).not.toBeInTheDocument();
+
+		(document.activeElement as HTMLElement).blur();
+		await userEvent.keyboard('/');
+		await expect.element(field).toHaveFocus();
+		await expect.element(field).toHaveValue('');
+	});
+
 	it('lists matches and opens the chosen place with the keyboard', async () => {
 		answer(Response.json(places));
 		const screen = render(PlaceSearch);
@@ -42,7 +58,9 @@ describe('PlaceSearch', () => {
 			.toHaveAttribute('aria-selected', 'true');
 		await userEvent.keyboard('{Enter}');
 
-		expect(goto).toHaveBeenCalledWith('/p/48.2,17.15/Bratislava%20-%20Ra%C4%8Da');
+		expect(goto).toHaveBeenCalledWith('/p/48.2,17.15/Bratislava%20-%20Ra%C4%8Da', {
+			replace: false
+		});
 		expect(JSON.parse(localStorage.getItem('skysense.places') ?? '[]')[0].name).toBe(
 			'Bratislava - Rača'
 		);
