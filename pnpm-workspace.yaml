@@ -1,0 +1,6 @@
+# Vercel installs with pnpm 9 or 10, which rejects a workspace file without `packages`.
+packages:
+  - '.'
+engineStrict: true
+allowBuilds:
+  esbuild: true

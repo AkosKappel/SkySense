@@ -1,0 +1,44 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      svelte:
+        patterns:
+          - svelte
+          - svelte-check
+          - '@sveltejs/*'
+          - eslint-plugin-svelte
+          - prettier-plugin-svelte
+          - vitest-browser-svelte
+      tooling:
+        patterns:
+          - '@types/node'
+          - typescript
+          - typescript-eslint
+          - vite
+          - vitest
+          - '@vitest/*'
+          - tailwindcss
+          - '@tailwindcss/vite'
+          - '@playwright/test'
+          - playwright
+      everything-else:
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns:
+          - '*'
