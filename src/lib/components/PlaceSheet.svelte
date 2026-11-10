@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { MapPin, X } from '@lucide/svelte';
+	import { LocateFixed, MapPin, X } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import PlaceSearch from '#lib/components/PlaceSearch.svelte';
 	import { m } from '#lib/paraglide/messages.js';
+	import { openLive } from '#lib/open-live.js';
 	import { savedPlaces } from '#lib/places.svelte.js';
 	import { formatCoordinates, type Coordinates } from '#lib/weather.js';
 
@@ -65,17 +66,28 @@
 							<a
 								href={resolve('/p/[coords]/[[name]]', {
 									coords: formatCoordinates(place),
-									name: encodeURIComponent(place.name)
+									name: encodeURIComponent(place.live ? m.my_location() : place.name)
 								})}
+								onclick={(event) => place.live && openLive(event, place, m.my_location(), true)}
 								data-sveltekit-replacestate
 								aria-current={here ? 'page' : undefined}
 								class="flex min-h-14 items-center gap-3 rounded-2xl px-4 outline-1 outline-white/10 {here
 									? 'bg-white/15'
 									: 'bg-white/5 hover:bg-white/10'}"
 							>
-								<MapPin size={18} class="shrink-0 text-ink-muted" aria-hidden="true" />
+								{#if place.live}<LocateFixed
+										size={18}
+										class="shrink-0 text-ink-muted"
+										aria-hidden="true"
+									/>{:else}<MapPin
+										size={18}
+										class="shrink-0 text-ink-muted"
+										aria-hidden="true"
+									/>{/if}
 								<span class="min-w-0 flex-1">
-									<span class="block truncate font-semibold">{place.name}</span>
+									<span class="block truncate font-semibold"
+										>{place.live ? m.my_location() : place.name}</span
+									>
 									{#if place.detail}<span class="block truncate text-sm text-ink-muted"
 											>{place.detail}</span
 										>{/if}

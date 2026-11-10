@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { ArrowDown, ArrowUp, CloudSun, MapPin, Settings, X } from '@lucide/svelte';
+	import { ArrowDown, ArrowUp, CloudSun, LocateFixed, MapPin, Settings, X } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import PlaceSearch from '#lib/components/PlaceSearch.svelte';
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
 	import { m } from '#lib/paraglide/messages.js';
+	import { openLive } from '#lib/open-live.js';
 	import { savedPlaces, type SavedPlace } from '#lib/places.svelte.js';
 	import { formatCoordinates } from '#lib/weather.js';
 
@@ -65,28 +66,44 @@
 							<a
 								href={resolve('/p/[coords]/[[name]]', {
 									coords: formatCoordinates(place),
-									name: encodeURIComponent(place.name)
+									name: encodeURIComponent(place.live ? m.my_location() : place.name)
 								})}
+								onclick={(event) => place.live && openLive(event, place, m.my_location())}
 								class="flex min-h-14 min-w-0 flex-1 items-center gap-3 px-4"
 							>
-								<MapPin size={18} class="shrink-0 text-ink-muted" aria-hidden="true" />
+								{#if place.live}<LocateFixed
+										size={18}
+										class="shrink-0 text-ink-muted"
+										aria-hidden="true"
+									/>{:else}<MapPin
+										size={18}
+										class="shrink-0 text-ink-muted"
+										aria-hidden="true"
+									/>{/if}
 								<span class="min-w-0">
-									<span class="block truncate font-semibold">{place.name}</span>
+									<span class="block truncate font-semibold"
+										>{place.live ? m.my_location() : place.name}</span
+									>
 									{#if place.detail}<span class="block truncate text-sm text-ink-muted"
 											>{place.detail}</span
 										>{/if}
 								</span>
 							</a>
 						{:else}
-							<input
-								aria-label={m.rename_place({ name: place.name })}
-								value={place.name}
-								maxlength="80"
-								enterkeyhint="done"
-								class="my-1.5 ml-1.5 h-11 min-w-0 flex-1 rounded-xl bg-white/10 px-3 font-semibold outline-1 outline-white/30 focus:outline-2 focus:outline-white"
-								onchange={(event) => savedPlaces.rename(i, event.currentTarget.value)}
-								onkeydown={(event) => event.key === 'Enter' && event.currentTarget.blur()}
-							/>
+							{#if place.live}
+								<!-- Its name follows the language; it is the reader's position, not a place to name. -->
+								<span class="min-w-0 flex-1 truncate px-4 font-semibold">{m.my_location()}</span>
+							{:else}
+								<input
+									aria-label={m.rename_place({ name: place.name })}
+									value={place.name}
+									maxlength="80"
+									enterkeyhint="done"
+									class="my-1.5 ml-1.5 h-11 min-w-0 flex-1 rounded-xl bg-white/10 px-3 font-semibold outline-1 outline-white/30 focus:outline-2 focus:outline-white"
+									onchange={(event) => savedPlaces.rename(i, event.currentTarget.value)}
+									onkeydown={(event) => event.key === 'Enter' && event.currentTarget.blur()}
+								/>
+							{/if}
 							<button
 								type="button"
 								class="icon-button"

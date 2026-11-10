@@ -93,7 +93,7 @@
 	"feature_confidence": "Cuánta seguridad hay: el rango probable de 51 ejecuciones del modelo ECMWF, avisos en los días inciertos y cinco modelos meteorológicos lado a lado.",
 	"feature_normal": "Cómo es hoy comparado con los años 1991 a 2020, y cómo fue esta fecha en cada uno de los últimos diez años.",
 	"feature_offline": "Se instala como una app y muestra sin conexión los lugares que ya abriste.",
-	"feature_places": "Lugares que puedes guardar, renombrar y ordenar, una búsqueda en tu idioma y un enlace para compartir cualquier lugar.",
+	"feature_places": "Lugares que puedes guardar, renombrar y ordenar, una entrada «Mi ubicación» que te vuelve a encontrar al abrirla, una búsqueda en tu idioma y un enlace para compartir cualquier lugar.",
 	"feature_settings": "Tus unidades, formato de 12 o 24 horas y cinco idiomas.",
 	"feature_sky": "La luna de esta noche, la salida y la puesta del sol, y un cielo de fondo que sigue la hora del día y el tiempo.",
 	"feels_like": "Sensación de {temp}",

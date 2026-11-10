@@ -207,6 +207,21 @@ test('downloads the good times for an activity as a calendar file', async ({ pag
 	expect(ics).toContain('DTSTART:20261110T150000Z');
 });
 
+test('"My location" locates again when opened', async ({ context, page }) => {
+	await context.grantPermissions(['geolocation']);
+	await context.setGeolocation({ latitude: 48.15, longitude: 17.11 });
+	await page.goto('/?choose');
+	await page.getByRole('button', { name: 'Use my location' }).click();
+	await expect(page).toHaveURL(/\/p\/48\.15,17\.11\/My%20location$/);
+
+	await context.setGeolocation({ latitude: 40.42, longitude: -3.7 });
+	await page.goto('/?choose');
+	await page.getByRole('link', { name: 'My location' }).click();
+	await expect(page).toHaveURL(/\/p\/40\.42,-3\.7\/My%20location$/);
+	await page.goto('/?choose');
+	await expect(page.getByRole('link', { name: 'My location' })).toHaveCount(1);
+});
+
 test('settings change units and language', async ({ page }) => {
 	await page.goto('/settings');
 	await expectAccessible(page);

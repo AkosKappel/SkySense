@@ -93,7 +93,7 @@
 	"feature_confidence": "Wie sicher die Vorhersage ist: der wahrscheinliche Bereich aus 51 Läufen des ECMWF-Modells, Hinweise an unsicheren Tagen und fünf Wettermodelle im Vergleich.",
 	"feature_normal": "Wie heute im Vergleich zu den Jahren 1991 bis 2020 ist, und wie dieses Datum in jedem der letzten zehn Jahre war.",
 	"feature_offline": "Lässt sich als App installieren und zeigt offline die Orte, die du schon geöffnet hast.",
-	"feature_places": "Orte, die du speichern, umbenennen und sortieren kannst, eine Suche in deiner Sprache und ein Link zum Teilen jedes Ortes.",
+	"feature_places": "Orte, die du speichern, umbenennen und sortieren kannst, ein Eintrag „Mein Standort“, der dich beim Öffnen neu findet, eine Suche in deiner Sprache und ein Link zum Teilen jedes Ortes.",
 	"feature_settings": "Deine Einheiten, 12- oder 24-Stunden-Zeit und fünf Sprachen.",
 	"feature_sky": "Der Mond heute Nacht, Sonnenauf- und -untergang und ein Himmel im Hintergrund, der Tageszeit und Wetter folgt.",
 	"feels_like": "Gefühlt {temp}",

@@ -93,7 +93,7 @@
 	"feature_confidence": "Mennyire biztos az előrejelzés: az ECMWF modell 51 futásából számolt valószínű tartomány, a bizonytalan napok jelölése és öt időjárási modell egymás mellett.",
 	"feature_normal": "Milyen a mai nap az 1991 és 2020 közötti évekhez képest, és milyen volt ez a dátum az elmúlt tíz év mindegyikében.",
 	"feature_offline": "Alkalmazásként telepíthető, és offline is megmutatja a korábban megnyitott helyeket.",
-	"feature_places": "Helyek, amelyeket elmenthetsz, átnevezhetsz és sorba rendezhetsz, keresés a saját nyelveden, és bármely hely megosztható linkje.",
+	"feature_places": "Helyek, amelyeket elmenthetsz, átnevezhetsz és sorba rendezhetsz, egy „Saját helyzetem” elem, amely megnyitáskor újra megtalál, keresés a saját nyelveden, és bármely hely megosztható linkje.",
 	"feature_settings": "A saját mértékegységeid, 12 vagy 24 órás idő és öt nyelv.",
 	"feature_sky": "A ma esti hold, a napkelte és a napnyugta, és a háttérben egy égbolt, amely követi a napszakot és az időjárást.",
 	"feels_like": "Hőérzet {temp}",

@@ -93,7 +93,7 @@
 	"feature_confidence": "How sure the forecast is: the likely range from 51 runs of the ECMWF model, marks on uncertain days, and five weather models side by side.",
 	"feature_normal": "How today compares with the years 1991 to 2020, and what this date was like in each of the last ten years.",
 	"feature_offline": "Installs as an app, and shows places you opened before when you are offline.",
-	"feature_places": "Places you can save, rename and reorder, a search in your language, and a link to share any place.",
+	"feature_places": "Places you can save, rename and reorder, a \"My location\" entry that finds you again when opened, a search in your language, and a link to share any place.",
 	"feature_settings": "Your units, 12 or 24-hour time and five languages.",
 	"feature_sky": "Tonight's moon, sunrise and sunset, and a background sky that follows the time of day and the weather.",
 	"feels_like": "Feels like {temp}",

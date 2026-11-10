@@ -5,6 +5,7 @@
 	import { isSearchShortcut } from '#lib/keys.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
+	import { locate } from '#lib/locate.js';
 	import { savedPlaces, type SavedPlace } from '#lib/places.svelte.js';
 	import { formatCoordinates } from '#lib/weather.js';
 
@@ -55,8 +56,8 @@
 		}, 250);
 	}
 
-	function openPlace(place: SavedPlace) {
-		savedPlaces.add(place);
+	function openPlace(place: SavedPlace, save = true) {
+		if (save) savedPlaces.add(place);
 		goto(
 			resolve('/p/[coords]/[[name]]', {
 				coords: formatCoordinates(place),
@@ -99,25 +100,18 @@
 		}
 	}
 
-	function locate() {
+	async function useMyLocation() {
 		locationError = '';
-		if (!('geolocation' in navigator)) {
-			locationError = m.location_unavailable();
-			return;
-		}
 		locating = true;
-		navigator.geolocation.getCurrentPosition(
-			({ coords }) => {
-				locating = false;
-				openPlace({ name: m.my_location(), lat: coords.latitude, lon: coords.longitude });
-			},
-			(error) => {
-				locating = false;
-				locationError =
-					error.code === error.PERMISSION_DENIED ? m.location_denied() : m.location_unavailable();
-			},
-			{ timeout: 10000, maximumAge: 600000 }
-		);
+		try {
+			const position = await locate();
+			savedPlaces.setLive({ name: m.my_location(), ...position });
+			openPlace({ name: m.my_location(), ...position }, false);
+		} catch (error) {
+			locationError = error === 'denied' ? m.location_denied() : m.location_unavailable();
+		} finally {
+			locating = false;
+		}
 	}
 </script>
 
@@ -201,7 +195,7 @@
 
 	<button
 		type="button"
-		onclick={locate}
+		onclick={useMyLocation}
 		disabled={locating}
 		class="mt-2 flex h-12 cursor-pointer items-center gap-2 rounded-full bg-white/10 px-5 font-semibold outline-1 outline-white/20 transition hover:bg-white/20 disabled:cursor-wait"
 	>

@@ -3,7 +3,12 @@
 import { browser } from '$app/env';
 import { formatCoordinates, type Coordinates } from '#lib/weather.js';
 
-export type SavedPlace = Coordinates & { name: string; detail?: string };
+export type SavedPlace = Coordinates & {
+	name: string;
+	detail?: string;
+	/** "My location" (F-12): located again when opened; its coordinates are the last position. */
+	live?: true;
+};
 
 const KEY = 'skysense.places';
 export const MAX_PLACES = 10;
@@ -63,6 +68,13 @@ class SavedPlaces {
 
 	insert(index: number, place: SavedPlace) {
 		this.list.splice(index, 0, place);
+		this.save();
+	}
+
+	/** Saves the reader's position as the one "My location" entry, first in the list. */
+	setLive(place: Coordinates & { name: string }) {
+		const live: SavedPlace = { name: place.name, lat: place.lat, lon: place.lon, live: true };
+		this.list = [live, ...this.list.filter((p) => !p.live)].slice(0, MAX_PLACES);
 		this.save();
 	}
 

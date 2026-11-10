@@ -46,4 +46,15 @@ describe('savedPlaces', () => {
 		dispatchEvent(new StorageEvent('storage', { key: 'skysense.places' }));
 		expect(savedPlaces.list).toHaveLength(1);
 	});
+
+	it('keeps one "My location" entry, first, with the latest position', () => {
+		savedPlaces.add(place(1));
+		savedPlaces.setLive({ name: 'My location', lat: 48.15, lon: 17.11 });
+		savedPlaces.setLive({ name: 'My location', lat: 40.42, lon: -3.7 });
+		expect(savedPlaces.list.filter((p) => p.live)).toEqual([
+			{ name: 'My location', lat: 40.42, lon: -3.7, live: true }
+		]);
+		expect(savedPlaces.list[0].live).toBe(true);
+		expect(savedPlaces.list).toHaveLength(2);
+	});
 });
