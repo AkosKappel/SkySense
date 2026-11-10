@@ -9,6 +9,9 @@
 
 	type Result = { id: number; name: string; detail: string; lat: number; lon: number };
 
+	/** `replace` swaps the current history entry, so Back skips the sheet the search was opened in. */
+	let { replace = false }: { replace?: boolean } = $props();
+
 	let query = $state('');
 	let results = $state<Result[]>([]);
 	let active = $state(-1);
@@ -54,7 +57,8 @@
 			resolve('/p/[coords]/[[name]]', {
 				coords: formatCoordinates(place),
 				name: encodeURIComponent(place.name)
-			})
+			}),
+			{ replace }
 		);
 	}
 
@@ -72,7 +76,9 @@
 		} else if (event.key === 'Enter' && open && active >= 0) {
 			event.preventDefault();
 			choose(results[active]);
-		} else if (event.key === 'Escape') {
+		} else if (event.key === 'Escape' && open) {
+			// Close the results first; a second Escape closes the sheet around the field.
+			event.preventDefault();
 			results = [];
 		}
 	}

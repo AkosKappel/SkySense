@@ -45,12 +45,44 @@ test('reopens the last place and keeps saved places', async ({ page }) => {
 	await page.goto('/');
 	await expect(page).toHaveURL(/\/p\/40\.42,-3\.7\/Madrid$/);
 
-	await page.getByRole('link', { name: /Change place/ }).click();
+	await page.goto('/?choose');
 	await expect(page.getByRole('link', { name: 'Madrid' })).toBeVisible();
 	await page.getByRole('button', { name: 'Remove Madrid' }).click();
 	await expect(page.getByRole('link', { name: 'Madrid' })).toHaveCount(0);
 	await page.getByRole('button', { name: 'Undo' }).click();
 	await expect(page.getByRole('link', { name: 'Madrid' })).toBeVisible();
+});
+
+test('switches places in a sheet that Back and Escape close', async ({ page }) => {
+	await page.goto('/p/40.42,-3.7/Madrid');
+	await page.getByRole('button', { name: 'Save' }).click();
+	await page.goto('/p/48.15,17.11/Bratislava');
+	await expect(
+		page.getByRole('heading', { level: 1, name: 'Weather in Bratislava' })
+	).toBeAttached();
+
+	const change = page.getByRole('link', { name: /Change place/ });
+	const sheet = page.getByRole('dialog', { name: 'Change place' });
+	await change.click();
+	await expect(sheet).toBeVisible();
+	await expectAccessible(page);
+	await page.keyboard.press('Escape');
+	await expect(sheet).toBeHidden();
+	await expect(change).toBeFocused();
+
+	await change.click();
+	await expect(sheet).toBeVisible();
+	await page.goBack();
+	await expect(sheet).toBeHidden();
+	await expect(page).toHaveURL(/Bratislava$/);
+
+	await change.click();
+	await sheet.getByRole('link', { name: /Madrid/ }).click();
+	await expect(page.getByRole('heading', { level: 1, name: 'Weather in Madrid' })).toBeAttached();
+	await expect(sheet).toBeHidden();
+	await page.goBack();
+	await expect(page).toHaveURL(/Bratislava$/);
+	await expect(sheet).toBeHidden();
 });
 
 test('settings change units and language', async ({ page }) => {

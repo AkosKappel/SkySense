@@ -9,13 +9,14 @@
 		TriangleAlert,
 		Wind
 	} from '@lucide/svelte';
-	import { invalidateAll } from '$app/navigation';
+	import { invalidateAll, pushState } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import DailyList from '#lib/components/DailyList.svelte';
 	import DayDetail from '#lib/components/DayDetail.svelte';
 	import DayFacts from '#lib/components/DayFacts.svelte';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
+	import PlaceSheet from '#lib/components/PlaceSheet.svelte';
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
 	import UmbrellaTile from '#lib/components/UmbrellaTile.svelte';
 	import WeatherIcon from '#lib/components/WeatherIcon.svelte';
@@ -102,6 +103,12 @@
 	<header class="flex items-center justify-between gap-2">
 		<a
 			href="{resolve('/')}?choose"
+			onclick={(event) => {
+				// Without JavaScript the link still opens the home page chooser.
+				event.preventDefault();
+				pushState('', { placeSheet: true });
+			}}
+			aria-haspopup="dialog"
 			class="flex h-11 min-w-0 pill items-center gap-2 px-4 text-sm font-semibold"
 		>
 			<MapPin size={18} class="shrink-0" aria-hidden="true" />
@@ -226,3 +233,5 @@
 
 	<SiteFooter />
 </main>
+
+<PlaceSheet current={data.coordinates} />
