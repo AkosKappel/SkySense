@@ -71,6 +71,13 @@ describe('scoreHour', () => {
 		).toBe('cold');
 	});
 
+	it('counts poor air against a run but not a walk', () => {
+		const smog = hours(() => ({ aqi: 85 }));
+		expect(score('run', smog, 10).score).toBeLessThan(80);
+		expect(score('run', smog, 10).reason).toBe('air');
+		expect(score('walk', smog, 10).score).toBe(100);
+	});
+
 	it('keeps laundry in when rain comes within the next hours', () => {
 		const later = hours((h) => ({ rainChance: h === 13 ? 80 : 0, temp: 20 }));
 		expect(score('laundry', later, 11).score).toBe(0);
@@ -139,7 +146,14 @@ describe('bestWindow', () => {
 		const list = hours((h) => ({ wind: h === 11 ? 30 : 10, gust: 15 }));
 		const { detail } = bestWindow(activities.cycle, list, [day]);
 		expect(detail?.score).toBe(100);
-		expect(detail?.factors.map((f) => f.id)).toEqual(['feels', 'rain', 'wind', 'light', 'uv']);
+		expect(detail?.factors.map((f) => f.id)).toEqual([
+			'feels',
+			'rain',
+			'wind',
+			'light',
+			'uv',
+			'air'
+		]);
 		expect(detail?.factors.every((f) => f.value === 1)).toBe(true);
 	});
 

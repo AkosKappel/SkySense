@@ -1,6 +1,6 @@
 // Records Open-Meteo responses into src/lib/server/fixtures for tests, e2e and demos (T-08, T-10).
-// Each live forecast gets its ensemble (`ensemble-*`), model comparison (`models-*`) and climate
-// history (`climate-*`) for the same days.
+// Each live forecast gets its ensemble (`ensemble-*`), model comparison (`models-*`), climate
+// history (`climate-*`) and air quality (`air-*`) for the same days.
 // Run: node scripts/record-fixtures.ts [name ...]   (no names records all of them)
 //
 // Live forecasts are recorded as they are today. Past scenarios (polar night, midnight sun, a heat
@@ -104,6 +104,7 @@ async function record(name: string, { lat, lon, past }: Fixture) {
 		await recordEnsemble(name.replace('forecast-', 'ensemble-'), lat, lon, first);
 		await recordModels(name.replace('forecast-', 'models-'), lat, lon, first);
 		await recordClimate(name.replace('forecast-', 'climate-'), lat, lon, first);
+		await recordAir(name.replace('forecast-', 'air-'), lat, lon, first);
 	}
 	const codes = [...new Set(data.hourly.weather_code.slice(0, 48))].sort((a, b) => a - b);
 	console.log(
@@ -180,6 +181,26 @@ async function recordClimate(name: string, lat: number, lon: number, firstHour: 
 	writeFileSync(
 		new URL(`../src/lib/server/fixtures/${name}.json`, import.meta.url),
 		JSON.stringify(data) + '\n'
+	);
+}
+
+// Air quality and pollen (H-03) for the first five days, the API's range.
+async function recordAir(name: string, lat: number, lon: number, firstHour: string) {
+	const start = firstHour.slice(0, 10);
+	const kinds = ['alder', 'birch', 'grass', 'mugwort', 'olive', 'ragweed'];
+	const params = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		hourly: ['european_aqi', ...kinds.map((k) => `${k}_pollen`)].join(','),
+		timezone: 'auto',
+		start_date: start,
+		end_date: addDays(start, 4)
+	});
+	const response = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?${params}`);
+	if (!response.ok) throw new Error(`${name}: ${response.status} ${await response.text()}`);
+	writeFileSync(
+		new URL(`../src/lib/server/fixtures/${name}.json`, import.meta.url),
+		JSON.stringify(await response.json()) + '\n'
 	);
 }
 

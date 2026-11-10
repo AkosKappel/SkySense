@@ -15,6 +15,7 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import ActivityTile from '#lib/components/ActivityTile.svelte';
+	import AirTile from '#lib/components/AirTile.svelte';
 	import DailyList from '#lib/components/DailyList.svelte';
 	import DayDetail from '#lib/components/DayDetail.svelte';
 	import ClimateTiles from '#lib/components/ClimateTiles.svelte';
@@ -29,6 +30,7 @@
 	import SummaryLine from '#lib/components/SummaryLine.svelte';
 	import SkyLayer from '#lib/components/SkyLayer.svelte';
 	import UmbrellaTile from '#lib/components/UmbrellaTile.svelte';
+	import { airSummary } from '#lib/air.js';
 	import { darkness } from '#lib/daylight.js';
 	import { compass, formatter, STRONG_GUST_KMH, windLevel } from '#lib/format.js';
 	import { age, STALE_AFTER_MS } from '#lib/freshness.js';
@@ -98,6 +100,8 @@
 	const sky = $derived(
 		skyKind(skyAt, forecast.days.find((d) => skyAt.time.startsWith(d.date)) ?? today)
 	);
+
+	const air = $derived(airSummary(forecast.hours.slice(0, 24)));
 
 	// Tonight's moon, at 22:00 local time (H-05).
 	const tonight = $derived(moon(`${today.date}T22:00`));
@@ -216,6 +220,12 @@
 		<div
 			class="mt-5 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-flow-dense md:grid-cols-2 lg:grid-cols-4 [&>*]:min-w-0"
 		>
+			{#if air.air || air.pollen}
+				<section class="glass p-5 md:col-span-2 lg:col-span-4">
+					<AirTile summary={air} {f} />
+				</section>
+			{/if}
+
 			<section class="glass p-6 md:col-span-2 md:p-8 lg:row-span-2">
 				<NowTile
 					{now}

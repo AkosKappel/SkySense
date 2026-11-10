@@ -10,14 +10,25 @@ export type ActivityId = (typeof activityIds)[number];
 
 /** Why an hour scores low, as a message key in the UI. */
 export type Reason =
-	'cold' | 'hot' | 'rain' | 'wind' | 'dark' | 'daylight' | 'clouds' | 'notGolden' | 'uv' | 'moon';
+	| 'cold'
+	| 'hot'
+	| 'rain'
+	| 'wind'
+	| 'dark'
+	| 'daylight'
+	| 'clouds'
+	| 'notGolden'
+	| 'uv'
+	| 'moon'
+	| 'air';
 
 /** How someone feels temperature (S-05): the comfort ranges move by this many °C. */
 export const comfortShift = { cold: 3, neutral: 0, warm: -3 } as const;
 export type Comfort = keyof typeof comfortShift;
 
 /** What a factor measures, as a label in the "why this score" breakdown (S-06). */
-export type FactorId = 'feels' | 'temp' | 'rain' | 'wind' | 'light' | 'uv' | 'clouds' | 'moon';
+export type FactorId =
+	'feels' | 'temp' | 'rain' | 'wind' | 'light' | 'uv' | 'clouds' | 'moon' | 'air';
 
 type Context = { hours: Hour[]; index: number; days: Day[]; shift: number };
 type Factor = {
@@ -74,6 +85,13 @@ const awake: Factor = {
 		return hour >= 6 && hour < 23 ? 1 : 0;
 	}
 };
+/** Hard breathing in poor air (H-03): from "moderate" on, falling to 0 at "extremely poor". */
+const clean: Factor = {
+	id: 'air',
+	weight: 2,
+	reason: 'air',
+	value: (h) => (h.aqi === undefined ? 1 : band(h.aqi, [0, 100], [0, 40]))
+};
 const sunburn: Factor = {
 	id: 'uv',
 	weight: 0.5,
@@ -88,7 +106,15 @@ export const activities: Record<ActivityId, Activity> = {
 	run: {
 		id: 'run',
 		hours: 1,
-		factors: [comfort([-5, 28], [6, 18]), dry(70, 20), calm(45, 20), daylight(0.6), awake, sunburn]
+		factors: [
+			comfort([-5, 28], [6, 18]),
+			dry(70, 20),
+			calm(45, 20),
+			daylight(0.6),
+			awake,
+			sunburn,
+			clean
+		]
 	},
 	cycle: {
 		id: 'cycle',
@@ -99,7 +125,8 @@ export const activities: Record<ActivityId, Activity> = {
 			calm(35, 15, 2),
 			daylight(0.3),
 			awake,
-			sunburn
+			sunburn,
+			clean
 		]
 	},
 	walk: {

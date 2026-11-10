@@ -152,6 +152,13 @@ test('compares today with the climate and past years', async ({ page }) => {
 	await expectAccessible(page);
 });
 
+test('warns about poor air only where it is notable', async ({ page }) => {
+	await page.goto('/p/1.29,103.85/Singapore');
+	await expect(page.getByText('Poor air quality around 20:00.')).toBeVisible();
+	await page.goto('/p/69.65,18.96/Troms%C3%B8');
+	await expect(page.getByText('How is the air?')).toHaveCount(0);
+});
+
 test('settings change units and language', async ({ page }) => {
 	await page.goto('/settings');
 	await expectAccessible(page);

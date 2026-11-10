@@ -29,7 +29,14 @@ export type Hour = {
 	uv: number;
 	/** The ensemble's spread for this hour (C-01), missing when the ensemble is unavailable. */
 	spread?: Spread;
+	/** European Air Quality Index (H-03), missing where or when the air quality API has none. */
+	aqi?: number;
+	/** The strongest pollen this hour, in grains per m³; Europe only, missing when there is none. */
+	pollen?: { kind: Pollen; grains: number };
 };
+
+export const pollenKinds = ['alder', 'birch', 'grass', 'mugwort', 'olive', 'ragweed'] as const;
+export type Pollen = (typeof pollenKinds)[number];
 
 /** How 51 runs of the ECMWF ensemble disagree: the 10th and 90th percentile and the share with rain. */
 export type Spread = {

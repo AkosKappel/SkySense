@@ -30,6 +30,7 @@ Explicit rules, in pure functions under `src/lib/`:
 - **The band is the ensemble, the line is not:** the main forecast uses Open-Meteo's best model for the place, the band ECMWF's ensemble. The line can leave the band; that is a real disagreement between models, not a bug.
 
 - **Compared to normal:** today's forecast high against the median high of every day within a week of the date in 1991 to 2020 (ERA5). From 1.5 °C off it is "warmer" or "colder"; beyond the 10th or 90th percentile the tile also says what share of those days it beats. History comes from one archive request per place and month (`/api/climate?month=`), cached 30 days on the CDN, as 30 years of daily data weighs like a few hundred forecast calls against Open-Meteo's limits.
+- **Air and pollen** are shown only when notable: the European Air Quality Index from "moderate" (40) on, pollen from 10 grains per m³ (moderate) and 50 (high). The pollen bands are a rough common scale for every plant; real thresholds differ by species, so tune them when pollen season gives data. Poor air counts against running and cycling (a factor that falls from index 40 to 100), not walking.
 - **The moon** is the mean synodic month from a known new moon (no astronomy library, D-10); it is off by up to half a day, enough for a phase name and brightness. Moonlight lowers stargazing (a full moon caps it at "good").
 
 ## Consequences

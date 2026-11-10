@@ -41,7 +41,7 @@
 </script>
 
 {#if day?.normal && comparison}
-	<section class="glass p-6 lg:col-span-2">
+	<section class="self-start glass p-6 lg:col-span-2">
 		<p class="question"><CalendarClock size={18} aria-hidden="true" /> {m.normal_question()}</p>
 		<p class="mt-2 answer">
 			{comparison.kind === 'warmer'

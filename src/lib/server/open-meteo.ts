@@ -6,6 +6,7 @@ import {
 	type Coordinates,
 	type Day,
 	type Forecast,
+	pollenKinds,
 	type Hour,
 	type Spread
 } from '#lib/weather.js';
@@ -18,6 +19,7 @@ const FORECAST_URL = 'https://api.open-meteo.com/v1/forecast';
 const ENSEMBLE_URL = 'https://ensemble-api.open-meteo.com/v1/ensemble';
 /** 51 members, global, 15 days: one model everywhere keeps the confidence comparable between places. */
 const ENSEMBLE_MODEL = 'ecmwf_ifs025_ensemble';
+const AIR_URL = 'https://air-quality-api.open-meteo.com/v1/air-quality';
 const ARCHIVE_URL = 'https://archive-api.open-meteo.com/v1/archive';
 const GEOCODING_URL = 'https://geocoding-api.open-meteo.com/v1/search';
 const DAYS = 10;
@@ -232,6 +234,41 @@ export function withSpread(forecast: Forecast, spread: Record<string, Spread>): 
 	return {
 		...forecast,
 		hours: forecast.hours.map((h) => (spread[h.time] ? { ...h, spread: spread[h.time] } : h))
+	};
+}
+
+const airSchema = z.object({
+	hourly: z
+		.object({ time: z.array(z.string()), european_aqi: numbers })
+		.catchall(z.array(z.unknown()))
+});
+type Air = Pick<Hour, 'aqi' | 'pollen'>;
+
+/** Per hour: the air quality index and the strongest pollen above zero, keyed by time. */
+export function toAir(raw: unknown): Record<string, Air> {
+	const parsed = airSchema.safeParse(raw);
+	if (!parsed.success) throw new WeatherServiceError('Unexpected air quality response');
+	const h = parsed.data.hourly;
+	const air: Record<string, Air> = {};
+	h.time.forEach((time, i) => {
+		const entry: Air = {};
+		const aqi = h.european_aqi[i];
+		if (aqi !== null) entry.aqi = aqi;
+		for (const kind of pollenKinds) {
+			const grains = (h[`${kind}_pollen`] as (number | null)[] | undefined)?.[i];
+			if (typeof grains === 'number' && grains > 0 && grains > (entry.pollen?.grains ?? 0)) {
+				entry.pollen = { kind, grains };
+			}
+		}
+		if (entry.aqi !== undefined || entry.pollen) air[time] = entry;
+	});
+	return air;
+}
+
+export function withAir(forecast: Forecast, air: Record<string, Air>): Forecast {
+	return {
+		...forecast,
+		hours: forecast.hours.map((h) => (air[h.time] ? { ...h, ...air[h.time] } : h))
 	};
 }
 
@@ -476,9 +513,12 @@ export async function fetchForecast(
 	const { lat, lon } = roundCoordinates(coordinates);
 	if (useFixtures()) {
 		const name = nearestFixture({ lat, lon });
-		return withSpread(
-			toForecast(fixtures[`./fixtures/forecast-${name}.json`].default),
-			toSpread(fixtures[`./fixtures/ensemble-${name}.json`].default)
+		return withAir(
+			withSpread(
+				toForecast(fixtures[`./fixtures/forecast-${name}.json`].default),
+				toSpread(fixtures[`./fixtures/ensemble-${name}.json`].default)
+			),
+			toAir(fixtures[`./fixtures/air-${name}.json`].default)
 		);
 	}
 
@@ -492,11 +532,28 @@ export async function fetchForecast(
 		timezone: 'auto',
 		forecast_days: String(DAYS)
 	}).toString();
-	const [forecast, spread] = await Promise.all([
+	const [forecast, spread, air] = await Promise.all([
 		getJson(url, fetchFn).then(toForecast),
-		fetchSpread({ lat, lon }, fetchFn).catch(() => ({}))
+		fetchSpread({ lat, lon }, fetchFn).catch(() => ({})),
+		fetchAir({ lat, lon }, fetchFn).catch(() => ({}))
 	]);
-	return withSpread(forecast, spread);
+	return withAir(withSpread(forecast, spread), air);
+}
+
+/** Like the ensemble, extra: the forecast loads without it. Five days is the API's range. */
+async function fetchAir(
+	{ lat, lon }: Coordinates,
+	fetchFn: typeof fetch
+): Promise<Record<string, Air>> {
+	const url = new URL(AIR_URL);
+	url.search = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		hourly: ['european_aqi', ...pollenKinds.map((k) => `${k}_pollen`)].join(','),
+		timezone: 'auto',
+		forecast_days: '5'
+	}).toString();
+	return toAir(await getJson(url, fetchFn));
 }
 
 /** The ensemble is extra: when it fails, the forecast still loads, only without confidence. */

@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import bratislava from './fixtures/forecast-bratislava.json';
 import bratislavaEnsemble from './fixtures/ensemble-bratislava.json';
+import bratislavaAir from './fixtures/air-bratislava.json';
 import places from './fixtures/places-bratisl.json';
 import tromso from './fixtures/forecast-tromso.json';
 import heat from './fixtures/scenario-heat.json';
@@ -12,21 +13,24 @@ import {
 	searchPlaces,
 	toForecast,
 	toPlaces,
+	toAir,
 	toSpread,
 	WeatherServiceError,
 	withSpread
 } from './open-meteo.js';
 
-/** Answers the forecast and the ensemble requests separately, as they go to different hosts. */
+/** Answers the forecast, ensemble and air quality requests separately, by host. */
 const route = (
 	forecast: () => Response,
-	ensemble: () => Response = () => Response.json(bratislavaEnsemble)
+	ensemble: () => Response = () => Response.json(bratislavaEnsemble),
+	air: () => Response = () => Response.json(bratislavaAir)
 ) =>
-	vi.fn<typeof fetch>(async (input) =>
-		new URL(String(input)).hostname.startsWith('ensemble') ? ensemble() : forecast()
-	);
+	vi.fn<typeof fetch>(async (input) => {
+		const host = new URL(String(input)).hostname;
+		return host.startsWith('ensemble') ? ensemble() : host.startsWith('air') ? air() : forecast();
+	});
 const forecastCalls = (fetchFn: ReturnType<typeof route>) =>
-	fetchFn.mock.calls.filter(([input]) => !new URL(String(input)).hostname.startsWith('ensemble'));
+	fetchFn.mock.calls.filter(([input]) => new URL(String(input)).hostname === 'api.open-meteo.com');
 
 describe('toForecast', () => {
 	const forecast = toForecast(bratislava);
@@ -148,6 +152,27 @@ describe('toSpread', () => {
 	});
 });
 
+describe('toAir', () => {
+	it('keeps the air quality index for every hour it covers', () => {
+		const air = toAir(bratislavaAir);
+		expect(Object.keys(air)).toHaveLength(120);
+		expect(air['2026-11-10T12:00'].aqi).toBeGreaterThan(0);
+	});
+
+	it('picks the strongest pollen above zero', () => {
+		const air = toAir({
+			hourly: {
+				time: ['t1', 't2'],
+				european_aqi: [30, null],
+				birch_pollen: [12, 0],
+				grass_pollen: [40, 0],
+				ragweed_pollen: [null, 0]
+			}
+		});
+		expect(air).toEqual({ t1: { aqi: 30, pollen: { kind: 'grass', grains: 40 } } });
+	});
+});
+
 describe('requests', () => {
 	it('asks Open-Meteo for rounded coordinates', async () => {
 		const fetchFn = route(() => Response.json(bratislava));
@@ -185,6 +210,7 @@ describe('requests', () => {
 		);
 		expect(new URL(String(ensemble![0])).searchParams.get('models')).toBe('ecmwf_ifs025_ensemble');
 		expect(forecast.hours[0].spread).toBeDefined();
+		expect(forecast.hours[0].aqi).toBeDefined();
 	});
 
 	it('still loads the forecast when the ensemble fails', async () => {
