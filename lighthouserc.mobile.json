@@ -8,7 +8,8 @@
 				"http://localhost:4173/p/48.15,17.11/Bratislava",
 				"http://localhost:4173/settings",
 				"http://localhost:4173/about",
-				"http://localhost:4173/privacy"
+				"http://localhost:4173/privacy",
+				"http://localhost:4173/compare?a=48.15,17.11&an=Bratislava&b=40.42,-3.7&bn=Madrid"
 			],
 			"numberOfRuns": 3,
 			"settings": {
