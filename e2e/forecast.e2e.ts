@@ -159,6 +159,23 @@ test('warns about poor air only where it is notable', async ({ page }) => {
 	await expect(page.getByText('How is the air?')).toHaveCount(0);
 });
 
+test('installs and shows a place opened before when offline', async ({ page, context }) => {
+	await page.goto('/p/48.15,17.11/Bratislava');
+	await expect(page.locator('link[rel="manifest"]')).toHaveAttribute(
+		'href',
+		'/manifest.webmanifest'
+	);
+	await page.evaluate(() => navigator.serviceWorker.ready);
+	// The first load happened before the worker took over; this one goes through it and is kept.
+	await page.reload();
+	await expect(page.getByText('Rain until 16:00, then dry.')).toBeVisible();
+
+	await context.setOffline(true);
+	await page.reload();
+	await expect(page.getByText('Rain until 16:00, then dry.')).toBeVisible();
+	await context.setOffline(false);
+});
+
 test('settings change units and language', async ({ page }) => {
 	await page.goto('/settings');
 	await expectAccessible(page);

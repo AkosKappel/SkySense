@@ -11,6 +11,8 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+	<link rel="manifest" href="/manifest.webmanifest" />
+	<meta name="theme-color" content="#1e1b4b" />
 </svelte:head>
 
 <!-- A thin bar while a client navigation loads; the old page stays put, so nothing jumps. -->
