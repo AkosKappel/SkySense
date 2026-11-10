@@ -56,4 +56,13 @@ describe('UmbrellaTile', () => {
 		const screen = render(UmbrellaTile, { hours: hours([70, 10], 'thunder'), f });
 		await expect.element(screen.getByText('Yes, with thunderstorms until 09:00.')).toBeVisible();
 	});
+
+	it('says how many model runs agree on the start', async () => {
+		const list = hours([10, 70, 80, 10]).map((h, i) => ({
+			...h,
+			spread: { low: 7, high: 9, rain: i === 1 ? 65 : 10 }
+		}));
+		const screen = render(UmbrellaTile, { hours: list, f });
+		await expect.element(screen.getByText('65% of model runs show it at 09:00.')).toBeVisible();
+	});
 });

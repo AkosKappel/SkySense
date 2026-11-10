@@ -54,10 +54,21 @@
 		if (rain.startsNow && fromNow) return say.until({ until });
 		return say.fromTo({ from, until });
 	});
+	// How many ensemble runs agree on the wet hour the answer names (C-02).
+	const agreement = $derived.by(() => {
+		if (!rain) return null;
+		const at = rain.startsNow ? hours[0] : hours.find((h) => h.time === rain.from);
+		if (!at?.spread) return null;
+		const percent = f.percent(at.spread.rain);
+		return rain.startsNow && fromNow
+			? m.agreement_now({ percent })
+			: m.agreement_at({ percent, time: f.time(at.time) });
+	});
 </script>
 
 <p class="question"><Umbrella size={18} aria-hidden="true" /> {m.umbrella_question()}</p>
 <p class="mt-2 answer">{answer}</p>
+{#if agreement}<p class="mt-1 text-sm text-ink-muted">{agreement}</p>{/if}
 <div class="mt-4 flex items-end gap-0.5" aria-hidden="true">
 	{#each day as hour, i (hour.time)}
 		<div class="flex flex-1 flex-col items-center gap-1">

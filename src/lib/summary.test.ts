@@ -98,6 +98,31 @@ describe('summarize', () => {
 		).toEqual([{ key: 'dry' }]);
 	});
 
+	it('hedges when the model runs disagree, and only then', () => {
+		const spread = (rain: number) => ({ spread: { low: 9, high: 11, rain } });
+		const later = (share: number) =>
+			summarize(
+				day(
+					(i) => (i >= 14 && i < 16 ? 80 : 10),
+					(i) => spread(i === 14 ? share : 0)
+				),
+				10
+			).map((s) => s.key);
+		expect(later(30)).toEqual(['later', 'timingUnsure']);
+		expect(later(90)).toEqual(['later']);
+
+		const dry = (share: number) =>
+			summarize(
+				day(
+					() => 10,
+					(i) => spread(i === 20 ? share : 0)
+				),
+				10
+			).map((s) => s.key);
+		expect(dry(45)).toEqual(['dry', 'dryUnsure']);
+		expect(dry(20)).toEqual(['dry']);
+	});
+
 	it('reads the recorded forecasts', () => {
 		const of = (raw: unknown) => {
 			const f = toForecast(raw);

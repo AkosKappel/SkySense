@@ -262,7 +262,7 @@
 
 			<section class="glass p-6 lg:col-span-2 lg:row-span-2">
 				<h2 class="question">{m.ten_days()}</h2>
-				<DailyList days={forecast.days} {f} />
+				<DailyList days={forecast.days} hours={forecast.hours} {f} />
 			</section>
 
 			<section class="glass p-6 lg:col-span-2 lg:row-span-2">

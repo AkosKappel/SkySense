@@ -4,14 +4,18 @@
 	import { page } from '$app/state';
 	import WeatherIcon from '#lib/components/WeatherIcon.svelte';
 	import { conditionLabel } from '#lib/components/labels.js';
+	import { dayConfidence } from '#lib/confidence.js';
 	import type { Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
-	import type { Day } from '#lib/weather.js';
+	import type { Day, Hour } from '#lib/weather.js';
 
-	let { days, f }: { days: Day[]; f: Formatter } = $props();
+	let { days, hours, f }: { days: Day[]; hours: Hour[]; f: Formatter } = $props();
 
 	const low = $derived(Math.min(...days.map((d) => d.min)));
 	const high = $derived(Math.max(...days.map((d) => d.max)));
+	const confidence = $derived(
+		days.map((d) => dayConfidence(hours.filter((h) => h.time.startsWith(d.date))))
+	);
 	const position = (t: number) => ((t - low) / Math.max(1, high - low)) * 100;
 </script>
 
@@ -23,9 +27,16 @@
 					coords: page.params.coords ?? '',
 					name: encodeURIComponent(page.params.name ?? '')
 				})}?day={day.date}"
-				class="grid min-h-11 grid-cols-[3.5rem_1.75rem_2.75rem_2.5rem_1fr_2.5rem_1rem] items-center gap-2 rounded-xl py-2.5 text-sm transition hover:bg-white/5"
+				class="grid min-h-11 grid-cols-[4.5rem_1.75rem_2.75rem_2.5rem_1fr_2.5rem_1rem] items-center gap-2 rounded-xl py-2.5 text-sm transition hover:bg-white/5"
 			>
-				<span class="font-semibold">{i === 0 ? m.today() : f.weekday(day.date)}</span>
+				<span class="leading-tight">
+					<span class="block font-semibold">{i === 0 ? m.today() : f.weekday(day.date)}</span>
+					{#if confidence[i] === 'medium' || confidence[i] === 'low'}
+						<span class="block text-xs text-ink-muted"
+							>{confidence[i] === 'low' ? m.confidence_low() : m.confidence_medium()}</span
+						>
+					{/if}
+				</span>
 				<WeatherIcon condition={day.condition} size={20} />
 				<span class="text-xs text-rain-soft tabular-nums">
 					{#if day.rainChance >= 20}
@@ -50,3 +61,6 @@
 		</li>
 	{/each}
 </ul>
+{#if confidence.some((c) => c === 'medium' || c === 'low')}
+	<p class="mt-3 text-sm text-ink-muted">{m.confidence_note()}</p>
+{/if}

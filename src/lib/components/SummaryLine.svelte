@@ -44,6 +44,10 @@
 				return m.summary_frost({ min: f.temp(s.min), time: f.time(s.time) });
 			case 'heat':
 				return m.summary_heat({ max: f.temp(s.max), time: f.time(s.time) });
+			case 'timingUnsure':
+				return m.summary_timing_unsure();
+			case 'dryUnsure':
+				return m.summary_dry_unsure();
 		}
 	}
 </script>

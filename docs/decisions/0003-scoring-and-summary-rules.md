@@ -25,6 +25,10 @@ Explicit rules, in pure functions under `src/lib/`:
 - **Requirements, not preferences:** night for stargazing, a clear dawn or dusk (45 minutes either side of sunrise and sunset) for golden hour photos, daylight for laundry, and no suggestions from 23:00 to 06:00 for running, cycling and walking. Hours failing a requirement never explain a low score, so stargazing says "too cloudy", not "too light".
 - **A window** is the best stretch of the activity's usual length (an hour for a run, two for a ride, four for laundry) in which every hour scores at least 60; from 80 it is shown as great. The earliest wins a tie.
 
+- **Confidence** (`confidence.ts`) comes from 51 runs of the ECMWF ensemble (`ecmwf_ifs025_ensemble`, one model everywhere so places compare), reduced on the server to the 10th and 90th percentile of temperature and the share of runs with at least 0.1 mm per hour. A day is sure when the range averages under 3 °C and the runs are not split on rain (split = min(share, 100 - share) / 50, under 0.6); less sure under 6 °C and 0.8; uncertain beyond. The split threshold keeps tropical showers, which no model times, from marking every Singapore day uncertain.
+- **Hedging:** the summary adds "The timing is uncertain." when fewer than half the runs show rain in the hour it is said to start, and "Some model runs do show rain or snow, though." when a dry day has an hour where 40% of runs are wet.
+- **The band is the ensemble, the line is not:** the main forecast uses Open-Meteo's best model for the place, the band ECMWF's ensemble. The line can leave the band; that is a real disagreement between models, not a bug.
+
 ## Consequences
 
 - The rules are easy to explain in the UI (S-06) and to test: each threshold has a test with synthetic hours, and the recorded fixtures catch surprises (polar night, heat, snow).

@@ -6,12 +6,16 @@ import {
 	type Coordinates,
 	type Day,
 	type Forecast,
-	type Hour
+	type Hour,
+	type Spread
 } from '#lib/weather.js';
 
 export class WeatherServiceError extends Error {}
 
 const FORECAST_URL = 'https://api.open-meteo.com/v1/forecast';
+const ENSEMBLE_URL = 'https://ensemble-api.open-meteo.com/v1/ensemble';
+/** 51 members, global, 15 days: one model everywhere keeps the confidence comparable between places. */
+const ENSEMBLE_MODEL = 'ecmwf_ifs025_ensemble';
 const GEOCODING_URL = 'https://geocoding-api.open-meteo.com/v1/search';
 const DAYS = 10;
 
@@ -174,6 +178,60 @@ export function toForecast(raw: unknown): Forecast {
 	};
 }
 
+const ensembleSchema = z.object({
+	hourly: z.object({ time: z.array(z.string()) }).catchall(z.array(z.number().nullable()))
+});
+
+/** Linear interpolation between ranks, on a sorted list. */
+function quantile(sorted: number[], q: number): number {
+	const position = (sorted.length - 1) * q;
+	const below = Math.floor(position);
+	const above = Math.min(below + 1, sorted.length - 1);
+	return sorted[below] + (sorted[above] - sorted[below]) * (position - below);
+}
+
+const MIN_MEMBERS = 10;
+const RAIN_MM = 0.1;
+const tenth = (n: number) => Math.round(n * 10) / 10;
+
+/**
+ * Reduces the ensemble's members to a spread per hour, keyed by time, so the browser gets three
+ * numbers an hour instead of a hundred. Hours with too few members left (the far end) are skipped.
+ */
+export function toSpread(raw: unknown): Record<string, Spread> {
+	const parsed = ensembleSchema.safeParse(raw);
+	if (!parsed.success) throw new WeatherServiceError('Unexpected ensemble response');
+	const { time, ...columns } = parsed.data.hourly;
+	const members = (prefix: string) =>
+		Object.entries(columns)
+			.filter(([key]) => key === prefix || key.startsWith(`${prefix}_member`))
+			.map(([, values]) => values);
+	const temps = members('temperature_2m');
+	const rain = members('precipitation');
+
+	const spread: Record<string, Spread> = {};
+	time.forEach((t, i) => {
+		const temp = temps.map((m) => m[i]).filter((v) => v !== null);
+		const wet = rain.map((m) => m[i]).filter((v) => v !== null);
+		if (temp.length < MIN_MEMBERS || wet.length < MIN_MEMBERS) return;
+		temp.sort((a, b) => a - b);
+		spread[t] = {
+			low: tenth(quantile(temp, 0.1)),
+			high: tenth(quantile(temp, 0.9)),
+			rain: Math.round((wet.filter((v) => v >= RAIN_MM).length / wet.length) * 100)
+		};
+	});
+	return spread;
+}
+
+/** Adds the spread to the hours it covers; the forecast stands on its own without it. */
+export function withSpread(forecast: Forecast, spread: Record<string, Spread>): Forecast {
+	return {
+		...forecast,
+		hours: forecast.hours.map((h) => (spread[h.time] ? { ...h, spread: spread[h.time] } : h))
+	};
+}
+
 export type Place = {
 	id: number;
 	name: string;
@@ -226,11 +284,11 @@ const fixturePlaces: Record<string, Coordinates> = {
 	singapore: { lat: 1.29, lon: 103.85 }
 };
 
-function nearestFixture({ lat, lon }: Coordinates): unknown {
+function nearestFixture({ lat, lon }: Coordinates): string {
 	const [name] = Object.entries(fixturePlaces).sort(
 		([, a], [, b]) => Math.hypot(a.lat - lat, a.lon - lon) - Math.hypot(b.lat - lat, b.lon - lon)
 	)[0];
-	return fixtures[`./fixtures/forecast-${name}.json`].default;
+	return name;
 }
 
 const useFixtures = () => SKYSENSE_FIXTURES;
@@ -267,7 +325,13 @@ export async function fetchForecast(
 	fetchFn: typeof fetch = fetch
 ): Promise<Forecast> {
 	const { lat, lon } = roundCoordinates(coordinates);
-	if (useFixtures()) return toForecast(nearestFixture({ lat, lon }));
+	if (useFixtures()) {
+		const name = nearestFixture({ lat, lon });
+		return withSpread(
+			toForecast(fixtures[`./fixtures/forecast-${name}.json`].default),
+			toSpread(fixtures[`./fixtures/ensemble-${name}.json`].default)
+		);
+	}
 
 	const url = new URL(FORECAST_URL);
 	url.search = new URLSearchParams({
@@ -279,7 +343,28 @@ export async function fetchForecast(
 		timezone: 'auto',
 		forecast_days: String(DAYS)
 	}).toString();
-	return toForecast(await getJson(url, fetchFn));
+	const [forecast, spread] = await Promise.all([
+		getJson(url, fetchFn).then(toForecast),
+		fetchSpread({ lat, lon }, fetchFn).catch(() => ({}))
+	]);
+	return withSpread(forecast, spread);
+}
+
+/** The ensemble is extra: when it fails, the forecast still loads, only without confidence. */
+async function fetchSpread(
+	{ lat, lon }: Coordinates,
+	fetchFn: typeof fetch
+): Promise<Record<string, Spread>> {
+	const url = new URL(ENSEMBLE_URL);
+	url.search = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		hourly: 'temperature_2m,precipitation',
+		models: ENSEMBLE_MODEL,
+		timezone: 'auto',
+		forecast_days: String(DAYS)
+	}).toString();
+	return toSpread(await getJson(url, fetchFn));
 }
 
 export async function searchPlaces(

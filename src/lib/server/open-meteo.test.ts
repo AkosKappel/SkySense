@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import bratislava from './fixtures/forecast-bratislava.json';
+import bratislavaEnsemble from './fixtures/ensemble-bratislava.json';
 import places from './fixtures/places-bratisl.json';
 import tromso from './fixtures/forecast-tromso.json';
 import heat from './fixtures/scenario-heat.json';
@@ -11,8 +12,21 @@ import {
 	searchPlaces,
 	toForecast,
 	toPlaces,
-	WeatherServiceError
+	toSpread,
+	WeatherServiceError,
+	withSpread
 } from './open-meteo.js';
+
+/** Answers the forecast and the ensemble requests separately, as they go to different hosts. */
+const route = (
+	forecast: () => Response,
+	ensemble: () => Response = () => Response.json(bratislavaEnsemble)
+) =>
+	vi.fn<typeof fetch>(async (input) =>
+		new URL(String(input)).hostname.startsWith('ensemble') ? ensemble() : forecast()
+	);
+const forecastCalls = (fetchFn: ReturnType<typeof route>) =>
+	fetchFn.mock.calls.filter(([input]) => !new URL(String(input)).hostname.startsWith('ensemble'));
 
 describe('toForecast', () => {
 	const forecast = toForecast(bratislava);
@@ -98,35 +112,88 @@ describe('toPlaces', () => {
 	});
 });
 
+describe('toSpread', () => {
+	const spread = toSpread(bratislavaEnsemble);
+
+	it('reduces 51 members to a range and a rain share per hour', () => {
+		const hour = spread['2026-11-10T12:00'];
+		expect(Object.keys(spread)).toHaveLength(240);
+		expect(hour.low).toBeLessThanOrEqual(hour.high);
+		expect(hour.rain).toBeGreaterThanOrEqual(0);
+		expect(hour.rain).toBeLessThanOrEqual(100);
+	});
+
+	it('takes percentiles and the share of wet members', () => {
+		const members = Object.fromEntries(
+			Array.from({ length: 10 }, (_, i) => [
+				[i ? `temperature_2m_member0${i}` : 'temperature_2m', [i]],
+				[i ? `precipitation_member0${i}` : 'precipitation', [i < 3 ? 1 : 0]]
+			]).flat()
+		);
+		expect(toSpread({ hourly: { time: ['2026-11-10T00:00'], ...members } })).toEqual({
+			'2026-11-10T00:00': { low: 0.9, high: 8.1, rain: 30 }
+		});
+	});
+
+	it('skips hours with too few members', () => {
+		expect(toSpread({ hourly: { time: ['t'], temperature_2m: [1], precipitation: [0] } })).toEqual(
+			{}
+		);
+	});
+
+	it('widens over the days', () => {
+		const forecast = withSpread(toForecast(bratislava), spread);
+		const width = (h: (typeof forecast.hours)[number]) => h.spread!.high - h.spread!.low;
+		expect(width(forecast.hours.at(-1)!)).toBeGreaterThan(width(forecast.hours[0]));
+	});
+});
+
 describe('requests', () => {
 	it('asks Open-Meteo for rounded coordinates', async () => {
-		const fetchFn = vi.fn(async () => Response.json(bratislava));
+		const fetchFn = route(() => Response.json(bratislava));
 		await fetchForecast({ lat: 48.151321, lon: 17.098441 }, fetchFn);
-		const url = new URL(String((fetchFn.mock.calls[0] as unknown[])[0]));
+		const url = new URL(String(forecastCalls(fetchFn)[0][0]));
 		expect(url.searchParams.get('latitude')).toBe('48.15');
 		expect(url.searchParams.get('longitude')).toBe('17.1');
 		expect(url.searchParams.get('timezone')).toBe('auto');
 	});
 
 	it('retries a server error once and then gives up', async () => {
-		const fetchFn = vi.fn(async () => new Response('busy', { status: 503 }));
+		const fetchFn = route(() => new Response('busy', { status: 503 }));
 		await expect(fetchForecast({ lat: 1, lon: 1 }, fetchFn)).rejects.toThrow(WeatherServiceError);
-		expect(fetchFn).toHaveBeenCalledTimes(2);
+		expect(forecastCalls(fetchFn)).toHaveLength(2);
 	});
 
 	it('recovers when the retry succeeds', async () => {
-		const fetchFn = vi
-			.fn<typeof fetch>()
-			.mockResolvedValueOnce(new Response('busy', { status: 502 }))
-			.mockResolvedValueOnce(Response.json(bratislava));
+		const answers = [new Response('busy', { status: 502 }), Response.json(bratislava)];
+		const fetchFn = route(() => answers.shift()!);
 		const forecast = await fetchForecast({ lat: 48.15, lon: 17.11 }, fetchFn);
 		expect(forecast.current.time).toBe('2026-11-10T10:00');
 	});
 
 	it('does not retry when the rate limit is hit', async () => {
-		const fetchFn = vi.fn(async () => new Response('slow down', { status: 429 }));
+		const fetchFn = route(() => new Response('slow down', { status: 429 }));
 		await expect(fetchForecast({ lat: 1, lon: 1 }, fetchFn)).rejects.toThrow('answered 429');
-		expect(fetchFn).toHaveBeenCalledTimes(1);
+		expect(forecastCalls(fetchFn)).toHaveLength(1);
+	});
+
+	it('asks for the ensemble alongside and adds its spread', async () => {
+		const fetchFn = route(() => Response.json(bratislava));
+		const forecast = await fetchForecast({ lat: 48.15, lon: 17.11 }, fetchFn);
+		const ensemble = fetchFn.mock.calls.find(([input]) =>
+			new URL(String(input)).hostname.startsWith('ensemble')
+		);
+		expect(new URL(String(ensemble![0])).searchParams.get('models')).toBe('ecmwf_ifs025_ensemble');
+		expect(forecast.hours[0].spread).toBeDefined();
+	});
+
+	it('still loads the forecast when the ensemble fails', async () => {
+		const fetchFn = route(
+			() => Response.json(bratislava),
+			() => new Response('down', { status: 404 })
+		);
+		const forecast = await fetchForecast({ lat: 48.15, lon: 17.11 }, fetchFn);
+		expect(forecast.hours[0].spread).toBeUndefined();
 	});
 
 	it('turns a network failure into a WeatherServiceError after one retry', async () => {

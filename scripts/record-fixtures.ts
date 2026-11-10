@@ -1,4 +1,5 @@
 // Records Open-Meteo responses into src/lib/server/fixtures for tests, e2e and demos (T-08, T-10).
+// Each live forecast gets its ensemble (`ensemble-*`) for the same days.
 // Run: node scripts/record-fixtures.ts [name ...]   (no names records all of them)
 //
 // Live forecasts are recorded as they are today. Past scenarios (polar night, midnight sun, a heat
@@ -97,9 +98,31 @@ async function record(name: string, { lat, lon, past }: Fixture) {
 		new URL(`../src/lib/server/fixtures/${name}.json`, import.meta.url),
 		JSON.stringify(data) + '\n'
 	);
+	if (!past)
+		await recordEnsemble(name.replace('forecast-', 'ensemble-'), lat, lon, data.hourly.time[0]);
 	const codes = [...new Set(data.hourly.weather_code.slice(0, 48))].sort((a, b) => a - b);
 	console.log(
 		`${name}: now ${data.current.time}, codes ${codes.join(' ')}, sunrise ${data.daily.sunrise[0] || 'none'}, sunset ${data.daily.sunset[0] || 'none'}`
+	);
+}
+
+// The ensemble for the same ten days, so the spread lines up with the recorded forecast (C-01).
+async function recordEnsemble(name: string, lat: number, lon: number, firstHour: string) {
+	const start = firstHour.slice(0, 10);
+	const params = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		hourly: 'temperature_2m,precipitation',
+		models: 'ecmwf_ifs025_ensemble',
+		timezone: 'auto',
+		start_date: start,
+		end_date: addDays(start, 9)
+	});
+	const response = await fetch(`https://ensemble-api.open-meteo.com/v1/ensemble?${params}`);
+	if (!response.ok) throw new Error(`${name}: ${response.status} ${await response.text()}`);
+	writeFileSync(
+		new URL(`../src/lib/server/fixtures/${name}.json`, import.meta.url),
+		JSON.stringify(await response.json()) + '\n'
 	);
 }
 

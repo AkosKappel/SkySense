@@ -12,13 +12,23 @@
 	const HEIGHT = 100;
 	const width = $derived((hours.length - 1) * STEP);
 
-	const values = $derived(hours.flatMap((h) => [h.temp, h.feels]));
+	const values = $derived(
+		hours.flatMap((h) => [h.temp, h.feels, ...(h.spread ? [h.spread.low, h.spread.high] : [])])
+	);
 	const low = $derived(Math.min(...values) - 1);
 	const high = $derived(Math.max(...values) + 1);
 	// Temperatures use the top 70%; rain bars sit in the bottom 30%.
 	const y = (temp: number) => 5 + (1 - (temp - low) / (high - low)) * 60;
 	const line = (pick: (h: Hour) => number) =>
 		hours.map((h, i) => `${i ? 'L' : 'M'}${i * STEP},${y(pick(h)).toFixed(1)}`).join('');
+
+	// The ensemble's likely range as a band (C-02), drawn only when every hour has it.
+	const band = $derived.by(() => {
+		if (!hours.every((h) => h.spread)) return null;
+		const top = hours.map((h, i) => `${i ? 'L' : 'M'}${i * STEP},${y(h.spread!.high).toFixed(1)}`);
+		const bottom = hours.map((h, i) => `L${i * STEP},${y(h.spread!.low).toFixed(1)}`).toReversed();
+		return `${top.join('')}${bottom.join('')}Z`;
+	});
 
 	const warmest = $derived(hours.reduce((a, b) => (b.temp > a.temp ? b : a)));
 	const coldest = $derived(hours.reduce((a, b) => (b.temp < a.temp ? b : a)));
@@ -50,6 +60,9 @@
 			class="fill-rain/50"
 		/>
 	{/each}
+	{#if band}
+		<path d={band} class="fill-white/20 forced-colors:hidden" />
+	{/if}
 	<path
 		d={line((h) => h.feels)}
 		class="fill-none stroke-ink-muted"
@@ -74,6 +87,11 @@
 		<span class="h-0.75 w-5 rounded bg-sun forced-color-adjust-none forced-colors:bg-[CanvasText]"
 		></span>{m.temperature_line()}
 	</li>
+	{#if band}
+		<li class="flex items-center gap-1.5 forced-colors:hidden">
+			<span class="h-3 w-5 rounded-sm bg-white/20"></span>{m.range_line()}
+		</li>
+	{/if}
 	<li class="flex items-center gap-1.5">
 		<span class="w-5 border-t-2 border-dashed border-ink-muted"></span>{m.feels_like_line()}
 	</li>
@@ -94,6 +112,7 @@
 					<th scope="col" class="py-1 font-medium">{m.hour()}</th>
 					<th scope="col" class="py-1 font-medium">{m.temperature_line()}</th>
 					<th scope="col" class="py-1 font-medium">{m.feels_like_line()}</th>
+					{#if band}<th scope="col" class="py-1 font-medium">{m.range_line()}</th>{/if}
 					<th scope="col" class="py-1 font-medium">{m.rain_chance_label()}</th>
 				</tr>
 			</thead>
@@ -103,6 +122,14 @@
 						<th scope="row" class="py-1 text-left font-medium">{f.time(hour.time)}</th>
 						<td>{f.temp(hour.temp)}</td>
 						<td>{f.temp(hour.feels)}</td>
+						{#if band && hour.spread}
+							<td
+								>{m.range_value({
+									low: f.temp(hour.spread.low),
+									high: f.temp(hour.spread.high)
+								})}</td
+							>
+						{/if}
 						<td>{f.percent(hour.rainChance)}</td>
 					</tr>
 				{/each}

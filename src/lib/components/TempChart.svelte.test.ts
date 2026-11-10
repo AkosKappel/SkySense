@@ -33,4 +33,17 @@ describe('TempChart', () => {
 		const row = screen.getByRole('row', { name: /13:00/ });
 		await expect.element(row).toHaveTextContent('13:007°5°60%');
 	});
+
+	it('shows the likely range when the ensemble covers every hour', async () => {
+		const withSpread = hours.map((h) => ({
+			...h,
+			spread: { low: h.temp - 1, high: h.temp + 2, rain: 0 }
+		}));
+		const screen = render(TempChart, { hours: withSpread, f });
+		await screen.getByText('Show as a table').click();
+		await expect
+			.element(screen.getByRole('row', { name: /13:00/ }))
+			.toHaveTextContent('13:007°5°6° to 9°60%');
+		await expect.element(screen.getByText('Likely range').first()).toBeInTheDocument();
+	});
 });

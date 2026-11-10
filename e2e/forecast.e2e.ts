@@ -120,6 +120,14 @@ test('suggests times for the chosen activities and remembers the choice', async 
 	await expectAccessible(page);
 });
 
+test('marks the days the model runs disagree on', async ({ page }) => {
+	await page.goto('/p/69.65,18.96/Troms%C3%B8');
+	const days = page.locator('section', { hasText: '10-day forecast' });
+	await expect(days.getByText('Uncertain').first()).toBeVisible();
+	await expect(days.getByText(/51 runs of the ECMWF weather model/)).toBeVisible();
+	await expect(page.getByText('100% of model runs show it right now.')).toBeVisible();
+});
+
 test('settings change units and language', async ({ page }) => {
 	await page.goto('/settings');
 	await expectAccessible(page);

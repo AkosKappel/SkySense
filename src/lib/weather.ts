@@ -27,6 +27,18 @@ export type Hour = {
 	wind: number;
 	gust: number;
 	uv: number;
+	/** The ensemble's spread for this hour (C-01), missing when the ensemble is unavailable. */
+	spread?: Spread;
+};
+
+/** How 51 runs of the ECMWF ensemble disagree: the 10th and 90th percentile and the share with rain. */
+export type Spread = {
+	/** °C: one run in ten is colder than this. */
+	low: number;
+	/** °C: one run in ten is warmer than this. */
+	high: number;
+	/** Percent of runs with at least 0.1 mm of rain (or snow, as water) in the hour. */
+	rain: number;
 };
 
 export type Day = {
