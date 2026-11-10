@@ -5,6 +5,12 @@
 	"about_languages": "SkySense gibt es auf Englisch, Deutsch, Slowakisch, Ungarisch und Spanisch. Die Übersetzungen sind maschinell unterstützt und werden noch geprüft.",
 	"about_title": "Über SkySense",
 	"about_what": "SkySense beantwortet die Fragen, die du wirklich zum Wetter hast: ob du einen Schirm brauchst, wann es dunkel wird, wie windig es ist. Die besten Zeiten für deine Aktivitäten, wie sicher die Vorhersage ist und wie der Tag im Vergleich zum Normalwert abschneidet, kommen bald.",
+	"activity_cycle": "Radfahren",
+	"activity_golden": "Fotos zur goldenen Stunde",
+	"activity_laundry": "Wäsche draußen",
+	"activity_run": "Laufen",
+	"activity_stars": "Sterne beobachten",
+	"activity_walk": "Spaziergang",
 	"at_time": "Um {time}",
 	"back": "Zurück",
 	"back_to_forecast": "Zurück zur Vorhersage",
@@ -12,6 +18,7 @@
 	"beaufort": "Beaufort",
 	"celsius": "Celsius (°C)",
 	"change_place": "Ort ändern",
+	"choose_activities": "Aktivitäten wählen",
 	"clear_search": "Suche leeren",
 	"clock_12": "12 Stunden",
 	"clock_24": "24 Stunden",
@@ -42,6 +49,7 @@
 	"fahrenheit": "Fahrenheit (°F)",
 	"feels_like": "Gefühlt {temp}",
 	"feels_like_line": "Gefühlt",
+	"go_out_question": "Wann soll ich rausgehen?",
 	"high": "Max.",
 	"high_low": "Max. {max} · Min. {min}",
 	"home_question": "Wo sollen wir nachsehen?",
@@ -65,6 +73,7 @@
 	"move_up": "{name} nach oben",
 	"my_location": "Mein Standort",
 	"next_hours": "Nächste 24 Stunden",
+	"no_activities": "Wähle eine Aktivität, um ihre beste Zeit zu sehen.",
 	"now": "Jetzt",
 	"now_at": "Jetzt · {time}",
 	"place_removed": "{name} wurde entfernt.",
@@ -77,6 +86,15 @@
 	"rain_amount": "Niederschlagsmenge",
 	"rain_chance_label": "Regenwahrscheinlichkeit",
 	"rain_likely_note": "Ab {percent} Wahrscheinlichkeit gilt Regen als wahrscheinlich.",
+	"reason_clouds": "In den nächsten 24 Stunden zu bewölkt.",
+	"reason_cold": "In den nächsten 24 Stunden zu kalt.",
+	"reason_dark": "In den nächsten 24 Stunden zu wenig Tageslicht.",
+	"reason_daylight": "In den nächsten 24 Stunden kein dunkler Himmel.",
+	"reason_hot": "In den nächsten 24 Stunden zu heiß.",
+	"reason_notGolden": "In den nächsten 24 Stunden kein klarer Sonnenauf- oder -untergang.",
+	"reason_rain": "In den nächsten 24 Stunden zu nass.",
+	"reason_uv": "In den nächsten 24 Stunden ist die Sonne zu stark.",
+	"reason_wind": "In den nächsten 24 Stunden zu windig.",
 	"remove_place": "{name} entfernen",
 	"rename_place": "{name} umbenennen",
 	"save": "Speichern",
@@ -99,13 +117,8 @@
 	"summary_rain_all": "Regen in den nächsten 24 Stunden.",
 	"summary_rain_later": [
 		{
-			"declarations": [
-				"input hours",
-				"local hoursPlural = hours: plural"
-			],
-			"selectors": [
-				"hoursPlural"
-			],
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
 			"match": {
 				"hoursPlural=one": "Trocken bis {from}, dann etwa eine Stunde Regen.",
 				"hoursPlural=*": "Trocken bis {from}, dann etwa {hours} Stunden Regen."
@@ -117,13 +130,8 @@
 	"summary_snow_all": "Schnee in den nächsten 24 Stunden.",
 	"summary_snow_later": [
 		{
-			"declarations": [
-				"input hours",
-				"local hoursPlural = hours: plural"
-			],
-			"selectors": [
-				"hoursPlural"
-			],
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
 			"match": {
 				"hoursPlural=one": "Trocken bis {from}, dann etwa eine Stunde Schnee.",
 				"hoursPlural=*": "Trocken bis {from}, dann etwa {hours} Stunden Schnee."
@@ -135,13 +143,8 @@
 	"summary_thunder_all": "Gewitter in den nächsten 24 Stunden.",
 	"summary_thunder_later": [
 		{
-			"declarations": [
-				"input hours",
-				"local hoursPlural = hours: plural"
-			],
-			"selectors": [
-				"hoursPlural"
-			],
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
 			"match": {
 				"hoursPlural=one": "Trocken bis {from}, dann etwa eine Stunde Gewitter.",
 				"hoursPlural=*": "Trocken bis {from}, dann etwa {hours} Stunden Gewitter."
@@ -211,5 +214,9 @@
 	"wind_question": "Wie windig ist es?",
 	"wind_speed": "Windgeschwindigkeit",
 	"wind_stormy": "Stürmisch.",
-	"wind_windy": "Windig."
+	"wind_windy": "Windig.",
+	"window_good": "Gut",
+	"window_great": "Ideal",
+	"window_range": "{from} bis {until}",
+	"window_range_on": "{day} {from} bis {until}"
 }

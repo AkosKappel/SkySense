@@ -5,6 +5,12 @@
 	"about_languages": "SkySense is available in English, German, Slovak, Hungarian and Spanish. The translations are machine-assisted and still being reviewed.",
 	"about_title": "About SkySense",
 	"about_what": "SkySense answers the questions you actually have about the weather: whether you need an umbrella, when it gets dark, how windy it is. The best times for your activities, how sure the forecast is and how today compares to normal are on the way.",
+	"activity_cycle": "Bike ride",
+	"activity_golden": "Golden hour photos",
+	"activity_laundry": "Laundry outside",
+	"activity_run": "Run",
+	"activity_stars": "Stargazing",
+	"activity_walk": "Walk",
 	"at_time": "At {time}",
 	"back": "Back",
 	"back_to_forecast": "Back to the forecast",
@@ -12,6 +18,7 @@
 	"beaufort": "Beaufort",
 	"celsius": "Celsius (°C)",
 	"change_place": "Change place",
+	"choose_activities": "Choose activities",
 	"clear_search": "Clear the search",
 	"clock_12": "12-hour",
 	"clock_24": "24-hour",
@@ -42,6 +49,7 @@
 	"fahrenheit": "Fahrenheit (°F)",
 	"feels_like": "Feels like {temp}",
 	"feels_like_line": "Feels like",
+	"go_out_question": "When should I go out?",
 	"high": "High",
 	"high_low": "High {max} · Low {min}",
 	"home_question": "Where should we look?",
@@ -65,6 +73,7 @@
 	"move_up": "Move {name} up",
 	"my_location": "My location",
 	"next_hours": "Next 24 hours",
+	"no_activities": "Pick an activity to see its best time.",
 	"now": "Now",
 	"now_at": "Now · {time}",
 	"place_removed": "{name} removed.",
@@ -77,6 +86,15 @@
 	"rain_amount": "Rain amount",
 	"rain_chance_label": "Chance of rain",
 	"rain_likely_note": "Rain counts as likely from a {percent} chance.",
+	"reason_clouds": "Too cloudy in the next 24 hours.",
+	"reason_cold": "Too cold in the next 24 hours.",
+	"reason_dark": "Not enough daylight in the next 24 hours.",
+	"reason_daylight": "No dark sky in the next 24 hours.",
+	"reason_hot": "Too hot in the next 24 hours.",
+	"reason_notGolden": "No clear sunrise or sunset in the next 24 hours.",
+	"reason_rain": "Too wet in the next 24 hours.",
+	"reason_uv": "The sun is too strong in the next 24 hours.",
+	"reason_wind": "Too windy in the next 24 hours.",
 	"remove_place": "Remove {name}",
 	"rename_place": "Rename {name}",
 	"save": "Save",
@@ -99,13 +117,8 @@
 	"summary_rain_all": "Rain for the next 24 hours.",
 	"summary_rain_later": [
 		{
-			"declarations": [
-				"input hours",
-				"local hoursPlural = hours: plural"
-			],
-			"selectors": [
-				"hoursPlural"
-			],
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
 			"match": {
 				"hoursPlural=one": "Dry until {from}, then about an hour of rain.",
 				"hoursPlural=*": "Dry until {from}, then about {hours} hours of rain."
@@ -117,13 +130,8 @@
 	"summary_snow_all": "Snow for the next 24 hours.",
 	"summary_snow_later": [
 		{
-			"declarations": [
-				"input hours",
-				"local hoursPlural = hours: plural"
-			],
-			"selectors": [
-				"hoursPlural"
-			],
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
 			"match": {
 				"hoursPlural=one": "Dry until {from}, then about an hour of snow.",
 				"hoursPlural=*": "Dry until {from}, then about {hours} hours of snow."
@@ -135,13 +143,8 @@
 	"summary_thunder_all": "Thunderstorms for the next 24 hours.",
 	"summary_thunder_later": [
 		{
-			"declarations": [
-				"input hours",
-				"local hoursPlural = hours: plural"
-			],
-			"selectors": [
-				"hoursPlural"
-			],
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
 			"match": {
 				"hoursPlural=one": "Dry until {from}, then about an hour of thunderstorms.",
 				"hoursPlural=*": "Dry until {from}, then about {hours} hours of thunderstorms."
@@ -211,5 +214,9 @@
 	"wind_question": "How windy is it?",
 	"wind_speed": "Wind speed",
 	"wind_stormy": "Stormy.",
-	"wind_windy": "Windy."
+	"wind_windy": "Windy.",
+	"window_good": "Good",
+	"window_great": "Great",
+	"window_range": "{from} to {until}",
+	"window_range_on": "{day} {from} to {until}"
 }

@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { m } from '#lib/paraglide/messages.js';
 import settings from '../../project.inlang/settings.json';
 
 // A message is a string, or plural variants: [{ declarations, selectors, match: { 'n=one': '…' } }].
@@ -63,8 +64,7 @@ describe.each(others)('%s messages', (locale) => {
 });
 
 describe('plural sentences', () => {
-	it('pick the form for the count', async () => {
-		const { m } = await import('#lib/paraglide/messages.js');
+	it('pick the form for the count', () => {
 		const later = (hours: number, locale: 'en' | 'sk' | 'de') =>
 			m.summary_rain_later({ from: '14:00', hours }, { locale });
 		expect(later(1, 'en')).toBe('Dry until 14:00, then about an hour of rain.');

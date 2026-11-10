@@ -12,6 +12,7 @@
 	import { invalidateAll, pushState } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import ActivityTile from '#lib/components/ActivityTile.svelte';
 	import DailyList from '#lib/components/DailyList.svelte';
 	import DayDetail from '#lib/components/DayDetail.svelte';
 	import DayFacts from '#lib/components/DayFacts.svelte';
@@ -239,6 +240,10 @@
 						{m.wind_gust_warning({ gust: f.wind(strongestGust) })}
 					</p>
 				{/if}
+			</section>
+
+			<section class="glass p-6 md:col-span-2 lg:col-span-4">
+				<ActivityTile hours={forecast.hours.slice(0, 24)} days={forecast.days} {f} />
 			</section>
 
 			<section class="glass p-5 md:col-span-2 lg:col-span-4">

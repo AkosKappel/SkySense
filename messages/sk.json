@@ -5,6 +5,12 @@
 	"about_languages": "SkySense je k dispozícii po anglicky, nemecky, slovensky, maďarsky a španielsky. Preklady vznikli strojovo a ešte prechádzajú kontrolou.",
 	"about_title": "O aplikácii SkySense",
 	"about_what": "SkySense odpovedá na otázky, ktoré o počasí naozaj máš: či potrebuješ dáždnik, kedy sa zotmie, ako veľmi fúka. Najlepšie časy na tvoje aktivity, spoľahlivosť predpovede a porovnanie s dlhodobým priemerom pribudnú čoskoro.",
+	"activity_cycle": "Bicykel",
+	"activity_golden": "Fotky v zlatej hodine",
+	"activity_laundry": "Prádlo vonku",
+	"activity_run": "Beh",
+	"activity_stars": "Pozorovanie hviezd",
+	"activity_walk": "Prechádzka",
 	"at_time": "O {time}",
 	"back": "Späť",
 	"back_to_forecast": "Späť na predpoveď",
@@ -12,6 +18,7 @@
 	"beaufort": "Beaufort",
 	"celsius": "Celzius (°C)",
 	"change_place": "Zmeniť miesto",
+	"choose_activities": "Vybrať aktivity",
 	"clear_search": "Vymazať hľadanie",
 	"clock_12": "12-hodinový",
 	"clock_24": "24-hodinový",
@@ -42,6 +49,7 @@
 	"fahrenheit": "Fahrenheit (°F)",
 	"feels_like": "Pocitovo {temp}",
 	"feels_like_line": "Pocitová",
+	"go_out_question": "Kedy ísť von?",
 	"high": "Max.",
 	"high_low": "Max. {max} · Min. {min}",
 	"home_question": "Kde sa máme pozrieť?",
@@ -65,6 +73,7 @@
 	"move_up": "Posunúť {name} vyššie",
 	"my_location": "Moja poloha",
 	"next_hours": "Najbližších 24 hodín",
+	"no_activities": "Vyber si aktivitu a uvidíš jej najlepší čas.",
 	"now": "Teraz",
 	"now_at": "Teraz · {time}",
 	"place_removed": "Miesto {name} bolo odstránené.",
@@ -77,6 +86,15 @@
 	"rain_amount": "Úhrn zrážok",
 	"rain_chance_label": "Pravdepodobnosť dažďa",
 	"rain_likely_note": "Dážď považujeme za pravdepodobný od {percent}.",
+	"reason_clouds": "Najbližších 24 hodín príliš zamračené.",
+	"reason_cold": "Najbližších 24 hodín príliš zima.",
+	"reason_dark": "Najbližších 24 hodín málo denného svetla.",
+	"reason_daylight": "Najbližších 24 hodín žiadna tmavá obloha.",
+	"reason_hot": "Najbližších 24 hodín príliš horúco.",
+	"reason_notGolden": "Najbližších 24 hodín žiadny jasný východ ani západ slnka.",
+	"reason_rain": "Najbližších 24 hodín príliš mokro.",
+	"reason_uv": "Najbližších 24 hodín príliš silné slnko.",
+	"reason_wind": "Najbližších 24 hodín príliš veterno.",
 	"remove_place": "Odstrániť {name}",
 	"rename_place": "Premenovať {name}",
 	"save": "Uložiť",
@@ -99,13 +117,8 @@
 	"summary_rain_all": "Bude pršať počas nasledujúcich 24 hodín.",
 	"summary_rain_later": [
 		{
-			"declarations": [
-				"input hours",
-				"local hoursPlural = hours: plural"
-			],
-			"selectors": [
-				"hoursPlural"
-			],
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
 			"match": {
 				"hoursPlural=one": "Do {from} sucho, potom bude asi hodinu pršať.",
 				"hoursPlural=few": "Do {from} sucho, potom bude asi {hours} hodiny pršať.",
@@ -118,13 +131,8 @@
 	"summary_snow_all": "Bude snežiť počas nasledujúcich 24 hodín.",
 	"summary_snow_later": [
 		{
-			"declarations": [
-				"input hours",
-				"local hoursPlural = hours: plural"
-			],
-			"selectors": [
-				"hoursPlural"
-			],
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
 			"match": {
 				"hoursPlural=one": "Do {from} sucho, potom bude asi hodinu snežiť.",
 				"hoursPlural=few": "Do {from} sucho, potom bude asi {hours} hodiny snežiť.",
@@ -137,13 +145,8 @@
 	"summary_thunder_all": "Búrky počas nasledujúcich 24 hodín.",
 	"summary_thunder_later": [
 		{
-			"declarations": [
-				"input hours",
-				"local hoursPlural = hours: plural"
-			],
-			"selectors": [
-				"hoursPlural"
-			],
+			"declarations": ["input hours", "local hoursPlural = hours: plural"],
+			"selectors": ["hoursPlural"],
 			"match": {
 				"hoursPlural=one": "Do {from} sucho, potom asi hodinu búrky.",
 				"hoursPlural=few": "Do {from} sucho, potom asi {hours} hodiny búrky.",
@@ -214,5 +217,9 @@
 	"wind_question": "Ako veľmi fúka?",
 	"wind_speed": "Rýchlosť vetra",
 	"wind_stormy": "Búrlivý vietor.",
-	"wind_windy": "Veterno."
+	"wind_windy": "Veterno.",
+	"window_good": "Dobré",
+	"window_great": "Ideálne",
+	"window_range": "{from} až {until}",
+	"window_range_on": "{day} {from} až {until}"
 }

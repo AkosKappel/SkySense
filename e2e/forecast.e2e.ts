@@ -100,6 +100,22 @@ test('switches places in a sheet that Back and Escape close', async ({ page }) =
 	await expect(sheet).toBeHidden();
 });
 
+test('suggests times for the chosen activities and remembers the choice', async ({ page }) => {
+	await page.goto('/p/48.15,17.11/Bratislava');
+	const tile = page.locator('section', { hasText: 'When should I go out?' });
+	await expect(tile.getByRole('listitem').filter({ hasText: 'Run' })).toContainText(
+		'16:00 to 17:00'
+	);
+	await expect(tile.getByText('Too cold in the next 24 hours.')).toBeVisible();
+
+	await tile.getByText('Choose activities').click();
+	await tile.getByRole('checkbox', { name: 'Stargazing' }).check({ force: true });
+	await expect(tile.getByRole('listitem').filter({ hasText: 'Stargazing' })).toBeVisible();
+	await page.reload();
+	await expect(tile.getByRole('listitem').filter({ hasText: 'Stargazing' })).toBeVisible();
+	await expectAccessible(page);
+});
+
 test('settings change units and language', async ({ page }) => {
 	await page.goto('/settings');
 	await expectAccessible(page);
