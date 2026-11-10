@@ -16,13 +16,12 @@
 	import DayDetail from '#lib/components/DayDetail.svelte';
 	import DayFacts from '#lib/components/DayFacts.svelte';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
+	import NowTile from '#lib/components/NowTile.svelte';
 	import PlaceSheet from '#lib/components/PlaceSheet.svelte';
 	import ShareButton from '#lib/components/ShareButton.svelte';
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
 	import SkyLayer from '#lib/components/SkyLayer.svelte';
 	import UmbrellaTile from '#lib/components/UmbrellaTile.svelte';
-	import WeatherIcon from '#lib/components/WeatherIcon.svelte';
-	import { conditionLabel } from '#lib/components/labels.js';
 	import { darkness } from '#lib/daylight.js';
 	import { compass, formatter, STRONG_GUST_KMH, windLevel } from '#lib/format.js';
 	import { age, STALE_AFTER_MS } from '#lib/freshness.js';
@@ -62,7 +61,15 @@
 	);
 	const dayHours = $derived(day ? forecast.hours.filter((h) => h.time.startsWith(day.date)) : []);
 
-	// A day view shows that day's sky at noon; the overview shows the sky now.
+	// The scrubbed hour on the overview; 0 is now.
+	let scrubbed = $state(0);
+	// A new place or a reloaded forecast starts at now again.
+	$effect.pre(() => {
+		void forecast;
+		scrubbed = 0;
+	});
+
+	// A day view shows that day's sky at noon; the overview shows the sky at the scrubbed hour.
 	const skyAt = $derived(
 		day
 			? (dayHours.find((h) => h.time.endsWith('T12:00')) ?? {
@@ -70,9 +77,13 @@
 					isDay: true,
 					condition: day.condition
 				})
-			: now
+			: scrubbed > 0
+				? forecast.hours[scrubbed]
+				: now
 	);
-	const sky = $derived(skyKind(skyAt, day ?? today));
+	const sky = $derived(
+		skyKind(skyAt, forecast.days.find((d) => skyAt.time.startsWith(d.date)) ?? today)
+	);
 
 	const direction = $derived(
 		{
@@ -171,32 +182,14 @@
 			class="mt-5 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-flow-dense md:grid-cols-4 [&>*]:min-w-0"
 		>
 			<section class="glass p-6 md:col-span-2 md:row-span-2 md:p-8">
-				<div class="flex items-start justify-between gap-4">
-					<div>
-						<p class="text-sm font-medium text-ink-muted">
-							{m.now_at({ time: `${f.weekday(now.time.slice(0, 10))} ${f.time(now.time)}` })}
-						</p>
-						<p class="mt-2 text-8xl font-bold tracking-tight tabular-nums">{f.temp(now.temp)}</p>
-						<p class="mt-1 text-lg">
-							{conditionLabel(now.condition, now.isDay)} · {m.feels_like({
-								temp: f.temp(now.feels)
-							})}
-						</p>
-					</div>
-					<WeatherIcon
-						condition={now.condition}
-						isDay={now.isDay}
-						size={88}
-						strokeWidth={1.25}
-						class="shrink-0 drop-shadow-[0_0_24px_rgba(251,191,36,.35)]"
-					/>
-				</div>
-				<p class="mt-8 text-lg text-ink-muted">
-					{m.high_low({ max: f.temp(today.max), min: f.temp(today.min) })}
-				</p>
-				<p class="mt-2 text-sm text-ink-muted">
-					{updated ? m.updated_ago({ ago: updated }) : m.updated_just_now()}
-				</p>
+				<NowTile
+					{now}
+					hours={forecast.hours.slice(0, 49)}
+					days={forecast.days}
+					{f}
+					{updated}
+					bind:selected={scrubbed}
+				/>
 			</section>
 
 			<section class="glass p-6 md:col-span-2">
