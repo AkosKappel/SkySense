@@ -23,8 +23,9 @@
 	});
 
 	// Escape, the close button and a backdrop tap all end here; step back out of the sheet entry.
+	// The close event fires a task later, so a sheet opened again in between is left alone.
 	function onclose() {
-		if (page.state.placeSheet) history.back();
+		if (page.state.placeSheet && !dialog.open) history.back();
 	}
 </script>
 
