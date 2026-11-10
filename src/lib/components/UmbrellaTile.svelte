@@ -8,13 +8,21 @@
 
 	const rain = $derived(nextRain(hours));
 	const day = $derived(hours.slice(0, 24));
-	const answer = $derived(
-		!rain
-			? m.umbrella_no()
-			: rain.startsNow
-				? m.umbrella_until({ until: f.time(rain.until) })
-				: m.umbrella_from({ from: f.time(rain.from), until: f.time(rain.until) })
-	);
+	// Whole sentences per kind, so every language can phrase "snow instead of rain" its own way.
+	const sentences = {
+		rain: [m.umbrella_from, m.umbrella_until],
+		snow: [m.umbrella_snow_from, m.umbrella_snow_until],
+		mixed: [m.umbrella_mixed_from, m.umbrella_mixed_until],
+		thunder: [m.umbrella_thunder_from, m.umbrella_thunder_until]
+	} as const;
+
+	const answer = $derived.by(() => {
+		if (!rain) return m.umbrella_no();
+		const [from, until] = sentences[rain.kind];
+		return rain.startsNow
+			? until({ until: f.time(rain.until) })
+			: from({ from: f.time(rain.from), until: f.time(rain.until) });
+	});
 </script>
 
 <p class="question"><Umbrella size={18} aria-hidden="true" /> {m.umbrella_question()}</p>
@@ -23,7 +31,7 @@
 	{#each day as hour, i (hour.time)}
 		<div class="flex flex-1 flex-col items-center gap-1">
 			<div
-				class="w-full rounded-sm bg-rain"
+				class="w-full rounded-sm {hour.condition === 'snow' ? 'bg-ink' : 'bg-rain'}"
 				style="height: {Math.max(3, hour.rainChance * 0.5)}px; opacity: {hour.rainChance >=
 				RAIN_LIKELY
 					? 1

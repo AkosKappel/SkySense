@@ -69,7 +69,15 @@ export function conditionOf(code: number): Condition {
 /** A chance of rain from which the umbrella answer says yes. */
 export const RAIN_LIKELY = 50;
 
-export type RainWindow = { from: string; until: string; startsNow: boolean };
+export type RainWindow = {
+	from: string;
+	until: string;
+	startsNow: boolean;
+	/** What falls: thunderstorms win over everything, snow only when no hour brings rain. */
+	kind: 'rain' | 'snow' | 'mixed' | 'thunder';
+};
+
+const wet: Condition[] = ['drizzle', 'rain', 'showers'];
 
 /**
  * The first stretch of likely rain within the next `withinHours`. `until` is the hour the rain
@@ -82,7 +90,16 @@ export function nextRain(hours: Hour[], withinHours = 24): RainWindow | null {
 	let end = start;
 	while (end + 1 < window.length && window[end + 1].rainChance >= RAIN_LIKELY) end++;
 	const until = hours[end + 1]?.time ?? addHour(hours[end].time);
-	return { from: window[start].time, until, startsNow: start === 0 };
+	const during = window.slice(start, end + 1).map((h) => h.condition);
+	const snow = during.includes('snow');
+	const kind = during.includes('thunder')
+		? 'thunder'
+		: snow && during.some((c) => wet.includes(c))
+			? 'mixed'
+			: snow
+				? 'snow'
+				: 'rain';
+	return { from: window[start].time, until, startsNow: start === 0, kind };
 }
 
 function addHour(time: string): string {

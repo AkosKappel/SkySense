@@ -4,6 +4,7 @@ import {
 	formatCoordinates,
 	nextRain,
 	parseCoordinates,
+	type Condition,
 	type Hour
 } from './weather.js';
 
@@ -20,8 +21,11 @@ const hour = (time: string, rainChance: number): Hour => ({
 	uv: 1
 });
 
-const day = (chances: number[]) =>
-	chances.map((chance, i) => hour(`2026-11-10T${String(8 + i).padStart(2, '0')}:00`, chance));
+const day = (chances: number[], conditions: Condition[] = []) =>
+	chances.map((chance, i) => ({
+		...hour(`2026-11-10T${String(8 + i).padStart(2, '0')}:00`, chance),
+		condition: conditions[i] ?? 'rain'
+	}));
 
 describe('conditionOf', () => {
 	it.each([
@@ -45,7 +49,8 @@ describe('nextRain', () => {
 		expect(nextRain(day([10, 20, 60, 80, 40, 70]))).toEqual({
 			from: '2026-11-10T10:00',
 			until: '2026-11-10T12:00',
-			startsNow: false
+			startsNow: false,
+			kind: 'rain'
 		});
 	});
 
@@ -53,12 +58,24 @@ describe('nextRain', () => {
 		expect(nextRain(day([90, 55, 10]))).toEqual({
 			from: '2026-11-10T08:00',
 			until: '2026-11-10T10:00',
-			startsNow: true
+			startsNow: true,
+			kind: 'rain'
 		});
 	});
 
 	it('ends a stretch at the last hour of the list one hour later', () => {
 		expect(nextRain(day([10, 70]))?.until).toBe('2026-11-10T10:00');
+	});
+
+	it.each([
+		[['snow', 'snow'], 'snow'],
+		[['rain', 'snow'], 'mixed'],
+		[['drizzle', 'snow'], 'mixed'],
+		[['showers', 'thunder'], 'thunder'],
+		[['snow', 'thunder'], 'thunder'],
+		[['cloudy', 'rain'], 'rain']
+	] as [Condition[], string][])('calls %j %s', (conditions, kind) => {
+		expect(nextRain(day([80, 80], conditions))?.kind).toBe(kind);
 	});
 
 	it('returns null when no hour reaches the threshold', () => {
