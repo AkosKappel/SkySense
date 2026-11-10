@@ -19,6 +19,15 @@ function read(): ActivityId[] {
 class ActivityChoice {
 	list = $state<ActivityId[]>(browser ? read() : DEFAULT_ACTIVITIES);
 
+	constructor() {
+		// Kept in step with other tabs, like saved places.
+		if (browser) {
+			addEventListener('storage', (event) => {
+				if (event.key === KEY || event.key === null) this.list = read();
+			});
+		}
+	}
+
 	toggle(id: ActivityId) {
 		this.list = this.list.includes(id)
 			? this.list.filter((x) => x !== id)

@@ -28,6 +28,15 @@ const same = (a: Coordinates, b: Coordinates) => formatCoordinates(a) === format
 class SavedPlaces {
 	list = $state<SavedPlace[]>(browser ? read() : []);
 
+	constructor() {
+		// Another tab saved, removed or renamed a place (F-19); `key` is null when storage was cleared.
+		if (browser) {
+			addEventListener('storage', (event) => {
+				if (event.key === KEY || event.key === null) this.list = read();
+			});
+		}
+	}
+
 	private save() {
 		try {
 			localStorage.setItem(KEY, JSON.stringify(this.list));

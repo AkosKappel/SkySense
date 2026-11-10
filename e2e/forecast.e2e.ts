@@ -174,6 +174,15 @@ test('shows recorded scenarios for screenshots with ?demo=', async ({ page }) =>
 	await expect(page.getByText("The sun doesn't rise today.")).toBeVisible();
 });
 
+test('a place saved in one tab shows up in another', async ({ context }) => {
+	const home = await context.newPage();
+	await home.goto('/?choose');
+	const place = await context.newPage();
+	await place.goto('/p/48.15,17.11/Bratislava');
+	await place.getByRole('button', { name: 'Save' }).click();
+	await expect(home.getByRole('link', { name: /Bratislava/ }).first()).toBeVisible();
+});
+
 test('settings change units and language', async ({ page }) => {
 	await page.goto('/settings');
 	await expectAccessible(page);
