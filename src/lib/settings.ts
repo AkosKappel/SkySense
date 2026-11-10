@@ -1,4 +1,5 @@
 // Units live in a cookie, not localStorage, so the server renders the first paint in them.
+import { comfortShift, type Comfort } from '#lib/activities.js';
 import { imperial, metric, unitChoices, type Units } from '#lib/units.js';
 
 export const UNITS_COOKIE = 'skysense_units';
@@ -30,4 +31,11 @@ export function readUnits(cookie: string | undefined, fallback: Units): Units {
 		rain: pick('rain'),
 		clock: pick('clock')
 	};
+}
+
+export const COMFORT_COOKIE = 'skysense_comfort';
+
+/** The comfort profile (S-05) lives next to the units, so the first paint already uses it. */
+export function readComfort(cookie: string | undefined): Comfort {
+	return cookie && Object.hasOwn(comfortShift, cookie) ? (cookie as Comfort) : 'neutral';
 }

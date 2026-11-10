@@ -243,7 +243,12 @@
 			</section>
 
 			<section class="glass p-6 md:col-span-2 lg:col-span-4">
-				<ActivityTile hours={forecast.hours.slice(0, 24)} days={forecast.days} {f} />
+				<ActivityTile
+					hours={forecast.hours.slice(0, 24)}
+					days={forecast.days}
+					{f}
+					comfort={data.comfort}
+				/>
 			</section>
 
 			<section class="glass p-5 md:col-span-2 lg:col-span-4">

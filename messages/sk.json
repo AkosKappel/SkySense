@@ -16,6 +16,7 @@
 	"back_to_forecast": "Späť na predpoveď",
 	"back_to_now": "Späť na teraz",
 	"beaufort": "Beaufort",
+	"best_hour_score": "Najlepšia hodina, {time}: {score} zo 100",
 	"celsius": "Celzius (°C)",
 	"change_place": "Zmeniť miesto",
 	"choose_activities": "Vybrať aktivity",
@@ -23,6 +24,11 @@
 	"clock_12": "12-hodinový",
 	"clock_24": "24-hodinový",
 	"close": "Zavrieť",
+	"comfort_cold": "Ľahko mi je zima",
+	"comfort_neutral": "Bežne",
+	"comfort_note": "Posunie ideálne teploty pre aktivity o 3 stupne.",
+	"comfort_profile": "Vnímanie teploty",
+	"comfort_warm": "Ľahko mi je teplo",
 	"cond_clear": "Jasno",
 	"cond_cloudy": "Zamračené",
 	"cond_drizzle": "Mrholenie",
@@ -46,6 +52,13 @@
 	"error_not_found_title": "Toto miesto sa nedá nájsť.",
 	"error_service_body": "Skús to znova o chvíľu.",
 	"error_service_title": "Služba počasia práve neodpovedá.",
+	"factor_clouds": "Oblačnosť",
+	"factor_feels": "Pocitovo",
+	"factor_light": "Denné svetlo",
+	"factor_rain": "Dážď",
+	"factor_temp": "Teplota",
+	"factor_uv": "Sila slnka",
+	"factor_wind": "Vietor",
 	"fahrenheit": "Fahrenheit (°F)",
 	"feels_like": "Pocitovo {temp}",
 	"feels_like_line": "Pocitová",
@@ -60,6 +73,9 @@
 	"inches": "Palce",
 	"knots": "Uzly",
 	"language": "Jazyk",
+	"level_ideal": "Ideálne",
+	"level_ok": "V poriadku",
+	"level_poor": "Zlé",
 	"link_copied": "Odkaz skopírovaný.",
 	"loading_forecast": "Načítava sa predpoveď…",
 	"locating": "Hľadám ťa…",
@@ -100,6 +116,7 @@
 	"save": "Uložiť",
 	"save_place": "Uložiť",
 	"saved_places": "Uložené miesta",
+	"score_of": "Skóre: {score} zo 100",
 	"search_again": "Vyhľadať miesto",
 	"search_error": "Vyhľadávanie miest teraz nie je dostupné.",
 	"search_label": "Vyhľadať miesto",
@@ -117,8 +134,13 @@
 	"summary_rain_all": "Bude pršať počas nasledujúcich 24 hodín.",
 	"summary_rain_later": [
 		{
-			"declarations": ["input hours", "local hoursPlural = hours: plural"],
-			"selectors": ["hoursPlural"],
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
 			"match": {
 				"hoursPlural=one": "Do {from} sucho, potom bude asi hodinu pršať.",
 				"hoursPlural=few": "Do {from} sucho, potom bude asi {hours} hodiny pršať.",
@@ -131,8 +153,13 @@
 	"summary_snow_all": "Bude snežiť počas nasledujúcich 24 hodín.",
 	"summary_snow_later": [
 		{
-			"declarations": ["input hours", "local hoursPlural = hours: plural"],
-			"selectors": ["hoursPlural"],
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
 			"match": {
 				"hoursPlural=one": "Do {from} sucho, potom bude asi hodinu snežiť.",
 				"hoursPlural=few": "Do {from} sucho, potom bude asi {hours} hodiny snežiť.",
@@ -145,8 +172,13 @@
 	"summary_thunder_all": "Búrky počas nasledujúcich 24 hodín.",
 	"summary_thunder_later": [
 		{
-			"declarations": ["input hours", "local hoursPlural = hours: plural"],
-			"selectors": ["hoursPlural"],
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
 			"match": {
 				"hoursPlural=one": "Do {from} sucho, potom asi hodinu búrky.",
 				"hoursPlural=few": "Do {from} sucho, potom asi {hours} hodiny búrky.",

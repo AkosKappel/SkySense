@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import { cookieMaxAge, cookieName, isLocale } from '#lib/paraglide/runtime.js';
-import { readUnits, UNITS_COOKIE } from '#lib/settings.js';
+import { COMFORT_COOKIE, readComfort, readUnits, UNITS_COOKIE } from '#lib/settings.js';
 import { metric } from '#lib/units.js';
 import type { Actions } from './$types';
 
@@ -21,6 +21,7 @@ export const actions: Actions = {
 			metric
 		);
 		cookies.set(UNITS_COOKIE, JSON.stringify(units), cookie);
+		cookies.set(COMFORT_COOKIE, readComfort(String(form.get('comfort'))), cookie);
 
 		const language = form.get('language');
 		if (typeof language === 'string' && isLocale(language)) {

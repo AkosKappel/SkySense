@@ -108,6 +108,10 @@ test('suggests times for the chosen activities and remembers the choice', async 
 	);
 	await expect(tile.getByText('Too cold in the next 24 hours.')).toBeVisible();
 
+	await tile.getByRole('listitem').filter({ hasText: 'Run' }).getByText('16:00 to 17:00').click();
+	await expect(tile.getByText('Score:', { exact: false }).first()).toBeVisible();
+	await expect(tile.getByRole('term').filter({ hasText: 'Feels like' }).first()).toBeVisible();
+
 	await tile.getByText('Choose activities').click();
 	await tile.getByRole('checkbox', { name: 'Stargazing' }).check({ force: true });
 	await expect(tile.getByRole('listitem').filter({ hasText: 'Stargazing' })).toBeVisible();

@@ -16,6 +16,7 @@
 	"back_to_forecast": "Volver al pronóstico",
 	"back_to_now": "Volver a ahora",
 	"beaufort": "Beaufort",
+	"best_hour_score": "Mejor hora, {time}: {score} de 100",
 	"celsius": "Celsius (°C)",
 	"change_place": "Cambiar de lugar",
 	"choose_activities": "Elegir actividades",
@@ -23,6 +24,11 @@
 	"clock_12": "12 horas",
 	"clock_24": "24 horas",
 	"close": "Cerrar",
+	"comfort_cold": "Me enfrío fácilmente",
+	"comfort_neutral": "Normal",
+	"comfort_note": "Desplaza 3 grados las temperaturas ideales de las actividades.",
+	"comfort_profile": "Tolerancia a la temperatura",
+	"comfort_warm": "Me acaloro fácilmente",
 	"cond_clear": "Despejado",
 	"cond_cloudy": "Nublado",
 	"cond_drizzle": "Llovizna",
@@ -46,6 +52,13 @@
 	"error_not_found_title": "No encontramos ese lugar.",
 	"error_service_body": "Inténtalo de nuevo en un minuto.",
 	"error_service_title": "El servicio meteorológico no responde.",
+	"factor_clouds": "Nubes",
+	"factor_feels": "Sensación",
+	"factor_light": "Luz del día",
+	"factor_rain": "Lluvia",
+	"factor_temp": "Temperatura",
+	"factor_uv": "Fuerza del sol",
+	"factor_wind": "Viento",
 	"fahrenheit": "Fahrenheit (°F)",
 	"feels_like": "Sensación de {temp}",
 	"feels_like_line": "Sensación",
@@ -60,6 +73,9 @@
 	"inches": "Pulgadas",
 	"knots": "Nudos",
 	"language": "Idioma",
+	"level_ideal": "Ideal",
+	"level_ok": "Aceptable",
+	"level_poor": "Malo",
 	"link_copied": "Enlace copiado.",
 	"loading_forecast": "Cargando el pronóstico…",
 	"locating": "Buscándote…",
@@ -100,6 +116,7 @@
 	"save": "Guardar",
 	"save_place": "Guardar",
 	"saved_places": "Lugares guardados",
+	"score_of": "Puntuación: {score} de 100",
 	"search_again": "Buscar un lugar",
 	"search_error": "La búsqueda de lugares no está disponible ahora.",
 	"search_label": "Buscar un lugar",
@@ -117,8 +134,13 @@
 	"summary_rain_all": "Lluvia durante las próximas 24 horas.",
 	"summary_rain_later": [
 		{
-			"declarations": ["input hours", "local hoursPlural = hours: plural"],
-			"selectors": ["hoursPlural"],
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
 			"match": {
 				"hoursPlural=one": "Seco hasta las {from}, luego cerca de una hora de lluvia.",
 				"hoursPlural=*": "Seco hasta las {from}, luego unas {hours} horas de lluvia."
@@ -130,8 +152,13 @@
 	"summary_snow_all": "Nieve durante las próximas 24 horas.",
 	"summary_snow_later": [
 		{
-			"declarations": ["input hours", "local hoursPlural = hours: plural"],
-			"selectors": ["hoursPlural"],
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
 			"match": {
 				"hoursPlural=one": "Seco hasta las {from}, luego cerca de una hora de nieve.",
 				"hoursPlural=*": "Seco hasta las {from}, luego unas {hours} horas de nieve."
@@ -143,8 +170,13 @@
 	"summary_thunder_all": "Tormentas durante las próximas 24 horas.",
 	"summary_thunder_later": [
 		{
-			"declarations": ["input hours", "local hoursPlural = hours: plural"],
-			"selectors": ["hoursPlural"],
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
 			"match": {
 				"hoursPlural=one": "Seco hasta las {from}, luego cerca de una hora de tormentas.",
 				"hoursPlural=*": "Seco hasta las {from}, luego unas {hours} horas de tormentas."

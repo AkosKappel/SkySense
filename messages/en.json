@@ -16,6 +16,7 @@
 	"back_to_forecast": "Back to the forecast",
 	"back_to_now": "Back to now",
 	"beaufort": "Beaufort",
+	"best_hour_score": "Best hour, {time}: {score} of 100",
 	"celsius": "Celsius (°C)",
 	"change_place": "Change place",
 	"choose_activities": "Choose activities",
@@ -23,6 +24,11 @@
 	"clock_12": "12-hour",
 	"clock_24": "24-hour",
 	"close": "Close",
+	"comfort_cold": "I get cold easily",
+	"comfort_neutral": "Average",
+	"comfort_note": "Moves the ideal temperatures for activities by 3 degrees.",
+	"comfort_profile": "Temperature comfort",
+	"comfort_warm": "I get warm easily",
 	"cond_clear": "Clear",
 	"cond_cloudy": "Cloudy",
 	"cond_drizzle": "Drizzle",
@@ -46,6 +52,13 @@
 	"error_not_found_title": "We can't find that place.",
 	"error_service_body": "Try again in a minute.",
 	"error_service_title": "The weather service isn't answering.",
+	"factor_clouds": "Clouds",
+	"factor_feels": "Feels like",
+	"factor_light": "Daylight",
+	"factor_rain": "Rain",
+	"factor_temp": "Temperature",
+	"factor_uv": "Sun strength",
+	"factor_wind": "Wind",
 	"fahrenheit": "Fahrenheit (°F)",
 	"feels_like": "Feels like {temp}",
 	"feels_like_line": "Feels like",
@@ -60,6 +73,9 @@
 	"inches": "Inches",
 	"knots": "Knots",
 	"language": "Language",
+	"level_ideal": "Ideal",
+	"level_ok": "Okay",
+	"level_poor": "Poor",
 	"link_copied": "Link copied.",
 	"loading_forecast": "Loading the forecast…",
 	"locating": "Finding you…",
@@ -100,6 +116,7 @@
 	"save": "Save",
 	"save_place": "Save",
 	"saved_places": "Saved places",
+	"score_of": "Score: {score} of 100",
 	"search_again": "Search for a place",
 	"search_error": "Place search isn't available right now.",
 	"search_label": "Search for a place",
@@ -117,8 +134,13 @@
 	"summary_rain_all": "Rain for the next 24 hours.",
 	"summary_rain_later": [
 		{
-			"declarations": ["input hours", "local hoursPlural = hours: plural"],
-			"selectors": ["hoursPlural"],
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
 			"match": {
 				"hoursPlural=one": "Dry until {from}, then about an hour of rain.",
 				"hoursPlural=*": "Dry until {from}, then about {hours} hours of rain."
@@ -130,8 +152,13 @@
 	"summary_snow_all": "Snow for the next 24 hours.",
 	"summary_snow_later": [
 		{
-			"declarations": ["input hours", "local hoursPlural = hours: plural"],
-			"selectors": ["hoursPlural"],
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
 			"match": {
 				"hoursPlural=one": "Dry until {from}, then about an hour of snow.",
 				"hoursPlural=*": "Dry until {from}, then about {hours} hours of snow."
@@ -143,8 +170,13 @@
 	"summary_thunder_all": "Thunderstorms for the next 24 hours.",
 	"summary_thunder_later": [
 		{
-			"declarations": ["input hours", "local hoursPlural = hours: plural"],
-			"selectors": ["hoursPlural"],
+			"declarations": [
+				"input hours",
+				"local hoursPlural = hours: plural"
+			],
+			"selectors": [
+				"hoursPlural"
+			],
 			"match": {
 				"hoursPlural=one": "Dry until {from}, then about an hour of thunderstorms.",
 				"hoursPlural=*": "Dry until {from}, then about {hours} hours of thunderstorms."

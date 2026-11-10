@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import bratislava from '#lib/server/fixtures/forecast-bratislava.json';
 import { toForecast } from '#lib/server/open-meteo.js';
-import { activities, band, bestWindow, scoreHour } from './activities.js';
+import { activities, band, bestWindow, comfortShift, scoreHour } from './activities.js';
 import type { Day, Hour } from './weather.js';
 
 const day: Day = {
@@ -31,7 +31,7 @@ const hour = (h: number, extra: Partial<Hour> = {}): Hour => ({
 const hours = (extra: (h: number) => Partial<Hour> = () => ({})) =>
 	Array.from({ length: 24 }, (_, h) => hour(h, extra(h)));
 const score = (id: keyof typeof activities, list: Hour[], index: number) =>
-	scoreHour(activities[id], { hours: list, index, days: [day] });
+	scoreHour(activities[id], { hours: list, index, days: [day], shift: 0 });
 
 describe('band', () => {
 	it('is 1 inside the ideal range and falls to 0 at the acceptable edge', () => {
@@ -44,7 +44,7 @@ describe('band', () => {
 
 describe('scoreHour', () => {
 	it('scores a mild, dry, calm day hour as great for a run', () => {
-		expect(score('run', hours(), 10)).toEqual({ score: 100, reason: null, gated: false });
+		expect(score('run', hours(), 10)).toMatchObject({ score: 100, reason: null, gated: false });
 	});
 
 	it('names the main reason an hour is poor', () => {
@@ -117,7 +117,7 @@ describe('bestWindow', () => {
 				hours(() => ({ rainChance: 95 })),
 				[day]
 			)
-		).toEqual({
+		).toMatchObject({
 			window: null,
 			reason: 'rain'
 		});
@@ -128,5 +128,34 @@ describe('bestWindow', () => {
 		const run = bestWindow(activities.run, forecast.hours.slice(0, 24), forecast.days);
 		expect(run.window?.from).toBeDefined();
 		expect(run.window!.score).toBeGreaterThanOrEqual(60);
+	});
+
+	it('explains the window with the average of each factor', () => {
+		const list = hours((h) => ({ wind: h === 11 ? 30 : 10, gust: 15 }));
+		const { detail } = bestWindow(activities.cycle, list, [day]);
+		expect(detail?.score).toBe(100);
+		expect(detail?.factors.map((f) => f.id)).toEqual(['feels', 'rain', 'wind', 'light', 'uv']);
+		expect(detail?.factors.every((f) => f.value === 1)).toBe(true);
+	});
+
+	it('explains a missing window with the best hour', () => {
+		const { detail } = bestWindow(
+			activities.run,
+			hours((h) => ({ rainChance: h === 9 ? 60 : 95 })),
+			[day]
+		);
+		expect(detail?.time).toBe('2026-11-10T09:00');
+		expect(detail?.factors.find((f) => f.id === 'rain')!.value).toBeLessThan(1);
+	});
+});
+
+describe('comfort profile', () => {
+	it('moves the comfort range for someone who gets cold or warm easily', () => {
+		const chilly = hours(() => ({ feels: 9 }));
+		const at = (shift: number) =>
+			scoreHour(activities.walk, { hours: chilly, index: 10, days: [day], shift });
+		expect(at(comfortShift.neutral).score).toBe(at(comfortShift.warm).score);
+		expect(at(comfortShift.cold).score).toBeLessThan(at(comfortShift.neutral).score);
+		expect(at(comfortShift.cold).reason).toBe('cold');
 	});
 });

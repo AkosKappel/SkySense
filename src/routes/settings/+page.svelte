@@ -19,7 +19,12 @@
 		es: 'Español'
 	};
 
-	const groups: { name: keyof Units; legend: () => string; options: [string, () => string][] }[] = [
+	const groups: {
+		name: keyof Units | 'comfort';
+		legend: () => string;
+		note?: () => string;
+		options: [string, () => string][];
+	}[] = [
 		{
 			name: 'temperature',
 			legend: m.temperature,
@@ -54,8 +59,19 @@
 				['24', m.clock_24],
 				['12', m.clock_12]
 			]
+		},
+		{
+			name: 'comfort',
+			legend: m.comfort_profile,
+			note: m.comfort_note,
+			options: [
+				['cold', m.comfort_cold],
+				['neutral', m.comfort_neutral],
+				['warm', m.comfort_warm]
+			]
 		}
 	];
+	const chosen = $derived({ ...data.units, comfort: data.comfort });
 </script>
 
 <svelte:head>
@@ -105,13 +121,14 @@
 								type="radio"
 								name={group.name}
 								{value}
-								checked={data.units[group.name] === value}
+								checked={chosen[group.name] === value}
 								class="sr-only"
 							/>
 							{label()}
 						</label>
 					{/each}
 				</div>
+				{#if group.note}<p class="mt-2 text-sm text-ink-muted">{group.note()}</p>{/if}
 			</fieldset>
 		{/each}
 
