@@ -1,14 +1,5 @@
-import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
-
-async function expectAccessible(page: Page) {
-	const results = await new AxeBuilder({ page }).analyze();
-	expect(
-		results.violations.map(
-			(v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`
-		)
-	).toEqual([]);
-}
+import { expect, test } from '@playwright/test';
+import { expectAccessible } from './axe.js';
 
 test('finds a place and shows its forecast', async ({ page }) => {
 	await page.goto('/');

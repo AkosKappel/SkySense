@@ -27,7 +27,7 @@
 					coords: page.params.coords ?? '',
 					name: encodeURIComponent(page.params.name ?? '')
 				})}?day={day.date}"
-				class="grid min-h-11 grid-cols-[4.5rem_1.75rem_2.75rem_2.5rem_1fr_2.5rem_1rem] items-center gap-2 rounded-xl py-2.5 text-sm transition hover:bg-white/5"
+				class="grid min-h-11 grid-cols-[3.25rem_1.75rem_2.75rem_2.5rem_1fr_2.5rem] items-center gap-1.5 rounded-xl py-2.5 text-sm transition hover:bg-white/5 min-[380px]:grid-cols-[4.5rem_1.75rem_2.75rem_2.5rem_1fr_2.5rem_1rem] min-[380px]:gap-2"
 			>
 				<span class="leading-tight">
 					<span class="block font-semibold">{i === 0 ? m.today() : f.weekday(day.date)}</span>
@@ -56,7 +56,11 @@
 					<span class="sr-only">{m.high()} </span>{f.temp(day.max)}
 				</span>
 				<span class="sr-only">{conditionLabel(day.condition)}</span>
-				<ChevronRight size={16} class="text-ink-muted" aria-hidden="true" />
+				<ChevronRight
+					size={16}
+					class="hidden text-ink-muted min-[380px]:block"
+					aria-hidden="true"
+				/>
 			</a>
 		</li>
 	{/each}
