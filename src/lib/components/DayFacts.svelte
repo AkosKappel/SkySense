@@ -31,7 +31,7 @@
 <dl class="mt-4 grid grid-cols-2 gap-3">
 	{#each facts as [label, value] (label)}
 		<div class="rounded-2xl bg-white/5 p-4 outline-1 outline-white/10">
-			<dt class="text-sm text-ink-muted">{label}</dt>
+			<dt class="text-sm wrap-anywhere hyphens-auto text-ink-muted">{label}</dt>
 			<dd class="mt-1 text-xl font-bold tabular-nums">{value}</dd>
 		</div>
 	{/each}
