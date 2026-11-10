@@ -17,6 +17,7 @@
 	import DayFacts from '#lib/components/DayFacts.svelte';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
 	import PlaceSheet from '#lib/components/PlaceSheet.svelte';
+	import ShareButton from '#lib/components/ShareButton.svelte';
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
 	import UmbrellaTile from '#lib/components/UmbrellaTile.svelte';
 	import WeatherIcon from '#lib/components/WeatherIcon.svelte';
@@ -54,6 +55,9 @@
 
 	// `?day=2026-11-12` shows one day; anything not in the forecast shows the overview.
 	const day = $derived(forecast.days.find((d) => d.date === page.url.searchParams.get('day')));
+	const title = $derived(
+		day ? m.weather_on({ place: name, date: f.date(day.date) }) : m.weather_in({ place: name })
+	);
 	const dayHours = $derived(day ? forecast.hours.filter((h) => h.time.startsWith(day.date)) : []);
 
 	const direction = $derived(
@@ -103,9 +107,7 @@
 />
 
 <svelte:head>
-	<title
-		>{day ? m.weather_on({ place: name, date: f.date(day.date) }) : m.weather_in({ place: name })} · SkySense</title
-	>
+	<title>{title} · SkySense</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
@@ -137,6 +139,7 @@
 					{m.save_place()}
 				</button>
 			{/if}
+			<ShareButton {title} />
 			<a
 				href={resolve('/settings')}
 				aria-label={m.settings()}
