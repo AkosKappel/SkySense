@@ -35,6 +35,8 @@ Explicit rules, in pure functions under `src/lib/`:
 
 - **What to wear** follows the coldest feels-like of the next 12 waking hours, minus the comfort shift: a T-shirt from 24 °C, a light layer added from 17, a light jacket from 10, a warm jacket from 3, a winter coat from -5, full winter layers below. It adds something waterproof when rain is likely, windproof from gusts of 60 km/h and sun protection from UV 6.
 
+- **Comparing two places** rates each day by its best one-hour walking window (the most general activity); a place is nicer that day when it scores at least 10 points higher, otherwise the day is a draw.
+
 ## Consequences
 
 - The rules are easy to explain in the UI (S-06) and to test: each threshold has a test with synthetic hours, and the recorded fixtures catch surprises (polar night, heat, snow).

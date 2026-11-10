@@ -19,6 +19,7 @@
 	import DailyList from '#lib/components/DailyList.svelte';
 	import DayDetail from '#lib/components/DayDetail.svelte';
 	import ClimateTiles from '#lib/components/ClimateTiles.svelte';
+	import CompareWith from '#lib/components/CompareWith.svelte';
 	import DayFacts from '#lib/components/DayFacts.svelte';
 	import ModelCompare from '#lib/components/ModelCompare.svelte';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
@@ -322,6 +323,7 @@
 			<section class="glass p-6 lg:col-span-2 lg:row-span-2">
 				<h2 class="question">{m.ten_days()}</h2>
 				<DailyList days={forecast.days} hours={forecast.hours} {f} />
+				<CompareWith current={place} />
 			</section>
 
 			<section class="glass p-6 lg:col-span-2 lg:row-span-2">

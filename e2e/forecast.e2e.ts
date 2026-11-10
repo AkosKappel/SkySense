@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { expectAccessible } from './axe.js';
+import { placeReady, savePlace } from './helpers.js';
 
 test('finds a place and shows its forecast', async ({ page }) => {
 	await page.goto('/');
@@ -33,7 +34,7 @@ test('finds a place and shows its forecast', async ({ page }) => {
 test('reopens the last place and keeps saved places', async ({ page }) => {
 	await page.goto('/p/40.42,-3.7/Madrid');
 	await expect(page.getByRole('heading', { level: 1, name: 'Weather in Madrid' })).toBeAttached();
-	await page.getByRole('button', { name: 'Save' }).click();
+	await savePlace(page);
 	await expect(page.getByRole('button', { name: 'Save' })).toHaveCount(0);
 
 	await page.goto('/');
@@ -58,11 +59,12 @@ test('reopens the last place and keeps saved places', async ({ page }) => {
 
 test('switches places in a sheet that Back and Escape close', async ({ page }) => {
 	await page.goto('/p/40.42,-3.7/Madrid');
-	await page.getByRole('button', { name: 'Save' }).click();
+	await savePlace(page);
 	await page.goto('/p/48.15,17.11/Bratislava');
 	await expect(
 		page.getByRole('heading', { level: 1, name: 'Weather in Bratislava' })
 	).toBeAttached();
+	await placeReady(page);
 
 	const change = page.getByRole('link', { name: /Change place/ });
 	const sheet = page.getByRole('dialog', { name: 'Change place' });
@@ -95,6 +97,7 @@ test('switches places in a sheet that Back and Escape close', async ({ page }) =
 
 test('suggests times for the chosen activities and remembers the choice', async ({ page }) => {
 	await page.goto('/p/48.15,17.11/Bratislava');
+	await placeReady(page);
 	const tile = page.locator('section', { hasText: 'When should I go out?' });
 	await expect(tile.getByRole('listitem').filter({ hasText: 'Run' })).toContainText(
 		'16:00 to 17:00'
@@ -181,7 +184,7 @@ test('a place saved in one tab shows up in another', async ({ context }) => {
 	await home.goto('/?choose');
 	const place = await context.newPage();
 	await place.goto('/p/48.15,17.11/Bratislava');
-	await place.getByRole('button', { name: 'Save' }).click();
+	await savePlace(place);
 	await expect(home.getByRole('link', { name: /Bratislava/ }).first()).toBeVisible();
 });
 
@@ -194,6 +197,7 @@ test('the status bar colour follows the sky', async ({ page }) => {
 
 test('downloads the good times for an activity as a calendar file', async ({ page }) => {
 	await page.goto('/p/48.15,17.11/Bratislava');
+	await placeReady(page);
 	const tile = page.locator('section', { hasText: 'When should I go out?' });
 	await tile.getByRole('listitem').filter({ hasText: 'Run' }).getByText('16:00 to 17:00').click();
 	const download = page.waitForEvent('download');
@@ -220,6 +224,23 @@ test('"My location" locates again when opened', async ({ context, page }) => {
 	await expect(page).toHaveURL(/\/p\/40\.42,-3\.7\/My%20location$/);
 	await page.goto('/?choose');
 	await expect(page.getByRole('link', { name: 'My location' })).toHaveCount(1);
+});
+
+test('compares two saved places day by day', async ({ page }) => {
+	await page.goto('/p/40.42,-3.7/Madrid');
+	await savePlace(page);
+	await page.goto('/p/48.15,17.11/Bratislava');
+	await page.getByLabel('Compare with').selectOption({ label: 'Madrid' });
+	await page.getByRole('button', { name: 'Compare', exact: true }).click();
+	await expect(page).toHaveURL(
+		/\/compare\?a=48\.15%2C17\.11&an=Bratislava&b=40\.42%2C-3\.7&bn=Madrid/
+	);
+	await expect(
+		page.getByRole('heading', { level: 1, name: 'Bratislava or Madrid?' })
+	).toBeVisible();
+	await expect(page.getByText(/looks nicer on \d+ of the 10 days\.|About the same/)).toBeVisible();
+	await expect(page.getByRole('row')).toHaveCount(11);
+	await expectAccessible(page);
 });
 
 test('settings change units and language', async ({ page }) => {

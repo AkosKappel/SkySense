@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { savePlace } from './helpers.js';
 
 test('pages send a content security policy and the other security headers', async ({ page }) => {
 	const errors: string[] = [];
@@ -18,8 +19,7 @@ test('pages send a content security policy and the other security headers', asyn
 	expect(headers['permissions-policy']).toContain('geolocation=(self)');
 
 	// The page still hydrates under the policy: a client-side interaction works.
-	await page.getByRole('button', { name: 'Save' }).click();
-	await expect(page.getByRole('button', { name: 'Save' })).toHaveCount(0);
+	await savePlace(page);
 	expect(errors.filter((e) => e.includes('Content Security Policy'))).toEqual([]);
 });
 
