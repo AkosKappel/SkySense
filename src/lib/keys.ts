@@ -1,5 +1,11 @@
-/** True for a bare `/` pressed outside a text field: the shortcut to search for a place. */
+/**
+ * The shortcut to search for a place: a bare `/` outside a text field, or Ctrl+K (⌘K on a Mac),
+ * which people know from other apps and which works from inside a field too.
+ */
 export function isSearchShortcut(event: KeyboardEvent): boolean {
+	if (event.key.toLowerCase() === 'k' && (event.ctrlKey || event.metaKey) && !event.altKey) {
+		return true;
+	}
 	if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey) return false;
 	const target = event.target as HTMLElement | null;
 	return !(
