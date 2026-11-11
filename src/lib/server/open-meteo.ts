@@ -14,6 +14,7 @@ import type { Climate, Normal } from '#lib/climate.js';
 import { modelIds, type ModelRun } from '#lib/models.js';
 import { summarizeYear, type YearInWeather } from '#lib/year.js';
 import type { GridCell, RadarFrames } from '#lib/radar.js';
+import type { RainDay } from '#lib/recent.js';
 
 export class WeatherServiceError extends Error {}
 
@@ -472,6 +473,45 @@ export async function fetchYear(
 		timezone: 'auto'
 	}).toString();
 	return toYear(await getJson(url, fetchFn));
+}
+
+const recentSchema = z.object({
+	daily: z.object({ time: z.array(z.string()), precipitation_sum: numbers })
+});
+
+/** Rain per day, gaps dropped (H-04). */
+export function toRecent(raw: unknown): RainDay[] {
+	const parsed = recentSchema.safeParse(raw);
+	if (!parsed.success) throw new WeatherServiceError('Unexpected forecast response');
+	const d = parsed.data.daily;
+	return d.time.flatMap((date, i) => {
+		const rain = d.precipitation_sum[i];
+		return rain === null ? [] : [{ date, rain }];
+	});
+}
+
+export const RECENT_DAYS = 60;
+
+/** Rain on each of the 60 days before `today` (the place's date), from the forecast API's past. */
+export async function fetchRecent(
+	coordinates: Coordinates,
+	today: string,
+	fetchFn: typeof fetch = fetch
+): Promise<RainDay[]> {
+	const { lat, lon } = roundCoordinates(coordinates);
+	if (useFixtures()) {
+		return toRecent(fixtures[`./fixtures/recent-${nearestFixture({ lat, lon })}.json`].default);
+	}
+	const url = new URL(FORECAST_URL);
+	url.search = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		daily: 'precipitation_sum',
+		timezone: 'auto',
+		start_date: addDays(today, -RECENT_DAYS),
+		end_date: addDays(today, -1)
+	}).toString();
+	return toRecent(await getJson(url, fetchFn));
 }
 
 const gridSchema = z.array(

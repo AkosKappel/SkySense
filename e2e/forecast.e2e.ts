@@ -155,6 +155,14 @@ test('compares today with the climate and past years', async ({ page }) => {
 	await expectAccessible(page);
 });
 
+test('says how long it has been dry', async ({ page }) => {
+	await page.goto('/p/48.15,17.11/Bratislava');
+	const dry = page.locator('section', { hasText: 'How dry has it been?' });
+	await expect(dry.getByText('Dry for 9 days.')).toBeVisible();
+	await expect(dry.getByText(/^Last rain: .+ on Saturday 31 October\.$/)).toBeVisible();
+	await expect(dry.getByText(/^So far this month: /)).toBeVisible();
+});
+
 test('warns about poor air only where it is notable', async ({ page }) => {
 	await page.goto('/p/1.29,103.85/Singapore');
 	await expect(page.getByText('Poor air quality around 20:00.')).toBeVisible();

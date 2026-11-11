@@ -58,6 +58,13 @@ export function formatWind(kmh: number, units: Units): string {
 	return units.wind === 'bft' ? `${windLabel.bft} ${value}` : `${value} ${windLabel[units.wind]}`;
 }
 
-export function formatRain(mm: number, units: Units): string {
-	return units.rain === 'in' ? `${(mm / 25.4).toFixed(2)} in` : `${mm.toFixed(1)} mm`;
+/** Rain with the decimal separator of `locale` ("1,4 mm" in German). */
+export function formatRain(mm: number, units: Units, locale = 'en'): string {
+	const inches = units.rain === 'in';
+	const digits = inches ? 2 : 1;
+	const value = new Intl.NumberFormat(locale, {
+		minimumFractionDigits: digits,
+		maximumFractionDigits: digits
+	}).format(inches ? mm / 25.4 : mm);
+	return `${value} ${inches ? 'in' : 'mm'}`;
 }

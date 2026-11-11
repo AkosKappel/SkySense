@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { CalendarClock, ChevronRight, Droplets, History } from '@lucide/svelte';
+	import type { Snippet } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { compareToNormal, forDate, type Climate } from '#lib/climate.js';
@@ -12,9 +13,17 @@
 		date,
 		max,
 		place,
-		f
-	}: { coordinates: Coordinates; date: string; max: number; place: string; f: Formatter } =
-		$props();
+		f,
+		children
+	}: {
+		coordinates: Coordinates;
+		date: string;
+		max: number;
+		place: string;
+		f: Formatter;
+		/** Short tiles stacked under the normal, beside the taller table of past years. */
+		children?: Snippet;
+	} = $props();
 
 	// Loaded in the browser, not with the page: the history is extra, and the browser's request
 	// reaches the CDN, which keeps a place's month of history for 30 days.
@@ -44,30 +53,33 @@
 	});
 </script>
 
-{#if day?.normal && comparison}
-	<section class="self-start glass p-6 lg:col-span-2">
-		<p class="question"><CalendarClock size={18} aria-hidden="true" /> {m.normal_question()}</p>
-		<p class="mt-2 answer">
-			{comparison.kind === 'warmer'
-				? m.normal_warmer({ diff: f.tempDelta(comparison.diff) })
-				: comparison.kind === 'colder'
-					? m.normal_colder({ diff: f.tempDelta(comparison.diff) })
-					: m.normal_about()}
-		</p>
-		<p class="mt-2 text-ink-muted">
-			{m.normal_typical({ max: f.temp(day.normal.max[5]), min: f.temp(day.normal.min[5]) })}
-		</p>
-		{#if comparison.percent >= 90}
-			<p class="mt-1 text-sm text-ink-muted">
-				{m.normal_rank_warm({ percent: f.percent(comparison.percent) })}
+<div class="flex flex-col gap-4 self-start lg:col-span-2">
+	{#if day?.normal && comparison}
+		<section class="glass p-6">
+			<p class="question"><CalendarClock size={18} aria-hidden="true" /> {m.normal_question()}</p>
+			<p class="mt-2 answer">
+				{comparison.kind === 'warmer'
+					? m.normal_warmer({ diff: f.tempDelta(comparison.diff) })
+					: comparison.kind === 'colder'
+						? m.normal_colder({ diff: f.tempDelta(comparison.diff) })
+						: m.normal_about()}
 			</p>
-		{:else if comparison.percent <= 10}
-			<p class="mt-1 text-sm text-ink-muted">
-				{m.normal_rank_cold({ percent: f.percent(100 - comparison.percent) })}
+			<p class="mt-2 text-ink-muted">
+				{m.normal_typical({ max: f.temp(day.normal.max[5]), min: f.temp(day.normal.min[5]) })}
 			</p>
-		{/if}
-	</section>
-{/if}
+			{#if comparison.percent >= 90}
+				<p class="mt-1 text-sm text-ink-muted">
+					{m.normal_rank_warm({ percent: f.percent(comparison.percent) })}
+				</p>
+			{:else if comparison.percent <= 10}
+				<p class="mt-1 text-sm text-ink-muted">
+					{m.normal_rank_cold({ percent: f.percent(100 - comparison.percent) })}
+				</p>
+			{/if}
+		</section>
+	{/if}
+	{@render children?.()}
+</div>
 
 {#if day && extremes}
 	<section class="glass p-6 lg:col-span-2">

@@ -78,6 +78,22 @@
 	"data_attribution": "Wetterdaten von Open-Meteo.com",
 	"details": "Details",
 	"done": "Fertig",
+	"dry_days": [
+		{
+			"declarations": ["input days", "local daysPlural = days: plural"],
+			"selectors": ["daysPlural"],
+			"match": {
+				"daysPlural=one": "Seit einem Tag trocken.",
+				"daysPlural=*": "Seit {days} Tagen trocken."
+			}
+		}
+	],
+	"dry_last": "Zuletzt Regen: {rain} am {date}.",
+	"dry_month": "Bisher in diesem Monat: {rain} Regen.",
+	"dry_none": "Kein Regen in den letzten {days} Tagen.",
+	"dry_note": "Tage mit 1 mm oder mehr, vor heute.",
+	"dry_question": "Wie trocken war es?",
+	"dry_yesterday": "Gestern hat es geregnet.",
 	"edit": "Bearbeiten",
 	"embed_open": "Ganze Vorhersage auf SkySense",
 	"embed_umbrella_no": "In den nächsten 24 Stunden kein Schirm nötig.",
@@ -103,7 +119,7 @@
 	"feature_answers": "Zuerst klare Antworten: ein Satz zu den nächsten 24 Stunden, was du anziehen solltest, ob du einen Schirm brauchst, wann es dunkel wird und wie windig es ist.",
 	"feature_comfort": "Eine Einstellung für alle, denen schnell kalt oder warm ist; sie verschiebt die idealen Temperaturen der Aktivitäten.",
 	"feature_confidence": "Wie sicher die Vorhersage ist: der wahrscheinliche Bereich aus 51 Läufen des ECMWF-Modells, Hinweise an unsicheren Tagen und fünf Wettermodelle im Vergleich.",
-	"feature_normal": "Wie heute im Vergleich zu den Jahren 1991 bis 2020 ist, wie dieses Datum in jedem der letzten zehn Jahre war, und die Rekorde des letzten Jahres Monat für Monat.",
+	"feature_normal": "Wie heute im Vergleich zu den Jahren 1991 bis 2020 ist, wie dieses Datum in jedem der letzten zehn Jahre war, wie lange es schon trocken ist, und die Rekorde des letzten Jahres Monat für Monat.",
 	"feature_offline": "Lässt sich als App installieren und zeigt offline die Orte, die du schon geöffnet hast.",
 	"feature_places": "Orte, die du speichern, umbenennen und sortieren kannst, ein Eintrag „Mein Standort“, der dich beim Öffnen neu findet, zwei Orte im Vergleich Tag für Tag, eine Suche in deiner Sprache und ein Link zum Teilen jedes Ortes.",
 	"feature_radar": "Ein Regenradar der letzten 2 Stunden und der Modellregen der nächsten 3, auf einer Karte.",

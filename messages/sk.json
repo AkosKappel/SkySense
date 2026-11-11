@@ -78,6 +78,23 @@
 	"data_attribution": "Údaje o počasí: Open-Meteo.com",
 	"details": "Podrobnosti",
 	"done": "Hotovo",
+	"dry_days": [
+		{
+			"declarations": ["input days", "local daysPlural = days: plural"],
+			"selectors": ["daysPlural"],
+			"match": {
+				"daysPlural=one": "Jeden deň bez dažďa.",
+				"daysPlural=few": "{days} dni bez dažďa.",
+				"daysPlural=*": "{days} dní bez dažďa."
+			}
+		}
+	],
+	"dry_last": "Naposledy pršalo: {rain}, {date}.",
+	"dry_month": "Tento mesiac zatiaľ: {rain} zrážok.",
+	"dry_none": "Za posledných {days} dní nepršalo.",
+	"dry_note": "Dni s 1 mm a viac, pred dneškom.",
+	"dry_question": "Aké sucho bolo?",
+	"dry_yesterday": "Včera pršalo.",
 	"edit": "Upraviť",
 	"embed_open": "Celá predpoveď na SkySense",
 	"embed_umbrella_no": "V najbližších 24 hodinách dáždnik netreba.",
@@ -103,7 +120,7 @@
 	"feature_answers": "Najprv jasné odpovede: veta o najbližších 24 hodinách, čo si obliecť, či potrebuješ dáždnik, kedy sa zotmie a aký je vietor.",
 	"feature_comfort": "Nastavenie pre tých, ktorým je ľahko zima alebo teplo; posunie ideálne teploty pre aktivity.",
 	"feature_confidence": "Nakoľko je predpoveď istá: pravdepodobný rozsah z 51 behov modelu ECMWF, označenie neistých dní a päť meteorologických modelov vedľa seba.",
-	"feature_normal": "Aký je dnešok v porovnaní s rokmi 1991 až 2020, aký bol tento dátum v každom z posledných desiatich rokov, a rekordy posledného roka mesiac po mesiaci.",
+	"feature_normal": "Aký je dnešok v porovnaní s rokmi 1991 až 2020, aký bol tento dátum v každom z posledných desiatich rokov, ako dlho už nepršalo, a rekordy posledného roka mesiac po mesiaci.",
 	"feature_offline": "Dá sa nainštalovať ako aplikácia a bez pripojenia ukáže miesta, ktoré si už otvoril.",
 	"feature_places": "Miesta, ktoré si môžeš uložiť, premenovať a zoradiť, položka „Moja poloha“, ktorá ťa pri otvorení znova nájde, porovnanie dvoch miest deň po dni, vyhľadávanie v tvojom jazyku a odkaz na zdieľanie ktoréhokoľvek miesta.",
 	"feature_radar": "Zrážkový radar za posledné 2 hodiny a dážď podľa modelu na najbližšie 3, na mape.",

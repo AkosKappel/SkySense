@@ -78,6 +78,22 @@
 	"data_attribution": "Weather data by Open-Meteo.com",
 	"details": "Details",
 	"done": "Done",
+	"dry_days": [
+		{
+			"declarations": ["input days", "local daysPlural = days: plural"],
+			"selectors": ["daysPlural"],
+			"match": {
+				"daysPlural=one": "Dry for a day.",
+				"daysPlural=*": "Dry for {days} days."
+			}
+		}
+	],
+	"dry_last": "Last rain: {rain} on {date}.",
+	"dry_month": "So far this month: {rain} of rain.",
+	"dry_none": "No rain in the last {days} days.",
+	"dry_note": "Days with 1 mm or more, before today.",
+	"dry_question": "How dry has it been?",
+	"dry_yesterday": "It rained yesterday.",
 	"edit": "Edit",
 	"embed_open": "Full forecast on SkySense",
 	"embed_umbrella_no": "No umbrella needed in the next 24 hours.",
@@ -103,7 +119,7 @@
 	"feature_answers": "Plain answers first: a sentence about the next 24 hours, what to wear, whether you need an umbrella, when it gets dark and how windy it is.",
 	"feature_comfort": "A setting for people who get cold or warm easily, which moves the ideal temperatures for activities.",
 	"feature_confidence": "How sure the forecast is: the likely range from 51 runs of the ECMWF model, marks on uncertain days, and five weather models side by side.",
-	"feature_normal": "How today compares with the years 1991 to 2020, what this date was like in each of the last ten years, and the past year's records month by month.",
+	"feature_normal": "How today compares with the years 1991 to 2020, what this date was like in each of the last ten years, how long it has been dry, and the past year's records month by month.",
 	"feature_offline": "Installs as an app, and shows places you opened before when you are offline.",
 	"feature_places": "Places you can save, rename and reorder, a \"My location\" entry that finds you again when opened, two places compared day by day, a search in your language, and a link to share any place.",
 	"feature_radar": "A rain radar for the last 2 hours and the model's rain for the next 3, on a map.",

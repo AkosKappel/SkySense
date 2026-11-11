@@ -78,6 +78,22 @@
 	"data_attribution": "Időjárási adatok: Open-Meteo.com",
 	"details": "Részletek",
 	"done": "Kész",
+	"dry_days": [
+		{
+			"declarations": ["input days", "local daysPlural = days: plural"],
+			"selectors": ["daysPlural"],
+			"match": {
+				"daysPlural=one": "Egy napja nem esett.",
+				"daysPlural=*": "{days} napja nem esett."
+			}
+		}
+	],
+	"dry_last": "Utoljára esett: {rain}, {date}.",
+	"dry_month": "Ebben a hónapban eddig: {rain} csapadék.",
+	"dry_none": "Az elmúlt {days} napban nem esett.",
+	"dry_note": "Legalább 1 mm-es napok, a mai nap előtt.",
+	"dry_question": "Mennyire volt száraz?",
+	"dry_yesterday": "Tegnap esett.",
 	"edit": "Szerkesztés",
 	"embed_open": "Teljes előrejelzés a SkySense-en",
 	"embed_umbrella_no": "A következő 24 órában nem kell esernyő.",
@@ -103,7 +119,7 @@
 	"feature_answers": "Először egyszerű válaszok: egy mondat a következő 24 óráról, mit vegyél fel, kell-e esernyő, mikor sötétedik és mennyire fúj a szél.",
 	"feature_comfort": "Beállítás azoknak, akik könnyen fáznak vagy melegük lesz; eltolja a tevékenységek ideális hőmérsékletét.",
 	"feature_confidence": "Mennyire biztos az előrejelzés: az ECMWF modell 51 futásából számolt valószínű tartomány, a bizonytalan napok jelölése és öt időjárási modell egymás mellett.",
-	"feature_normal": "Milyen a mai nap az 1991 és 2020 közötti évekhez képest, milyen volt ez a dátum az elmúlt tíz év mindegyikében, és az elmúlt év rekordjai hónapról hónapra.",
+	"feature_normal": "Milyen a mai nap az 1991 és 2020 közötti évekhez képest, milyen volt ez a dátum az elmúlt tíz év mindegyikében, mióta nem esett, és az elmúlt év rekordjai hónapról hónapra.",
 	"feature_offline": "Alkalmazásként telepíthető, és offline is megmutatja a korábban megnyitott helyeket.",
 	"feature_places": "Helyek, amelyeket elmenthetsz, átnevezhetsz és sorba rendezhetsz, egy „Saját helyzetem” elem, amely megnyitáskor újra megtalál, két hely összehasonlítása napról napra, keresés a saját nyelveden, és bármely hely megosztható linkje.",
 	"feature_radar": "Esőradar az elmúlt 2 óráról és a modell esője a következő 3 órára, térképen.",

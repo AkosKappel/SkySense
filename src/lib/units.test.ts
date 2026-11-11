@@ -33,6 +33,8 @@ describe('conversions', () => {
 	it('formats rain', () => {
 		expect(formatRain(2.54, metric)).toBe('2.5 mm');
 		expect(formatRain(25.4, imperial)).toBe('1.00 in');
+		expect(formatRain(1.44, metric, 'de')).toBe('1,4 mm');
+		expect(formatRain(1234, metric, 'en')).toBe('1,234.0 mm');
 	});
 });
 

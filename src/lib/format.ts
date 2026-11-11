@@ -24,7 +24,7 @@ export function formatter(locale: string, units: Units) {
 		pastDate: (date: string) => formatPastDate(date, intl),
 		month: (month: string, withYear = false) => formatMonth(month, intl, withYear),
 		wind: (kmh: number) => formatWind(kmh, units),
-		rain: (mm: number) => formatRain(mm, units),
+		rain: (mm: number) => formatRain(mm, units, intl),
 		percent: (value: number) =>
 			new Intl.NumberFormat(intl, { style: 'percent' }).format(value / 100)
 	};

@@ -21,6 +21,7 @@
 	import DailyList from '#lib/components/DailyList.svelte';
 	import DayDetail from '#lib/components/DayDetail.svelte';
 	import ClimateTiles from '#lib/components/ClimateTiles.svelte';
+	import DryTile from '#lib/components/DryTile.svelte';
 	import CompareWith from '#lib/components/CompareWith.svelte';
 	import DayFacts from '#lib/components/DayFacts.svelte';
 	import ModelCompare from '#lib/components/ModelCompare.svelte';
@@ -468,7 +469,9 @@
 				max={today.max}
 				place={name}
 				{f}
-			/>
+			>
+				<DryTile coordinates={data.coordinates} today={today.date} {f} />
+			</ClimateTiles>
 		</div>
 	{/if}
 

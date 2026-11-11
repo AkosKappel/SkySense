@@ -78,6 +78,22 @@
 	"data_attribution": "Datos meteorológicos de Open-Meteo.com",
 	"details": "Detalles",
 	"done": "Listo",
+	"dry_days": [
+		{
+			"declarations": ["input days", "local daysPlural = days: plural"],
+			"selectors": ["daysPlural"],
+			"match": {
+				"daysPlural=one": "Un día sin lluvia.",
+				"daysPlural=*": "{days} días sin lluvia."
+			}
+		}
+	],
+	"dry_last": "Última lluvia: {rain} el {date}.",
+	"dry_month": "En lo que va de mes: {rain} de lluvia.",
+	"dry_none": "Sin lluvia en los últimos {days} días.",
+	"dry_note": "Días con 1 mm o más, antes de hoy.",
+	"dry_question": "¿Cuánto tiempo lleva sin llover?",
+	"dry_yesterday": "Ayer llovió.",
 	"edit": "Editar",
 	"embed_open": "Pronóstico completo en SkySense",
 	"embed_umbrella_no": "No hace falta paraguas en las próximas 24 horas.",
@@ -103,7 +119,7 @@
 	"feature_answers": "Primero, respuestas claras: una frase sobre las próximas 24 horas, qué ponerte, si necesitas paraguas, cuándo oscurece y cuánto viento hace.",
 	"feature_comfort": "Un ajuste para quien se enfría o se acalora fácilmente, que desplaza las temperaturas ideales de las actividades.",
 	"feature_confidence": "Cuánta seguridad hay: el rango probable de 51 ejecuciones del modelo ECMWF, avisos en los días inciertos y cinco modelos meteorológicos lado a lado.",
-	"feature_normal": "Cómo es hoy comparado con los años 1991 a 2020, cómo fue esta fecha en cada uno de los últimos diez años, y los récords del último año mes a mes.",
+	"feature_normal": "Cómo es hoy comparado con los años 1991 a 2020, cómo fue esta fecha en cada uno de los últimos diez años, cuánto lleva sin llover, y los récords del último año mes a mes.",
 	"feature_offline": "Se instala como una app y muestra sin conexión los lugares que ya abriste.",
 	"feature_places": "Lugares que puedes guardar, renombrar y ordenar, una entrada «Mi ubicación» que te vuelve a encontrar al abrirla, dos lugares comparados día a día, una búsqueda en tu idioma y un enlace para compartir cualquier lugar.",
 	"feature_radar": "Un radar de lluvia de las últimas 2 horas y la lluvia del modelo para las próximas 3, en un mapa.",
