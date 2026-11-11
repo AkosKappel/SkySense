@@ -1,10 +1,33 @@
 <script lang="ts">
-	import { Droplets } from '@lucide/svelte';
+	import { Droplets, Gauge } from '@lucide/svelte';
 	import { uvLevel, type Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
+	import { pressureTrend, type Pressure } from '#lib/pressure.js';
 	import { RAIN_LIKELY, type Day } from '#lib/weather.js';
 
-	let { day, f, humidity }: { day: Day; f: Formatter; humidity?: number } = $props();
+	// Humidity and pressure are readings for now, so only today's tile passes them.
+	let {
+		day,
+		f,
+		humidity,
+		pressure = null
+	}: { day: Day; f: Formatter; humidity?: number; pressure?: Pressure | null } = $props();
+
+	const trends = {
+		risingFast: m.pressure_rising_fast,
+		rising: m.pressure_rising,
+		steady: m.pressure_steady,
+		falling: m.pressure_falling,
+		fallingFast: m.pressure_falling_fast
+	};
+	const pressureText = $derived(
+		pressure
+			? [
+					f.pressure(pressure.hpa),
+					...(pressure.change === null ? [] : [trends[pressureTrend(pressure.change)]()])
+				].join(' · ')
+			: null
+	);
 
 	const uvLabel = $derived(
 		{
@@ -35,8 +58,20 @@
 			<dd class="mt-1 text-xl font-bold tabular-nums">{value}</dd>
 		</div>
 	{/each}
+	{#if pressureText}
+		<div class="col-span-2 rounded-2xl bg-white/5 p-4 outline-1 outline-white/10">
+			<dt class="text-sm text-ink-muted">{m.pressure()}</dt>
+			<dd class="mt-1 text-xl font-bold tabular-nums">{pressureText}</dd>
+		</div>
+	{/if}
 </dl>
 <p class="mt-4 flex items-center gap-1.5 text-sm text-ink-muted">
 	<Droplets size={14} aria-hidden="true" />
 	{m.rain_likely_note({ percent: f.percent(RAIN_LIKELY) })}
 </p>
+{#if pressureText}
+	<p class="mt-2 flex items-start gap-1.5 text-sm text-ink-muted">
+		<Gauge size={14} class="mt-0.5 shrink-0" aria-hidden="true" />
+		{m.pressure_note()}
+	</p>
+{/if}

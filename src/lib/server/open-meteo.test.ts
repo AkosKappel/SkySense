@@ -42,6 +42,15 @@ describe('toForecast', () => {
 		expect(forecast.hours.at(-1)?.time).toBe('2026-11-19T23:00');
 	});
 
+	it('reads the pressure now and its change over the last three hours', () => {
+		expect(forecast.current.pressure).toEqual({ hpa: 1013.6, change: -1 });
+	});
+
+	it('leaves the pressure out when a recording has none', () => {
+		const hourly = { ...bratislava.hourly, pressure_msl: undefined };
+		expect(toForecast({ ...bratislava, hourly }).current.pressure).toBeNull();
+	});
+
 	it('keeps ten days with sunrise and sunset', () => {
 		expect(forecast.days).toHaveLength(10);
 		expect(forecast.days[0]).toMatchObject({

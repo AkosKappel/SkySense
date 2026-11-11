@@ -460,7 +460,7 @@
 
 			<section class="glass p-6 lg:col-span-2 lg:row-span-2">
 				<h2 class="question">{m.today_details()}</h2>
-				<DayFacts day={today} {f} humidity={now.humidity} />
+				<DayFacts day={today} {f} humidity={now.humidity} pressure={now.pressure} />
 			</section>
 
 			<ClimateTiles

@@ -7,7 +7,7 @@ import {
 	formatWeekday,
 	intlLocale
 } from '#lib/time.js';
-import { formatRain, formatWind, temperature, type Units } from '#lib/units.js';
+import { formatPressure, formatRain, formatWind, temperature, type Units } from '#lib/units.js';
 
 /** Formatting bound to the reader's language and units, for components. */
 export function formatter(locale: string, units: Units) {
@@ -25,6 +25,7 @@ export function formatter(locale: string, units: Units) {
 		month: (month: string, withYear = false) => formatMonth(month, intl, withYear),
 		wind: (kmh: number) => formatWind(kmh, units),
 		rain: (mm: number) => formatRain(mm, units, intl),
+		pressure: (hpa: number) => formatPressure(hpa, units, intl),
 		percent: (value: number) =>
 			new Intl.NumberFormat(intl, { style: 'percent' }).format(value / 100)
 	};

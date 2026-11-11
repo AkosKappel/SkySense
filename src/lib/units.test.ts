@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { defaultUnits, readUnits } from './settings.js';
-import { beaufort, formatRain, formatWind, imperial, metric, temperature } from './units.js';
+import {
+	beaufort,
+	formatPressure,
+	formatRain,
+	formatWind,
+	imperial,
+	metric,
+	temperature
+} from './units.js';
 
 describe('conversions', () => {
 	it('converts temperature', () => {
@@ -34,6 +42,9 @@ describe('conversions', () => {
 		expect(formatRain(2.54, metric)).toBe('2.5 mm');
 		expect(formatRain(25.4, imperial)).toBe('1.00 in');
 		expect(formatRain(1.44, metric, 'de')).toBe('1,4 mm');
+		expect(formatPressure(1013.6, metric)).toBe('1014 hPa');
+		expect(formatPressure(1013.6, metric, 'de')).toBe('1014 hPa');
+		expect(formatPressure(1013.25, imperial)).toBe('29.92 inHg');
 		expect(formatRain(1234, metric, 'en')).toBe('1,234.0 mm');
 	});
 });

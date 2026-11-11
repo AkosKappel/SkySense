@@ -163,6 +163,16 @@ test('says how long it has been dry', async ({ page }) => {
 	await expect(dry.getByText(/^So far this month: /)).toBeVisible();
 });
 
+test("reads the barometer in today's details", async ({ page }) => {
+	await page.goto('/p/48.15,17.11/Bratislava');
+	const details = page.locator('section', { hasText: 'Today in detail' });
+	await expect(details.getByRole('definition').filter({ hasText: 'hPa' })).toHaveText(
+		'1014 hPa · steady'
+	);
+	await page.goto('/p/69.65,18.96/Tromso?demo=polar-night');
+	await expect(page.getByText('985 hPa · falling')).toBeVisible();
+});
+
 test('warns about poor air only where it is notable', async ({ page }) => {
 	await page.goto('/p/1.29,103.85/Singapore');
 	await expect(page.getByText('Poor air quality around 20:00.')).toBeVisible();

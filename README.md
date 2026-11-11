@@ -19,7 +19,7 @@ The weather, made sense of. Most weather apps show a grid of numbers and icons a
 - **When should I go out?** Every hour is scored for running, cycling, walking, hiking, a picnic, laundry outside, stargazing and golden hour photos. The tile names the best time today and in the next 10 days, or why there is none ("Too wet in the next 24 hours."), each score opens into the factors behind it, and the good times download as a calendar file. A comfort setting shifts the temperatures for people who get cold or warm easily.
 - **How sure is it?** 51 runs of the ECMWF ensemble give a likely range around the temperature line, "96% of model runs show it right now" under the umbrella answer, and "Less sure" or "Uncertain" on later days. The summary hedges when the runs disagree. Five weather models can be compared side by side.
 - **Is this normal?** Today's high against the 1991 to 2020 climate for the date ("3° colder than usual."), the same date in each of the last ten years, and how long it has been dry ("Dry for 9 days.").
-- **Anything else I should know?** Air quality and pollen when they matter, tonight's moon, strong gusts, frost and heat, and how far the place's clock is from yours.
+- **Anything else I should know?** Air quality and pollen when they matter, tonight's moon, whether the pressure is rising or falling, strong gusts, frost and heat, and how far the place's clock is from yours.
 - **Is rain coming my way?** A radar map of the last 2 hours, then the model's rain for the next 3, said in words too ("The model shows rain within about 60 km from 11:00.").
 - **Where is it nicer?** Two saved places side by side, day by day, with the nicer one marked.
 

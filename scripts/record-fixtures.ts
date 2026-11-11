@@ -18,7 +18,8 @@ const hourly = [
 	'wind_speed_10m',
 	'wind_gusts_10m',
 	'uv_index',
-	'is_day'
+	'is_day',
+	'pressure_msl'
 ];
 const daily = [
 	'weather_code',

@@ -14,6 +14,7 @@ import type { Climate, Normal } from '#lib/climate.js';
 import { modelIds, type ModelRun } from '#lib/models.js';
 import { summarizeYear, type YearInWeather } from '#lib/year.js';
 import type { GridCell, RadarFrames } from '#lib/radar.js';
+import { pressureAt } from '#lib/pressure.js';
 import type { RainDay } from '#lib/recent.js';
 
 export class WeatherServiceError extends Error {}
@@ -36,7 +37,8 @@ const hourly = [
 	'wind_speed_10m',
 	'wind_gusts_10m',
 	'uv_index',
-	'is_day'
+	'is_day',
+	'pressure_msl'
 ] as const;
 
 const daily = [
@@ -88,7 +90,9 @@ const forecastSchema = z.object({
 		wind_speed_10m: numbers,
 		wind_gusts_10m: numbers,
 		uv_index: numbers,
-		is_day: numbers
+		is_day: numbers,
+		// Optional: fixtures recorded before H-06 and some models lack it.
+		pressure_msl: numbers.optional()
 	}),
 	daily: z.object({
 		time: z.array(z.string()),
@@ -181,7 +185,8 @@ export function toForecast(raw: unknown): Forecast {
 			wind: c.wind_speed_10m,
 			gust: c.wind_gusts_10m,
 			windDirection: c.wind_direction_10m,
-			humidity: c.relative_humidity_2m
+			humidity: c.relative_humidity_2m,
+			pressure: h.pressure_msl ? pressureAt(h.pressure_msl, first) : null
 		},
 		hours,
 		days

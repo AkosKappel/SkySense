@@ -1,6 +1,8 @@
 // The forecast as the app uses it, shared by server and browser. Times are the place's local
 // wall-clock time as Open-Meteo returns them with `timezone=auto` ("2026-11-10T14:00").
 
+import type { Pressure } from '#lib/pressure.js';
+
 export type Condition =
 	'clear' | 'partly' | 'cloudy' | 'fog' | 'drizzle' | 'rain' | 'showers' | 'snow' | 'thunder';
 
@@ -14,6 +16,8 @@ export type Current = {
 	gust: number;
 	windDirection: number;
 	humidity: number;
+	/** Sea-level pressure and its three-hour change (H-06); missing in older recordings. */
+	pressure?: Pressure | null;
 };
 
 export type Hour = {

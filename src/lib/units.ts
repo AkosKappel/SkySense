@@ -68,3 +68,18 @@ export function formatRain(mm: number, units: Units, locale = 'en'): string {
 	}).format(inches ? mm / 25.4 : mm);
 	return `${value} ${inches ? 'in' : 'mm'}`;
 }
+
+/**
+ * Pressure in hPa, or inches of mercury for readers who chose inches for rain: there is no
+ * separate setting, and the US is where barometers read inHg.
+ */
+export function formatPressure(hpa: number, units: Units, locale = 'en'): string {
+	if (units.rain === 'in') {
+		const value = new Intl.NumberFormat(locale, {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2
+		}).format(hpa * 0.02953);
+		return `${value} inHg`;
+	}
+	return `${new Intl.NumberFormat(locale, { maximumFractionDigits: 0, useGrouping: false }).format(hpa)} hPa`;
+}
