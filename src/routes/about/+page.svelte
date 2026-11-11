@@ -12,6 +12,7 @@
 		m.feature_confidence,
 		m.feature_normal,
 		m.feature_air,
+		m.feature_radar,
 		m.feature_sky,
 		m.feature_places,
 		m.feature_offline,

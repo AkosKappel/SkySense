@@ -23,7 +23,13 @@ export default defineConfig({
 					// Svelte writes style attributes (bar heights, positions); 'unsafe-inline' here also
 					// tells SvelteKit not to add nonces for styles, which would disable it.
 					'style-src': ['self', 'unsafe-inline'],
-					'img-src': ['self', 'data:'],
+					// Radar images (RainViewer) and the map under them (CARTO), on the radar view only.
+					'img-src': [
+						'self',
+						'data:',
+						'https://tilecache.rainviewer.com',
+						'https://*.basemaps.cartocdn.com'
+					],
 					// Vite inlines small font subsets as data: URLs.
 					'font-src': ['self', 'data:'],
 					'connect-src': ['self'],

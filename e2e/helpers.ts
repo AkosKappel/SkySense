@@ -20,3 +20,16 @@ export async function savePlace(page: Page) {
 export async function placeReady(page: Page) {
 	await expect(page.getByText('Is this normal for the time of year?')).toBeVisible();
 }
+
+const blankPng = Buffer.from(
+	'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
+	'base64'
+);
+
+/** Answers radar and base map tiles with a blank image, so tests never reach those services. */
+export async function blankMapTiles(page: Page) {
+	await page.route(
+		/^https:\/\/(tilecache\.rainviewer\.com|[a-d]\.basemaps\.cartocdn\.com)\//,
+		(route) => route.fulfill({ contentType: 'image/png', body: blankPng })
+	);
+}

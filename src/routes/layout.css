@@ -15,6 +15,8 @@
 	--color-warm: #fcd34d;
 	--color-cold: #7dd3fc;
 	--color-rose: #fda4af;
+	/* Behind the radar map, also where no base map is configured. */
+	--color-map: #1a1d2e;
 
 	--radius-tile: 1.5rem;
 }
@@ -158,4 +160,40 @@ body::before {
 	details[open]::details-content {
 		height: auto;
 	}
+}
+
+/* The radar view (M-01). RainViewer's "Universal Blue" scheme, light to heavy rain, for the
+   legend: these are the colours on its tiles, not ours. */
+:root {
+	--radar-legend: linear-gradient(
+		to right,
+		#cec087,
+		#88ddee,
+		#00a3e0,
+		#0077aa,
+		#005588,
+		#ffee00,
+		#ffaa00,
+		#ff4400,
+		#c10000
+	);
+}
+
+/* Leaflet's stylesheet loads after this one, so these carry one more selector part to win. */
+div.leaflet-container {
+	background: var(--color-map);
+	font: inherit;
+}
+div.leaflet-container .leaflet-bar a {
+	background: var(--color-map);
+	color: var(--color-ink);
+	border-color: rgb(255 255 255 / 0.15);
+}
+div.leaflet-container .leaflet-control-attribution {
+	font-size: 0.75rem;
+	background: rgb(0 0 0 / 0.55);
+	color: var(--color-ink-muted);
+}
+div.leaflet-container .leaflet-control-attribution a {
+	color: var(--color-ink);
 }

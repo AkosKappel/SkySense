@@ -225,6 +225,10 @@ async function recordYear(name: string, lat: number, lon: number, firstHour: str
 	);
 }
 
+// The radar frames (M-01) and a 5 × 5 rain grid per place are recorded separately: the frames'
+// times are shifted to end at the forecast fixtures' "now" (2026-11-10 09:00 UTC) so the radar
+// view's timeline joins up, and their tiles are never fetched in tests (Playwright answers them).
+
 const wanted = process.argv.slice(2);
 for (const [name, fixture] of Object.entries(fixtures)) {
 	if (wanted.length === 0 || wanted.includes(name)) await record(name, fixture);

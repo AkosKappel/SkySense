@@ -24,6 +24,7 @@
 	import CompareWith from '#lib/components/CompareWith.svelte';
 	import DayFacts from '#lib/components/DayFacts.svelte';
 	import ModelCompare from '#lib/components/ModelCompare.svelte';
+	import RadarView from '#lib/components/RadarView.svelte';
 	import YearView from '#lib/components/YearView.svelte';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
 	import NowTile from '#lib/components/NowTile.svelte';
@@ -81,14 +82,17 @@
 	const day = $derived(forecast.days.find((d) => d.date === page.url.searchParams.get('day')));
 	const comparing = $derived(page.url.searchParams.has('models'));
 	const pastYear = $derived(page.url.searchParams.has('year'));
+	const showRadar = $derived(page.url.searchParams.has('radar'));
 	const title = $derived(
-		pastYear
-			? m.year_title({ place: name })
-			: comparing
-				? m.compare_title({ place: name })
-				: day
-					? m.weather_on({ place: name, date: f.date(day.date) })
-					: m.weather_in({ place: name })
+		showRadar
+			? m.radar_title({ place: name })
+			: pastYear
+				? m.year_title({ place: name })
+				: comparing
+					? m.compare_title({ place: name })
+					: day
+						? m.weather_on({ place: name, date: f.date(day.date) })
+						: m.weather_in({ place: name })
 	);
 	const dayHours = $derived(day ? forecast.hours.filter((h) => h.time.startsWith(day.date)) : []);
 
@@ -311,7 +315,14 @@
 		</p>
 	{/if}
 
-	{#if pastYear}
+	{#if showRadar}
+		<RadarView
+			coordinates={data.coordinates}
+			place={name}
+			utcOffsetSeconds={forecast.utcOffsetSeconds}
+			{f}
+		/>
+	{:else if pastYear}
 		<YearView year={data.year} place={name} {f} />
 	{:else if comparing}
 		<ModelCompare runs={data.models} from={forecast.hours[0].time} {f} />
@@ -357,6 +368,14 @@
 
 			<section class="glass p-6 md:col-span-2">
 				<UmbrellaTile hours={forecast.hours} {f} />
+				<a
+					href="{resolve('/p/[coords]/[[name]]', {
+						coords: page.params.coords ?? '',
+						name: encodeURIComponent(page.params.name ?? '')
+					})}?radar"
+					class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
+					>{m.radar_link()} <ChevronRight size={16} aria-hidden="true" /></a
+				>
 			</section>
 
 			<section class="glass p-6 md:col-span-2 lg:col-span-4">

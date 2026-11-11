@@ -13,6 +13,7 @@ import {
 import type { Climate, Normal } from '#lib/climate.js';
 import { modelIds, type ModelRun } from '#lib/models.js';
 import { summarizeYear, type YearInWeather } from '#lib/year.js';
+import type { GridCell, RadarFrames } from '#lib/radar.js';
 
 export class WeatherServiceError extends Error {}
 
@@ -471,6 +472,91 @@ export async function fetchYear(
 		timezone: 'auto'
 	}).toString();
 	return toYear(await getJson(url, fetchFn));
+}
+
+const gridSchema = z.array(
+	z.object({
+		latitude: z.number(),
+		longitude: z.number(),
+		hourly: z.object({
+			time: z.array(z.string()),
+			precipitation: numbers,
+			precipitation_probability: numbers
+		})
+	})
+);
+
+/** Points on each side of the place; 5 × 5 points about 33 km apart cover some 130 km. */
+const GRID_STEPS = 2;
+const GRID_DEGREES = 0.3;
+const GRID_HOURS = 3;
+
+/** The grid around a place: rows north to south, columns west to east, spaced evenly in km. */
+export function gridPoints({ lat, lon }: Coordinates): Coordinates[] {
+	const lonStep = GRID_DEGREES / Math.max(0.2, Math.cos((lat * Math.PI) / 180));
+	const points: Coordinates[] = [];
+	for (let i = GRID_STEPS; i >= -GRID_STEPS; i--) {
+		for (let j = -GRID_STEPS; j <= GRID_STEPS; j++) {
+			points.push({
+				lat: Math.round((lat + i * GRID_DEGREES) * 100) / 100,
+				lon: Math.round((lon + j * lonStep) * 100) / 100
+			});
+		}
+	}
+	return points;
+}
+
+export function toGrid(raw: unknown): GridCell[] {
+	const parsed = gridSchema.safeParse(raw);
+	if (!parsed.success) throw new WeatherServiceError('Unexpected grid response');
+	return parsed.data.map((point) => ({
+		lat: point.latitude,
+		lon: point.longitude,
+		hours: point.hourly.time.map((time, i) => ({
+			time,
+			rain: point.hourly.precipitation[i] ?? 0,
+			chance: point.hourly.precipitation_probability[i] ?? 0
+		}))
+	}));
+}
+
+/** The model's rain for the next hours around a place: one request for all 25 points. */
+export async function fetchGrid(
+	coordinates: Coordinates,
+	fetchFn: typeof fetch = fetch
+): Promise<GridCell[]> {
+	const { lat, lon } = roundCoordinates(coordinates);
+	if (useFixtures()) {
+		return toGrid(fixtures[`./fixtures/grid-${nearestFixture({ lat, lon })}.json`].default);
+	}
+	const points = gridPoints({ lat, lon });
+	const url = new URL(FORECAST_URL);
+	url.search = new URLSearchParams({
+		latitude: points.map((p) => p.lat).join(','),
+		longitude: points.map((p) => p.lon).join(','),
+		hourly: 'precipitation,precipitation_probability',
+		timezone: 'auto',
+		forecast_hours: String(GRID_HOURS + 1)
+	}).toString();
+	return toGrid(await getJson(url, fetchFn));
+}
+
+const RADAR_URL = 'https://api.rainviewer.com/public/weather-maps.json';
+const radarSchema = z.object({
+	host: z.string().url(),
+	radar: z.object({ past: z.array(z.object({ time: z.number(), path: z.string() })) })
+});
+
+/** RainViewer's list of past radar frames (2 hours, every 10 minutes), reduced to what tiles need. */
+export function toRadarFrames(raw: unknown): RadarFrames {
+	const parsed = radarSchema.safeParse(raw);
+	if (!parsed.success) throw new WeatherServiceError('Unexpected radar response');
+	return { host: parsed.data.host, frames: parsed.data.radar.past };
+}
+
+export async function fetchRadarFrames(fetchFn: typeof fetch = fetch): Promise<RadarFrames> {
+	if (useFixtures()) return toRadarFrames(fixtures['./fixtures/radar-frames.json'].default);
+	return toRadarFrames(await getJson(new URL(RADAR_URL), fetchFn));
 }
 
 export type Place = {

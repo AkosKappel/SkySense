@@ -1,5 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { expectAccessible } from './axe.js';
+import { blankMapTiles } from './helpers.js';
+
+test.beforeEach(({ page }) => blankMapTiles(page));
 
 // The accessibility pass (P-02): every page through axe, reflow at 320 px (WCAG 1.4.10, the
 // same as 1280 px at 400% zoom), a visible focus on everything Tab reaches, and no motion when
@@ -10,6 +13,7 @@ const pages = [
 	'/p/48.15,17.11/Bratislava?day=2026-11-12',
 	'/p/48.15,17.11/Bratislava?models',
 	'/p/48.15,17.11/Bratislava?year',
+	'/p/48.15,17.11/Bratislava?radar',
 	'/p/1.29,103.85/Singapore',
 	'/compare?a=48.15,17.11&an=Bratislava&b=40.42,-3.7&bn=Madrid',
 	'/embed/48.15,17.11/Bratislava',

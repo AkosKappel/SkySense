@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { expectAccessible } from './axe.js';
-import { placeReady, savePlace } from './helpers.js';
+import { blankMapTiles, placeReady, savePlace } from './helpers.js';
 
 test('finds a place and shows its forecast', async ({ page }) => {
 	await page.goto('/');
@@ -295,6 +295,25 @@ test('shares today as a picture, or downloads it where sharing files is not poss
 	expect(png.subarray(1, 4).toString()).toBe('PNG');
 	expect(png.readUInt32BE(16)).toBe(1080);
 	expect(png.readUInt32BE(20)).toBe(1080);
+});
+
+test('shows the rain radar, then the model, from the umbrella tile', async ({ page }) => {
+	await blankMapTiles(page);
+	await page.goto('/p/48.15,17.11/Bratislava');
+	await page.getByRole('link', { name: 'Rain radar' }).click();
+	await expect(page).toHaveURL(/\?radar$/);
+	await expect(
+		page.getByRole('heading', { level: 1, name: 'Rain radar around Bratislava' })
+	).toBeVisible();
+	await expect(page.getByText('The model shows rain within about 60 km from 10:00.')).toBeVisible();
+	await expect(page.getByRole('region', { name: 'Map of rain around Bratislava' })).toBeVisible();
+
+	const slider = page.getByRole('slider', { name: 'Time' });
+	await expect(slider).toHaveAttribute('aria-valuetext', '10:00, radar');
+	await slider.focus();
+	await page.keyboard.press('End');
+	await expect(slider).toHaveAttribute('aria-valuetext', '13:00, model forecast');
+	await expectAccessible(page);
 });
 
 test('settings change units and language', async ({ page }) => {

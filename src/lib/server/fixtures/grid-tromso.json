@@ -1,0 +1,401 @@
+[
+	{
+		"latitude": 69.04221,
+		"longitude": 17.213425,
+		"generationtime_ms": 0.12218952178955078,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 0,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0, 0, 0.1, 0.1],
+			"precipitation_probability": [100, 100, 100, 100]
+		}
+	},
+	{
+		"latitude": 69.04717,
+		"longitude": 18.089554,
+		"generationtime_ms": 0.017881393432617188,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 865,
+		"location_id": 1,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0, 0.6, 1.3, 1.8],
+			"precipitation_probability": [100, 100, 99, 98]
+		}
+	},
+	{
+		"latitude": 69.047874,
+		"longitude": 18.965897,
+		"generationtime_ms": 0.0152587890625,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 606,
+		"location_id": 2,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0.1, 0.3, 0.6, 0.2],
+			"precipitation_probability": [27, 30, 41, 53]
+		}
+	},
+	{
+		"latitude": 69.05389,
+		"longitude": 19.819092,
+		"generationtime_ms": 0.08463859558105469,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 1077,
+		"location_id": 3,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0.2, 0.6, 0.6, 0.2],
+			"precipitation_probability": [61, 53, 47, 45]
+		}
+	},
+	{
+		"latitude": 69.04615,
+		"longitude": 20.695267,
+		"generationtime_ms": 0.016450881958007812,
+		"utc_offset_seconds": 7200,
+		"timezone": "Europe/Helsinki",
+		"timezone_abbreviation": "GMT+2",
+		"elevation": 477,
+		"location_id": 4,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0.1, 0, 0.1, 0.7],
+			"precipitation_probability": [0, 0, 0, 0]
+		}
+	},
+	{
+		"latitude": 69.35511,
+		"longitude": 17.218628,
+		"generationtime_ms": 0.5726814270019531,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 703,
+		"location_id": 5,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0, 0, 0, 0.5],
+			"precipitation_probability": [100, 100, 100, 100]
+		}
+	},
+	{
+		"latitude": 69.3511,
+		"longitude": 18.105621,
+		"generationtime_ms": 0.08320808410644531,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 0,
+		"location_id": 6,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0.4, 0, 0, 0.1],
+			"precipitation_probability": [94, 95, 97, 98]
+		}
+	},
+	{
+		"latitude": 69.35223,
+		"longitude": 18.968414,
+		"generationtime_ms": 0.1556873321533203,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 537,
+		"location_id": 7,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0.6, 0.4, 0.2, 0.9],
+			"precipitation_probability": [90, 90, 91, 92]
+		}
+	},
+	{
+		"latitude": 69.358864,
+		"longitude": 19.807785,
+		"generationtime_ms": 0.017642974853515625,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 1077,
+		"location_id": 8,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [2.4, 3.9, 0.7, 0.7],
+			"precipitation_probability": [96, 94, 91, 88]
+		}
+	},
+	{
+		"latitude": 69.35118,
+		"longitude": 20.695755,
+		"generationtime_ms": 0.10919570922851562,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 850,
+		"location_id": 9,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0.2, 0.3, 0.4, 1.5],
+			"precipitation_probability": [4, 8, 17, 22]
+		}
+	},
+	{
+		"latitude": 69.64994,
+		"longitude": 17.222183,
+		"generationtime_ms": 0.10192394256591797,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 0,
+		"location_id": 10,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0, 0, 0.1, 0],
+			"precipitation_probability": [98, 99, 100, 98]
+		}
+	},
+	{
+		"latitude": 69.646324,
+		"longitude": 18.095245,
+		"generationtime_ms": 0.08153915405273438,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 27,
+		"location_id": 11,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0, 0.2, 0, 0.1],
+			"precipitation_probability": [100, 100, 100, 100]
+		}
+	},
+	{
+		"latitude": 69.638565,
+		"longitude": 18.967834,
+		"generationtime_ms": 0.013828277587890625,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 9,
+		"location_id": 12,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0.9, 0.7, 0.6, 0],
+			"precipitation_probability": [100, 100, 100, 100]
+		}
+	},
+	{
+		"latitude": 69.65408,
+		"longitude": 19.81987,
+		"generationtime_ms": 0.013828277587890625,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 8,
+		"location_id": 13,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0.2, 1.1, 0.4, 0.3],
+			"precipitation_probability": [100, 100, 99, 98]
+		}
+	},
+	{
+		"latitude": 69.65519,
+		"longitude": 20.721832,
+		"generationtime_ms": 0.0845193862915039,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 745,
+		"location_id": 14,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0.8, 0.1, 0.4, 0.1],
+			"precipitation_probability": [63, 65, 71, 75]
+		}
+	},
+	{
+		"latitude": 69.95348,
+		"longitude": 17.226746,
+		"generationtime_ms": 0.015139579772949219,
+		"utc_offset_seconds": 3600,
+		"timezone": "Etc/GMT-1",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 0,
+		"location_id": 15,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0.4, 0, 0, 0],
+			"precipitation_probability": [96, 92, 87, 82]
+		}
+	},
+	{
+		"latitude": 69.949814,
+		"longitude": 18.111816,
+		"generationtime_ms": 0.08499622344970703,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 0,
+		"location_id": 16,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0.3, 0, 0, 0],
+			"precipitation_probability": [98, 92, 83, 76]
+		}
+	},
+	{
+		"latitude": 69.95143,
+		"longitude": 18.972061,
+		"generationtime_ms": 0.07998943328857422,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 153,
+		"location_id": 17,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0, 0, 0, 0.1],
+			"precipitation_probability": [100, 100, 100, 100]
+		}
+	},
+	{
+		"latitude": 69.957985,
+		"longitude": 19.834229,
+		"generationtime_ms": 0.06854534149169922,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 273,
+		"location_id": 18,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0.1, 0.1, 0.7, 1.7],
+			"precipitation_probability": [100, 100, 99, 98]
+		}
+	},
+	{
+		"latitude": 69.94358,
+		"longitude": 20.66626,
+		"generationtime_ms": 0.06842613220214844,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 0,
+		"location_id": 19,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0.1, 0, 0.1, 0.1],
+			"precipitation_probability": [100, 100, 100, 100]
+		}
+	},
+	{
+		"latitude": 70.2479,
+		"longitude": 17.23053,
+		"generationtime_ms": 0.07617473602294922,
+		"utc_offset_seconds": 3600,
+		"timezone": "Etc/GMT-1",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 0,
+		"location_id": 20,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0, 0, 0, 0],
+			"precipitation_probability": [76, 64, 51, 43]
+		}
+	},
+	{
+		"latitude": 70.25351,
+		"longitude": 18.102509,
+		"generationtime_ms": 0.07605552673339844,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 0,
+		"location_id": 21,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0, 0, 0.4, 0.1],
+			"precipitation_probability": [84, 69, 51, 39]
+		}
+	},
+	{
+		"latitude": 70.246796,
+		"longitude": 18.946808,
+		"generationtime_ms": 0.014066696166992188,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 0,
+		"location_id": 22,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0, 0, 0.3, 0.1],
+			"precipitation_probability": [98, 95, 91, 86]
+		}
+	},
+	{
+		"latitude": 70.25343,
+		"longitude": 19.820694,
+		"generationtime_ms": 0.10132789611816406,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 0,
+		"location_id": 23,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0, 0, 0, 0],
+			"precipitation_probability": [100, 98, 94, 92]
+		}
+	},
+	{
+		"latitude": 70.238304,
+		"longitude": 20.690292,
+		"generationtime_ms": 0.10025501251220703,
+		"utc_offset_seconds": 3600,
+		"timezone": "Europe/Oslo",
+		"timezone_abbreviation": "GMT+1",
+		"elevation": 0,
+		"location_id": 24,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T10:00", "2026-11-10T11:00", "2026-11-10T12:00", "2026-11-10T13:00"],
+			"precipitation": [0, 0, 0, 0],
+			"precipitation_probability": [100, 100, 100, 100]
+		}
+	}
+]

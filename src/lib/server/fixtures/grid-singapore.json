@@ -1,0 +1,401 @@
+[
+	{
+		"latitude": 0.66783834,
+		"longitude": 103.27059,
+		"generationtime_ms": 0.20885467529296875,
+		"utc_offset_seconds": 25200,
+		"timezone": "Asia/Jakarta",
+		"timezone_abbreviation": "GMT+7",
+		"elevation": 0,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [3.1, 0.6, 0.2, 0.4],
+			"precipitation_probability": [99, 95, 88, 76]
+		}
+	},
+	{
+		"latitude": 0.66783834,
+		"longitude": 103.48236,
+		"generationtime_ms": 0.08392333984375,
+		"utc_offset_seconds": 25200,
+		"timezone": "Asia/Jakarta",
+		"timezone_abbreviation": "GMT+7",
+		"elevation": 0,
+		"location_id": 1,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [2.2, 0.3, 0.1, 0],
+			"precipitation_probability": [100, 94, 84, 64]
+		}
+	},
+	{
+		"latitude": 0.66783834,
+		"longitude": 103.8353,
+		"generationtime_ms": 0.022292137145996094,
+		"utc_offset_seconds": 25200,
+		"timezone": "Asia/Jakarta",
+		"timezone_abbreviation": "GMT+7",
+		"elevation": 0,
+		"location_id": 2,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [0, 0, 0, 0],
+			"precipitation_probability": [92, 86, 76, 60]
+		}
+	},
+	{
+		"latitude": 0.66783834,
+		"longitude": 104.11765,
+		"generationtime_ms": 0.020503997802734375,
+		"utc_offset_seconds": 25200,
+		"timezone": "Asia/Jakarta",
+		"timezone_abbreviation": "GMT+7",
+		"elevation": 0,
+		"location_id": 3,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [0, 0, 0.1, 0],
+			"precipitation_probability": [93, 84, 73, 57]
+		}
+	},
+	{
+		"latitude": 0.66783834,
+		"longitude": 104.4706,
+		"generationtime_ms": 0.02110004425048828,
+		"utc_offset_seconds": 25200,
+		"timezone": "Asia/Jakarta",
+		"timezone_abbreviation": "GMT+7",
+		"elevation": 0,
+		"location_id": 4,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [0, 0, 0.1, 0],
+			"precipitation_probability": [93, 84, 73, 57]
+		}
+	},
+	{
+		"latitude": 1.0896308,
+		"longitude": 103.333336,
+		"generationtime_ms": 0.019311904907226562,
+		"utc_offset_seconds": 25200,
+		"timezone": "Asia/Jakarta",
+		"timezone_abbreviation": "GMT+7",
+		"elevation": 0,
+		"location_id": 5,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [0.5, 0.1, 0, 0],
+			"precipitation_probability": [98, 93, 86, 75]
+		}
+	},
+	{
+		"latitude": 1.0193322,
+		"longitude": 103.53544,
+		"generationtime_ms": 0.018715858459472656,
+		"utc_offset_seconds": 25200,
+		"timezone": "Asia/Jakarta",
+		"timezone_abbreviation": "GMT+7",
+		"elevation": 0,
+		"location_id": 6,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [0, 0.3, 0.3, 0],
+			"precipitation_probability": [100, 94, 84, 64]
+		}
+	},
+	{
+		"latitude": 1.0193322,
+		"longitude": 103.88977,
+		"generationtime_ms": 0.029206275939941406,
+		"utc_offset_seconds": 25200,
+		"timezone": "Asia/Jakarta",
+		"timezone_abbreviation": "GMT+7",
+		"elevation": 14,
+		"location_id": 7,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [0.1, 0, 0, 0],
+			"precipitation_probability": [99, 96, 88, 68]
+		}
+	},
+	{
+		"latitude": 1.0896308,
+		"longitude": 104.11348,
+		"generationtime_ms": 0.021576881408691406,
+		"utc_offset_seconds": 25200,
+		"timezone": "Asia/Jakarta",
+		"timezone_abbreviation": "GMT+7",
+		"elevation": 0,
+		"location_id": 8,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [0, 0, 0, 0],
+			"precipitation_probability": [99, 96, 88, 68]
+		}
+	},
+	{
+		"latitude": 0.9490334,
+		"longitude": 104.44532,
+		"generationtime_ms": 0.0171661376953125,
+		"utc_offset_seconds": 25200,
+		"timezone": "Asia/Jakarta",
+		"timezone_abbreviation": "GMT+7",
+		"elevation": 0,
+		"location_id": 9,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [0, 0.1, 0, 0],
+			"precipitation_probability": [97, 93, 84, 65]
+		}
+	},
+	{
+		"latitude": 1.3005272,
+		"longitude": 103.222755,
+		"generationtime_ms": 0.01990795135498047,
+		"utc_offset_seconds": 28800,
+		"timezone": "Asia/Kuala_Lumpur",
+		"timezone_abbreviation": "GMT+8",
+		"elevation": 0,
+		"location_id": 10,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [0, 0, 0.9, 0.3],
+			"precipitation_probability": [80, 88, 91, 88]
+		}
+	},
+	{
+		"latitude": 1.3708259,
+		"longitude": 103.517784,
+		"generationtime_ms": 0.017881393432617188,
+		"utc_offset_seconds": 28800,
+		"timezone": "Asia/Kuala_Lumpur",
+		"timezone_abbreviation": "GMT+8",
+		"elevation": 0,
+		"location_id": 11,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [5, 4.2, 3, 2.7],
+			"precipitation_probability": [100, 100, 100, 92]
+		}
+	},
+	{
+		"latitude": 1.3005272,
+		"longitude": 103.862564,
+		"generationtime_ms": 0.017523765563964844,
+		"utc_offset_seconds": 28800,
+		"timezone": "Asia/Singapore",
+		"timezone_abbreviation": "GMT+8",
+		"elevation": 27,
+		"location_id": 12,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [2.8, 0.8, 1.4, 1],
+			"precipitation_probability": [96, 100, 100, 96]
+		}
+	},
+	{
+		"latitude": 1.3708259,
+		"longitude": 104.1581,
+		"generationtime_ms": 0.015854835510253906,
+		"utc_offset_seconds": 28800,
+		"timezone": "Asia/Kuala_Lumpur",
+		"timezone_abbreviation": "GMT+8",
+		"elevation": 0,
+		"location_id": 13,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [1.1, 1, 0.4, 0.1],
+			"precipitation_probability": [98, 100, 97, 88]
+		}
+	},
+	{
+		"latitude": 1.3005272,
+		"longitude": 104.43128,
+		"generationtime_ms": 0.04279613494873047,
+		"utc_offset_seconds": 28800,
+		"timezone": "Asia/Kuala_Lumpur",
+		"timezone_abbreviation": "GMT+8",
+		"elevation": 0,
+		"location_id": 14,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [1.1, 0.5, 0.3, 0.1],
+			"precipitation_probability": [98, 100, 97, 88]
+		}
+	},
+	{
+		"latitude": 1.652021,
+		"longitude": 103.27518,
+		"generationtime_ms": 0.020623207092285156,
+		"utc_offset_seconds": 28800,
+		"timezone": "Asia/Kuala_Lumpur",
+		"timezone_abbreviation": "GMT+8",
+		"elevation": 0,
+		"location_id": 15,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [7.5, 2.1, 0.4, 0.1],
+			"precipitation_probability": [94, 97, 94, 86]
+		}
+	},
+	{
+		"latitude": 1.5817223,
+		"longitude": 103.54992,
+		"generationtime_ms": 0.01704692840576172,
+		"utc_offset_seconds": 28800,
+		"timezone": "Asia/Kuala_Lumpur",
+		"timezone_abbreviation": "GMT+8",
+		"elevation": 308,
+		"location_id": 16,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [11.6, 4.1, 1.1, 0.4],
+			"precipitation_probability": [100, 100, 100, 92]
+		}
+	},
+	{
+		"latitude": 1.5817223,
+		"longitude": 103.83518,
+		"generationtime_ms": 0.017404556274414062,
+		"utc_offset_seconds": 28800,
+		"timezone": "Asia/Kuala_Lumpur",
+		"timezone_abbreviation": "GMT+8",
+		"elevation": 16,
+		"location_id": 17,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [1.7, 0.6, 0.1, 0],
+			"precipitation_probability": [96, 100, 100, 96]
+		}
+	},
+	{
+		"latitude": 1.5817223,
+		"longitude": 104.12044,
+		"generationtime_ms": 0.01633167266845703,
+		"utc_offset_seconds": 28800,
+		"timezone": "Asia/Kuala_Lumpur",
+		"timezone_abbreviation": "GMT+8",
+		"elevation": 23,
+		"location_id": 18,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [0.4, 4.2, 1.3, 0.3],
+			"precipitation_probability": [98, 100, 97, 88]
+		}
+	},
+	{
+		"latitude": 1.5817223,
+		"longitude": 104.47702,
+		"generationtime_ms": 0.016450881958007812,
+		"utc_offset_seconds": 28800,
+		"timezone": "Asia/Kuala_Lumpur",
+		"timezone_abbreviation": "GMT+8",
+		"elevation": 0,
+		"location_id": 19,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [0.7, 2.8, 0.7, 0.3],
+			"precipitation_probability": [98, 100, 97, 88]
+		}
+	},
+	{
+		"latitude": 1.8629173,
+		"longitude": 103.23529,
+		"generationtime_ms": 0.01633167266845703,
+		"utc_offset_seconds": 28800,
+		"timezone": "Asia/Kuala_Lumpur",
+		"timezone_abbreviation": "GMT+8",
+		"elevation": 37,
+		"location_id": 20,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [0.2, 0, 0, 0],
+			"precipitation_probability": [90, 88, 79, 69]
+		}
+	},
+	{
+		"latitude": 1.8629173,
+		"longitude": 103.52146,
+		"generationtime_ms": 0.02586841583251953,
+		"utc_offset_seconds": 28800,
+		"timezone": "Asia/Kuala_Lumpur",
+		"timezone_abbreviation": "GMT+8",
+		"elevation": 42,
+		"location_id": 21,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [1.4, 0.5, 0.6, 0.3],
+			"precipitation_probability": [94, 92, 85, 76]
+		}
+	},
+	{
+		"latitude": 1.8629173,
+		"longitude": 103.87917,
+		"generationtime_ms": 0.016570091247558594,
+		"utc_offset_seconds": 28800,
+		"timezone": "Asia/Kuala_Lumpur",
+		"timezone_abbreviation": "GMT+8",
+		"elevation": 25,
+		"location_id": 22,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [0.4, 0.5, 0.4, 0.3],
+			"precipitation_probability": [100, 98, 93, 84]
+		}
+	},
+	{
+		"latitude": 1.8629173,
+		"longitude": 104.093796,
+		"generationtime_ms": 0.016570091247558594,
+		"utc_offset_seconds": 28800,
+		"timezone": "Asia/Kuala_Lumpur",
+		"timezone_abbreviation": "GMT+8",
+		"elevation": 0,
+		"location_id": 23,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [1, 0.5, 0.2, 0.1],
+			"precipitation_probability": [98, 98, 96, 90]
+		}
+	},
+	{
+		"latitude": 1.8629173,
+		"longitude": 104.45151,
+		"generationtime_ms": 0.016570091247558594,
+		"utc_offset_seconds": 28800,
+		"timezone": "Asia/Kuala_Lumpur",
+		"timezone_abbreviation": "GMT+8",
+		"elevation": 0,
+		"location_id": 24,
+		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly": {
+			"time": ["2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00", "2026-11-10T20:00"],
+			"precipitation": [1.5, 0.5, 0.6, 0.7],
+			"precipitation_probability": [84, 90, 95, 96]
+		}
+	}
+]
