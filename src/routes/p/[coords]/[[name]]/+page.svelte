@@ -47,7 +47,7 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { moon } from '#lib/moon.js';
-	import { rememberLastPlace, savedPlaces } from '#lib/places.svelte.js';
+	import { MAX_PLACES, rememberLastPlace, savedPlaces } from '#lib/places.svelte.js';
 	import { precipitation, skies, skyKind } from '#lib/sky.js';
 	import { summarize } from '#lib/summary.js';
 	import { whatToWear } from '#lib/wear.js';
@@ -180,7 +180,11 @@
 
 	$effect(() => rememberLastPlace(place));
 
-	// Previous and next saved place (F-21), in the list's order and round the end.
+	// Saving into a full list does nothing but say so (no place is dropped to make room).
+	let placesFull = $state(false);
+
+	// Previous and next saved place (F-21), in the list's order and round the end. Hidden below
+	// 380 px, where they would squeeze the place name out of the header; the sheet still lists all.
 	const neighbours = $derived.by(() => {
 		const list = savedPlaces.list;
 		const at = list.findIndex((p) => formatCoordinates(p) === formatCoordinates(place));
@@ -256,13 +260,13 @@
 				<a
 					href={neighbours.previous.href}
 					aria-label={m.previous_place({ name: neighbours.previous.label })}
-					class="grid size-11 pill place-items-center"
+					class="hidden size-11 pill place-items-center min-[380px]:grid"
 					><ChevronLeft size={18} aria-hidden="true" /></a
 				>
 				<a
 					href={neighbours.next.href}
 					aria-label={m.next_place({ name: neighbours.next.label })}
-					class="grid size-11 pill place-items-center"
+					class="hidden size-11 pill place-items-center min-[380px]:grid"
 					><ChevronRight size={18} aria-hidden="true" /></a
 				>
 			{/if}
@@ -270,7 +274,7 @@
 				<button
 					type="button"
 					class="flex h-11 pill items-center gap-1.5 px-4 text-sm font-semibold"
-					onclick={() => savedPlaces.add(place)}
+					onclick={() => (placesFull = !savedPlaces.add(place))}
 				>
 					<Plus size={16} aria-hidden="true" />
 					{m.save_place()}
@@ -284,6 +288,11 @@
 			>
 		</div>
 	</header>
+	{#if placesFull}
+		<p role="status" class="mt-3 glass px-5 py-3 text-sm font-semibold">
+			{m.places_full({ max: MAX_PLACES })}
+		</p>
+	{/if}
 
 	{#if pastYear}
 		<YearView year={data.year} place={name} {f} />

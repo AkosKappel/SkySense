@@ -256,6 +256,12 @@ test('steps through saved places with previous and next', async ({ page }) => {
 	await page.getByRole('link', { name: 'Next place: Tromsø' }).click();
 	await expect(page).toHaveURL(/Troms%C3%B8$/);
 	await expectAccessible(page);
+
+	// On the narrowest phones the arrows give way, so the place name keeps its room.
+	await page.setViewportSize({ width: 320, height: 640 });
+	await expect(page.getByRole('link', { name: /^Next place/ })).toBeHidden();
+	const name = page.getByRole('link', { name: /Change place/ }).getByText('Tromsø');
+	expect((await name.boundingBox())?.width).toBeGreaterThan(40);
 });
 
 test('shows the past year from the "past years" tile', async ({ page }) => {

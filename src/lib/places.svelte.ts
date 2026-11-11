@@ -19,16 +19,24 @@ function read(): SavedPlace[] {
 	try {
 		const parsed: unknown = JSON.parse(localStorage.getItem(KEY) ?? '[]');
 		if (!Array.isArray(parsed)) return [];
-		return parsed.filter(
+		const valid = parsed.filter(
 			(p): p is SavedPlace =>
 				typeof p?.name === 'string' && typeof p?.lat === 'number' && typeof p?.lon === 'number'
 		);
+		// Two entries with one key would break the lists keyed by it; the first one stays.
+		return valid.filter((p, i) => valid.findIndex((q) => placeKey(q) === placeKey(p)) === i);
 	} catch {
 		return [];
 	}
 }
 
 const same = (a: Coordinates, b: Coordinates) => formatCoordinates(a) === formatCoordinates(b);
+
+/**
+ * A saved place's key in lists. "My location" can round to the same coordinates as a saved
+ * place, so it has its own key; there is only ever one.
+ */
+export const placeKey = (place: SavedPlace) => (place.live ? 'live' : formatCoordinates(place));
 
 class SavedPlaces {
 	list = $state<SavedPlace[]>(browser ? read() : []);
@@ -54,10 +62,16 @@ class SavedPlaces {
 		return this.list.some((p) => same(p, place));
 	}
 
-	add(place: SavedPlace) {
-		if (this.has(place)) return;
-		this.list = [place, ...this.list].slice(0, MAX_PLACES);
+	/**
+	 * Saves a place first in the list. Returns false when the list is full: nothing is dropped
+	 * to make room, the reader removes a place themselves. "My location" does not count.
+	 */
+	add(place: SavedPlace): boolean {
+		if (this.has(place)) return true;
+		if (this.list.filter((p) => !p.live).length >= MAX_PLACES) return false;
+		this.list = [place, ...this.list];
 		this.save();
+		return true;
 	}
 
 	remove(index: number): SavedPlace | undefined {
@@ -74,7 +88,7 @@ class SavedPlaces {
 	/** Saves the reader's position as the one "My location" entry, first in the list. */
 	setLive(place: Coordinates & { name: string }) {
 		const live: SavedPlace = { name: place.name, lat: place.lat, lon: place.lon, live: true };
-		this.list = [live, ...this.list.filter((p) => !p.live)].slice(0, MAX_PLACES);
+		this.list = [live, ...this.list.filter((p) => !p.live)];
 		this.save();
 	}
 

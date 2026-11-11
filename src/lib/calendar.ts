@@ -16,6 +16,32 @@ function utcStamp(local: string, utcOffsetSeconds: number): string {
 /** Commas, semicolons and backslashes are special in text values; newlines become \n. */
 const escape = (text: string) => text.replace(/[\\;,]/g, (c) => `\\${c}`).replace(/\n/g, '\\n');
 
+const encoder = new TextEncoder();
+
+/**
+ * Lines may be at most 75 octets (RFC 5545, 3.1); longer ones continue on lines that start with a
+ * space. Counted in UTF-8 bytes and split between characters, so "ő" is never cut in half.
+ */
+export function fold(line: string): string {
+	const parts: string[] = [];
+	let part = '';
+	let bytes = 0;
+	for (const char of line) {
+		const size = encoder.encode(char).length;
+		// Continuation lines lose one octet to their leading space.
+		const limit = parts.length ? 74 : 75;
+		if (bytes + size > limit) {
+			parts.push(part);
+			part = '';
+			bytes = 0;
+		}
+		part += char;
+		bytes += size;
+	}
+	parts.push(part);
+	return parts.join('\r\n ');
+}
+
 export function toIcs(
 	events: CalendarEvent[],
 	utcOffsetSeconds: number,
@@ -44,5 +70,5 @@ export function toIcs(
 		'END:VCALENDAR'
 	];
 	// The format wants CRLF line endings.
-	return lines.join('\r\n') + '\r\n';
+	return lines.map(fold).join('\r\n') + '\r\n';
 }

@@ -166,6 +166,7 @@
 	"past_answer": "Am wärmsten {warmYear} mit {warm}, am kältesten {coldYear} mit {cold}.",
 	"past_question": "Wie war dieser Tag in den letzten Jahren?",
 	"place_removed": "{name} wurde entfernt.",
+	"places_full": "Du kannst bis zu {max} Orte speichern. Entferne zuerst einen.",
 	"polar_night": "Die Sonne geht heute nicht auf.",
 	"pollen_alder": "Erle",
 	"pollen_birch": "Birke",

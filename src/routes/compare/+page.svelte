@@ -17,6 +17,7 @@
 	const nameA = $derived(data.a.name ?? m.unnamed_place());
 	const nameB = $derived(data.b.name ?? m.unnamed_place());
 	const days = $derived(compareDays(data.forecastA, data.forecastB));
+	const rated = $derived(days.filter((d) => d.rated).length);
 	const winsA = $derived(days.filter((d) => d.better === 'a').length);
 	const winsB = $derived(days.filter((d) => d.better === 'b').length);
 	const answer = $derived(
@@ -25,7 +26,7 @@
 			: m.compare_answer({
 					place: winsA > winsB ? nameA : nameB,
 					days: Math.max(winsA, winsB),
-					total: days.length
+					total: rated
 				})
 	);
 	const title = $derived(m.compare_title_two({ a: nameA, b: nameB }));
@@ -79,7 +80,7 @@
 				aDays: winsA,
 				b: nameB,
 				bDays: winsB,
-				even: days.length - winsA - winsB
+				even: rated - winsA - winsB
 			})}
 		</p>
 		<p class="mt-2 text-sm text-ink-muted">{m.compare_basis()}</p>

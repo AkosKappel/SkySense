@@ -166,6 +166,7 @@
 	"past_answer": "A legmelegebb év: {warmYear} ({warm}), a leghidegebb: {coldYear} ({cold}).",
 	"past_question": "Milyen volt ez a nap az elmúlt években?",
 	"place_removed": "{name} törölve.",
+	"places_full": "Legfeljebb {max} helyet menthetsz el. Előbb törölj egyet.",
 	"polar_night": "Ma nem kel fel a nap.",
 	"pollen_alder": "éger",
 	"pollen_birch": "nyírfa",

@@ -75,7 +75,7 @@ describe('summarize', () => {
 			),
 			3
 		);
-		expect(gusty[1]).toEqual({ key: 'gusts', gust: 75, time: '2026-11-10T05:00' });
+		expect(gusty[1]).toEqual({ key: 'gusts', gust: 75, time: '2026-11-10T05:00', today: true });
 		const frosty = summarize(
 			day(
 				() => 10,
@@ -83,7 +83,7 @@ describe('summarize', () => {
 			),
 			4
 		);
-		expect(frosty[1]).toEqual({ key: 'frost', min: -19, time: '2026-11-10T04:00' });
+		expect(frosty[1]).toEqual({ key: 'frost', min: -19, time: '2026-11-10T04:00', today: true });
 	});
 
 	it('does not call frost news when it is already freezing', () => {
@@ -121,6 +121,18 @@ describe('summarize', () => {
 			).map((s) => s.key);
 		expect(dry(45)).toEqual(['dry', 'dryUnsure']);
 		expect(dry(20)).toEqual(['dry']);
+	});
+
+	it('marks gusts that come tomorrow, so the time is not read as today', () => {
+		const evening = Array.from({ length: 24 }, (_, i) => {
+			const h = (18 + i) % 24;
+			const date = 18 + i < 24 ? '2026-11-10' : '2026-11-11';
+			return hour(0, 10, {
+				time: `${date}T${String(h).padStart(2, '0')}:00`,
+				gust: h === 10 ? 70 : 20
+			});
+		});
+		expect(summarize(evening, 10)[1]).toMatchObject({ key: 'gusts', today: false });
 	});
 
 	it('reads the recorded forecasts', () => {

@@ -25,4 +25,13 @@ describe('compareDays', () => {
 		expect(days.some((d) => d.better === 'a')).toBe(true);
 		expect(days.some((d) => d.better === 'b')).toBe(false);
 	});
+
+	it('leaves out a day that is nearly over in one place', () => {
+		// Madrid's forecast starts at 22:00: one waking hour of today is left there.
+		const late = { ...b, hours: b.hours.filter((h) => h.time >= '2026-11-10T22:00') };
+		const today = compareDays(a, late)[0];
+		expect(today.rated).toBe(false);
+		expect(today.better).toBeNull();
+		expect(compareDays(a, b)[1].rated).toBe(true);
+	});
 });

@@ -16,8 +16,8 @@ export type Sentence =
 	| { key: 'rest'; fall: Fall; from: string }
 	| { key: 'now'; fall: Fall; until: string }
 	| { key: 'all'; fall: Fall }
-	| { key: 'gusts'; gust: number; time: string }
-	| { key: 'frost'; min: number; time: string }
+	| { key: 'gusts'; gust: number; time: string; today: boolean }
+	| { key: 'frost'; min: number; time: string; today: boolean }
 	| { key: 'heat'; max: number; time: string }
 	| { key: 'timingUnsure' }
 	| { key: 'dryUnsure' };
@@ -45,13 +45,16 @@ function precipitation(hours: Hour[]): Sentence {
 
 function notable(hours: Hour[], nowTemp: number): Sentence | null {
 	const window = hours.slice(0, WINDOW);
+	// The window reaches into tomorrow, so these say which day when it is not today.
+	const isToday = (h: Hour) => h.time.startsWith(window[0].time.slice(0, 10));
 	const gustiest = window.reduce((a, b) => (b.gust > a.gust ? b : a));
 	if (gustiest.gust >= STRONG_GUST_KMH) {
-		return { key: 'gusts', gust: gustiest.gust, time: gustiest.time };
+		return { key: 'gusts', gust: gustiest.gust, time: gustiest.time, today: isToday(gustiest) };
 	}
 	const frost = window.find((h) => h.temp <= 0);
 	if (nowTemp > 0 && frost) {
-		return { key: 'frost', min: Math.min(...window.map((h) => h.temp)), time: frost.time };
+		const min = Math.min(...window.map((h) => h.temp));
+		return { key: 'frost', min, time: frost.time, today: isToday(frost) };
 	}
 	// Heat only today: "around 12:00" read at 18:00 would sound like today, not tomorrow.
 	const today = window.filter((h) => h.time.startsWith(window[0].time.slice(0, 10)));

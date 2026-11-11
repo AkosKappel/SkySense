@@ -166,6 +166,7 @@
 	"past_answer": "El más cálido fue {warmYear} con {warm}, el más frío {coldYear} con {cold}.",
 	"past_question": "¿Cómo fue este día en años anteriores?",
 	"place_removed": "Se eliminó {name}.",
+	"places_full": "Puedes guardar hasta {max} lugares. Quita uno primero.",
 	"polar_night": "Hoy no sale el sol.",
 	"pollen_alder": "aliso",
 	"pollen_birch": "abedul",

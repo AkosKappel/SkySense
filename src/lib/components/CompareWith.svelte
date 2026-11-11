@@ -2,7 +2,7 @@
 	import { Scale } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { m } from '#lib/paraglide/messages.js';
-	import { savedPlaces } from '#lib/places.svelte.js';
+	import { placeKey, savedPlaces } from '#lib/places.svelte.js';
 	import { formatCoordinates, type Coordinates } from '#lib/weather.js';
 
 	// "Compare with" another saved place (X-07). Saved places live in this browser, so this only
@@ -32,7 +32,7 @@
 				bind:value={chosen}
 				class="h-11 min-w-0 rounded-xl bg-white/10 px-3 text-ink outline-1 outline-white/20"
 			>
-				{#each others as place, i (formatCoordinates(place))}
+				{#each others as place, i (placeKey(place))}
 					<option value={i} class="text-slate-900"
 						>{place.live ? m.my_location() : place.name}</option
 					>

@@ -166,6 +166,7 @@
 	"past_answer": "Warmest in {warmYear} at {warm}, coldest in {coldYear} at {cold}.",
 	"past_question": "What was this day like in past years?",
 	"place_removed": "{name} removed.",
+	"places_full": "You can save up to {max} places. Remove one first.",
 	"polar_night": "The sun doesn't rise today.",
 	"pollen_alder": "alder",
 	"pollen_birch": "birch",

@@ -5,7 +5,7 @@
 	import PlaceSearch from '#lib/components/PlaceSearch.svelte';
 	import { m } from '#lib/paraglide/messages.js';
 	import { openLive } from '#lib/open-live.js';
-	import { savedPlaces } from '#lib/places.svelte.js';
+	import { placeKey, savedPlaces } from '#lib/places.svelte.js';
 	import { formatCoordinates, type Coordinates } from '#lib/weather.js';
 
 	// Open state lives in shallow-routed history (`page.state.placeSheet`), so Back closes the
@@ -60,7 +60,7 @@
 			{#if savedPlaces.list.length}
 				<h3 class="mt-4 question">{m.saved_places()}</h3>
 				<ul class="mt-3 space-y-2">
-					{#each savedPlaces.list as place (formatCoordinates(place))}
+					{#each savedPlaces.list as place (placeKey(place))}
 						{@const here = formatCoordinates(place) === formatCoordinates(current)}
 						<li>
 							<a

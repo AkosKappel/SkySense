@@ -25,6 +25,10 @@ const fall = {
 	}
 };
 
+/** "10:00" today, "Wed 10:00" tomorrow, so "around 10:00" read at 18:00 is not misread. */
+const when = (time: string, today: boolean, f: Formatter) =>
+	today ? f.time(time) : `${f.weekday(time.slice(0, 10))} ${f.time(time)}`;
+
 function say(s: Sentence, f: Formatter): string {
 	switch (s.key) {
 		case 'dry':
@@ -38,9 +42,9 @@ function say(s: Sentence, f: Formatter): string {
 		case 'all':
 			return fall[s.fall].all();
 		case 'gusts':
-			return m.summary_gusts({ gust: f.wind(s.gust), time: f.time(s.time) });
+			return m.summary_gusts({ gust: f.wind(s.gust), time: when(s.time, s.today, f) });
 		case 'frost':
-			return m.summary_frost({ min: f.temp(s.min), time: f.time(s.time) });
+			return m.summary_frost({ min: f.temp(s.min), time: when(s.time, s.today, f) });
 		case 'heat':
 			return m.summary_heat({ max: f.temp(s.max), time: f.time(s.time) });
 		case 'timingUnsure':

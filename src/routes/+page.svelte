@@ -5,7 +5,7 @@
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
 	import { m } from '#lib/paraglide/messages.js';
 	import { openLive } from '#lib/open-live.js';
-	import { savedPlaces, type SavedPlace } from '#lib/places.svelte.js';
+	import { placeKey, savedPlaces, type SavedPlace } from '#lib/places.svelte.js';
 	import { formatCoordinates } from '#lib/weather.js';
 
 	let removed = $state<{ place: SavedPlace; index: number } | null>(null);
@@ -60,7 +60,7 @@
 				>
 			</div>
 			<ul class="mt-3 space-y-2">
-				{#each savedPlaces.list as place, i (formatCoordinates(place))}
+				{#each savedPlaces.list as place, i (placeKey(place))}
 					<li class="flex items-center gap-1 rounded-2xl bg-white/5 outline-1 outline-white/10">
 						{#if !editing}
 							<a

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { toIcs } from './calendar.js';
+import { fold, toIcs } from './calendar.js';
 
 describe('toIcs', () => {
 	const ics = toIcs(
@@ -28,5 +28,16 @@ describe('toIcs', () => {
 		expect(ics).toContain('DESCRIPTION:Score 97\\; dry\\, calm');
 		expect(ics.split('\r\n')[0]).toBe('BEGIN:VCALENDAR');
 		expect(ics.endsWith('END:VCALENDAR\r\n')).toBe(true);
+	});
+
+	it('folds lines longer than 75 octets without cutting a character', () => {
+		const line = `DESCRIPTION:${'ő'.repeat(60)}`;
+		const folded = fold(line);
+		const lines = folded.split('\r\n');
+		expect(lines.length).toBeGreaterThan(1);
+		for (const part of lines) expect(new TextEncoder().encode(part).length).toBeLessThanOrEqual(75);
+		expect(lines.slice(1).every((part) => part.startsWith(' '))).toBe(true);
+		expect(folded.replace(/\r\n /g, '')).toBe(line);
+		expect(fold('SUMMARY:Run')).toBe('SUMMARY:Run');
 	});
 });
