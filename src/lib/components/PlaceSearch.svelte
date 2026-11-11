@@ -40,7 +40,12 @@
 			try {
 				// The browser's region ("SK" in "sk-SK") moves that country's places up.
 				const country = new Intl.Locale(navigator.language).region;
-				const params = new URLSearchParams({ q, lang: getLocale(), ...(country && { country }) });
+				// Lower case: the geocoder ignores case, and one URL per query gives more CDN hits.
+				const params = new URLSearchParams({
+					q: q.toLocaleLowerCase(),
+					lang: getLocale(),
+					...(country && { country })
+				});
 				const response = await fetch(`/api/places?${params}`);
 				if (!response.ok) throw new Error(String(response.status));
 				const found: Result[] = await response.json();

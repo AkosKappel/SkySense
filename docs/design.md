@@ -39,9 +39,12 @@ Numbers that change or line up (temperatures, times, percentages) use `tabular-n
 
 ## Layout
 
-- Phone: one column, 16 px side padding, tiles stacked in this order: now and summary, umbrella, when to go out, next hours, the week, confidence, compared to normal, stars, darkness.
-- Desktop (`md` and up): a 4-column bento grid with `grid-flow-dense` so tiles of different spans leave no gaps. Now and summary take 2 by 2; umbrella and best times sit beside it; next hours spans the full width; the week takes 2 by 2 beside the four small answer tiles.
-- Grid children get `min-w-0`, so horizontal lists (the hourly strip) scroll inside their tile instead of widening the page.
+- Notices first, only when active: poor air or pollen, being offline, a full saved list.
+- Phone: one column, 16 px side padding, in this order: the summary sentence (with "Share today as a picture"), now (with what to wear and the hour scrubber), the umbrella, when to go out, the next 24 hours, the temperature chart (with the model comparison link), darkness and wind, the 10 days (with confidence marks and "Compare with"), today in detail, compared to normal and past years.
+- Desktop (`md` and up): a 4-column bento grid with `grid-flow-dense` so tiles of different spans leave no gaps. Now takes 2 by 2; the umbrella sits beside it with darkness and wind under it; activities, the next hours and the chart span the full width; the 10 days and today in detail take two columns each.
+- Grid children get `min-w-0`, so horizontal lists (the hourly strip) scroll inside their tile instead of widening the page. Tables that would scroll sideways wrap instead (the place comparison), so no scroll region needs keyboard focus.
+- Views one tap away, on the same page through a query: `?day=` a day (with its own activity times), `?models` the model comparison, `?year` the past year. `/compare` puts two saved places side by side; `/embed/...` is a small card for other sites.
+- Header: the place name opens the place sheet; previous and next saved place from 380 px (below that the name needs the room), Save, Share, Settings.
 
 ## Icons
 
