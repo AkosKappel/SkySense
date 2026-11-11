@@ -12,6 +12,7 @@
 		TriangleAlert,
 		Wind
 	} from '@lucide/svelte';
+	import { onMount } from 'svelte';
 	import { invalidateAll, pushState } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
@@ -183,6 +184,19 @@
 	// Saving into a full list does nothing but say so (no place is dropped to make room).
 	let placesFull = $state(false);
 
+	// Served from the offline copy (P-01): say so; the age of the forecast is in the now tile.
+	let offline = $state(false);
+	onMount(() => {
+		const update = () => (offline = !navigator.onLine);
+		update();
+		addEventListener('online', update);
+		addEventListener('offline', update);
+		return () => {
+			removeEventListener('online', update);
+			removeEventListener('offline', update);
+		};
+	});
+
 	// Previous and next saved place (F-21), in the list's order and round the end. Hidden below
 	// 380 px, where they would squeeze the place name out of the header; the sheet still lists all.
 	const neighbours = $derived.by(() => {
@@ -288,6 +302,9 @@
 			>
 		</div>
 	</header>
+	{#if offline}
+		<p role="status" class="mt-3 glass px-5 py-3 text-sm font-semibold">{m.offline_notice()}</p>
+	{/if}
 	{#if placesFull}
 		<p role="status" class="mt-3 glass px-5 py-3 text-sm font-semibold">
 			{m.places_full({ max: MAX_PLACES })}
@@ -299,7 +316,14 @@
 	{:else if comparing}
 		<ModelCompare runs={data.models} from={forecast.hours[0].time} {f} />
 	{:else if day}
-		<DayDetail {day} hours={dayHours} isToday={day.date === today.date} {f} />
+		<DayDetail
+			{day}
+			hours={dayHours}
+			days={forecast.days}
+			isToday={day.date === today.date}
+			{f}
+			comfort={data.comfort}
+		/>
 	{:else}
 		<h1 class="sr-only">{m.weather_in({ place: name })}</h1>
 

@@ -7,7 +7,9 @@ export default defineConfig({
 	webServer: {
 		command: 'pnpm build && pnpm preview',
 		port: 4173,
-		env: { SKYSENSE_FIXTURES: '1' }
+		env: { SKYSENSE_FIXTURES: '1' },
+		// The build runs first; on a busy machine or CI runner it can take over a minute.
+		timeout: 180_000
 	},
 	use: { baseURL: 'http://localhost:4173', locale: 'en-GB' },
 	projects: [

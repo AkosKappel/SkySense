@@ -38,6 +38,7 @@
 		week = [],
 		place = '',
 		timeZone = 'UTC',
+		scope = 'next',
 		days,
 		f,
 		comfort = 'neutral'
@@ -49,6 +50,8 @@
 		/** For the calendar export: the event titles and the conversion to UTC. */
 		place?: string;
 		timeZone?: string;
+		/** "next": the next 24 hours from now; "day": one day of a day view. */
+		scope?: 'next' | 'day';
 		days: Day[];
 		f: Formatter;
 		comfort?: Comfort;
@@ -64,19 +67,36 @@
 		stars: Telescope,
 		golden: Camera
 	};
-	const reasons: Record<Reason, () => string> = {
-		cold: m.reason_cold,
-		hot: m.reason_hot,
-		rain: m.reason_rain,
-		wind: m.reason_wind,
-		dark: m.reason_dark,
-		daylight: m.reason_daylight,
-		clouds: m.reason_clouds,
-		notGolden: m.reason_notGolden,
-		uv: m.reason_uv,
-		moon: m.reason_moon,
-		air: m.reason_air
-	};
+	// "In the next 24 hours" on the overview; "that day" in a day view.
+	const reasons = $derived<Record<Reason, () => string>>(
+		scope === 'day'
+			? {
+					cold: m.reason_day_cold,
+					hot: m.reason_day_hot,
+					rain: m.reason_day_rain,
+					wind: m.reason_day_wind,
+					dark: m.reason_day_dark,
+					daylight: m.reason_day_daylight,
+					clouds: m.reason_day_clouds,
+					notGolden: m.reason_day_notGolden,
+					uv: m.reason_day_uv,
+					moon: m.reason_day_moon,
+					air: m.reason_day_air
+				}
+			: {
+					cold: m.reason_cold,
+					hot: m.reason_hot,
+					rain: m.reason_rain,
+					wind: m.reason_wind,
+					dark: m.reason_dark,
+					daylight: m.reason_daylight,
+					clouds: m.reason_clouds,
+					notGolden: m.reason_notGolden,
+					uv: m.reason_uv,
+					moon: m.reason_moon,
+					air: m.reason_air
+				}
+	);
 
 	const factorNames: Record<FactorId, () => string> = {
 		feels: m.factor_feels,

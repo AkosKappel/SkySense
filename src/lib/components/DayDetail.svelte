@@ -2,18 +2,33 @@
 	import { ArrowLeft } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import ActivityTile from '#lib/components/ActivityTile.svelte';
 	import DayFacts from '#lib/components/DayFacts.svelte';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
 	import TempChart from '#lib/components/TempChart.svelte';
 	import UmbrellaTile from '#lib/components/UmbrellaTile.svelte';
 	import WeatherIcon from '#lib/components/WeatherIcon.svelte';
 	import { conditionLabel } from '#lib/components/labels.js';
+	import type { Comfort } from '#lib/activities.js';
 	import type { Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import type { Day, Hour } from '#lib/weather.js';
 
-	let { day, hours, isToday, f }: { day: Day; hours: Hour[]; isToday: boolean; f: Formatter } =
-		$props();
+	let {
+		day,
+		hours,
+		days,
+		isToday,
+		f,
+		comfort = 'neutral'
+	}: {
+		day: Day;
+		hours: Hour[];
+		days: Day[];
+		isToday: boolean;
+		f: Formatter;
+		comfort?: Comfort;
+	} = $props();
 </script>
 
 <div class="mt-5 flex items-center gap-3">
@@ -44,6 +59,11 @@
 
 	<section class="glass p-6">
 		<UmbrellaTile {hours} {f} fromNow={isToday} />
+	</section>
+
+	<!-- When to go out that day: the same tile as the overview, for this day's hours. -->
+	<section class="glass p-6 md:col-span-2">
+		<ActivityTile {hours} {days} {f} {comfort} scope="day" />
 	</section>
 
 	<section class="glass p-5 md:col-span-2">

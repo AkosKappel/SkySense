@@ -171,6 +171,7 @@ test('installs and shows a place opened before when offline', async ({ page, con
 	await context.setOffline(true);
 	await page.reload();
 	await expect(page.getByText('Rain until 16:00, then dry.')).toBeVisible();
+	await expect(page.getByRole('status').filter({ hasText: "You're offline." })).toBeVisible();
 	await context.setOffline(false);
 });
 
@@ -334,6 +335,11 @@ test('opens a day from the 10-day list and goes back', async ({ page }) => {
 	await expect(page).toHaveURL(/\?day=2026-11-12$/);
 	await expect(page.getByRole('heading', { level: 1, name: 'Thursday 12 November' })).toBeVisible();
 	await expect(page.getByText('Hour by hour')).toBeVisible();
+	const tile = page.locator('section', { hasText: 'When should I go out?' });
+	// That day's own windows, without a weekday: the heading already names the day.
+	await expect(tile.getByRole('listitem').filter({ hasText: 'Run' })).toContainText(
+		'12:00 to 13:00'
+	);
 	await expect(page.getByText('Do I need an umbrella?')).toBeVisible();
 	await expect(page.getByText('Now', { exact: true })).toHaveCount(0);
 
