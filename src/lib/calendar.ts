@@ -1,13 +1,13 @@
 // Activity windows as an iCalendar file (X-11), made in the browser and downloaded, no server.
-// Times are the place's wall clock; with its UTC offset they become UTC, so a calendar anywhere
-// shows them right. ponytail: one offset for all ten days, off by an hour across a DST change.
+// Times are the place's wall clock; with its time zone they become UTC, so a calendar anywhere
+// shows them right, also after a daylight saving change inside the ten days.
+import { localToUtc } from '#lib/time.js';
 
 export type CalendarEvent = { start: string; end: string; title: string; description: string };
 
-/** "2026-11-12T12:00" at UTC+1 becomes "20261112T110000Z". */
-function utcStamp(local: string, utcOffsetSeconds: number): string {
-	const ms = Date.parse(`${local}:00Z`) - utcOffsetSeconds * 1000;
-	return new Date(ms)
+/** "2026-11-12T12:00" in Europe/Bratislava becomes "20261112T110000Z". */
+function utcStamp(local: string, timeZone: string): string {
+	return new Date(localToUtc(local, timeZone))
 		.toISOString()
 		.replace(/[-:]/g, '')
 		.replace(/\.\d{3}/, '');
@@ -44,7 +44,7 @@ export function fold(line: string): string {
 
 export function toIcs(
 	events: CalendarEvent[],
-	utcOffsetSeconds: number,
+	timeZone: string,
 	uidSuffix: string,
 	now = new Date()
 ): string {
@@ -61,8 +61,8 @@ export function toIcs(
 			'BEGIN:VEVENT',
 			`UID:${event.start}-${uidSuffix}@skysense`,
 			`DTSTAMP:${stamp}`,
-			`DTSTART:${utcStamp(event.start, utcOffsetSeconds)}`,
-			`DTEND:${utcStamp(event.end, utcOffsetSeconds)}`,
+			`DTSTART:${utcStamp(event.start, timeZone)}`,
+			`DTEND:${utcStamp(event.end, timeZone)}`,
 			`SUMMARY:${escape(event.title)}`,
 			`DESCRIPTION:${escape(event.description)}`,
 			'END:VEVENT'

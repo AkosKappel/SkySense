@@ -340,7 +340,7 @@
 					hours={forecast.hours.slice(0, 24)}
 					week={forecast.hours}
 					place={name}
-					utcOffsetSeconds={forecast.utcOffsetSeconds}
+					timeZone={forecast.timezone}
 					days={forecast.days}
 					{f}
 					comfort={data.comfort}

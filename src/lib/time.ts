@@ -68,3 +68,24 @@ export function formatDate(date: string, locale: string): string {
 export function hoursAhead(placeOffsetSeconds: number, readerOffsetMinutes: number): number {
 	return (placeOffsetSeconds / 60 - readerOffsetMinutes) / 60;
 }
+
+/** The zone's offset from UTC in seconds at an instant, from Intl ("GMT+01:00"). */
+function offsetAt(timeZone: string, instant: number): number {
+	const name = new Intl.DateTimeFormat('en-US', { timeZone, timeZoneName: 'longOffset' })
+		.formatToParts(instant)
+		.find((part) => part.type === 'timeZoneName')?.value;
+	const match = name?.match(/GMT([+-])(\d{2}):(\d{2})/);
+	if (!match) return 0;
+	return (match[1] === '-' ? -1 : 1) * (Number(match[2]) * 3600 + Number(match[3]) * 60);
+}
+
+/**
+ * A place's wall-clock time ("2026-03-29T12:00") as a UTC instant in milliseconds, with the
+ * offset in force at that moment, so times after a daylight saving change come out right.
+ */
+export function localToUtc(local: string, timeZone: string): number {
+	const asUtc = Date.parse(`${local}:00Z`);
+	// Two passes: the first guess can sit on the other side of a change.
+	const first = asUtc - offsetAt(timeZone, asUtc) * 1000;
+	return asUtc - offsetAt(timeZone, first) * 1000;
+}

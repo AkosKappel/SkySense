@@ -11,7 +11,7 @@ describe('toIcs', () => {
 				description: 'Score 97; dry, calm'
 			}
 		],
-		3600,
+		'Europe/Bratislava',
 		'run',
 		new Date('2026-11-10T09:00:00Z')
 	);

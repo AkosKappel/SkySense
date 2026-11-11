@@ -7,7 +7,8 @@ import {
 	formatTime,
 	formatWeekday,
 	hoursAhead,
-	intlLocale
+	intlLocale,
+	localToUtc
 } from './time.js';
 import type { Day, Hour } from './weather.js';
 
@@ -107,5 +108,16 @@ describe('past dates and months', () => {
 		expect(formatPastDate('2025-07-20', 'de')).toBe('20. Juli 2025');
 		expect(formatMonth('2025-07', 'en-GB')).toBe('Jul');
 		expect(formatMonth('2025-12', 'en-GB', true)).toBe('Dec 2025');
+	});
+});
+
+describe('localToUtc', () => {
+	it('uses the offset in force at that moment, across daylight saving changes', () => {
+		const iso = (local: string, zone: string) => new Date(localToUtc(local, zone)).toISOString();
+		expect(iso('2026-03-28T12:00', 'Europe/Bratislava')).toBe('2026-03-28T11:00:00.000Z');
+		expect(iso('2026-03-29T12:00', 'Europe/Bratislava')).toBe('2026-03-29T10:00:00.000Z');
+		expect(iso('2026-11-10T16:00', 'Asia/Singapore')).toBe('2026-11-10T08:00:00.000Z');
+		expect(iso('2026-11-10T16:00', 'America/New_York')).toBe('2026-11-10T21:00:00.000Z');
+		expect(iso('2026-11-10T16:00', 'Asia/Kolkata')).toBe('2026-11-10T10:30:00.000Z');
 	});
 });

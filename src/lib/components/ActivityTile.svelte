@@ -37,7 +37,7 @@
 		hours,
 		week = [],
 		place = '',
-		utcOffsetSeconds = 0,
+		timeZone = 'UTC',
 		days,
 		f,
 		comfort = 'neutral'
@@ -48,7 +48,7 @@
 		week?: Hour[];
 		/** For the calendar export: the event titles and the conversion to UTC. */
 		place?: string;
-		utcOffsetSeconds?: number;
+		timeZone?: string;
 		days: Day[];
 		f: Formatter;
 		comfort?: Comfort;
@@ -116,7 +116,7 @@
 			title: m.calendar_event({ activity: activityLabel(id), place }),
 			description: m.calendar_description({ score: w.score })
 		}));
-		const file = new Blob([toIcs(events, utcOffsetSeconds, id)], { type: 'text/calendar' });
+		const file = new Blob([toIcs(events, timeZone, id)], { type: 'text/calendar' });
 		const link = document.createElement('a');
 		link.href = URL.createObjectURL(file);
 		link.download = `skysense-${id}.ics`;
