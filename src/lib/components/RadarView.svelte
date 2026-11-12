@@ -22,6 +22,7 @@
 		GRID_WET_MM,
 		FREEZING_C,
 		RADAR_MAX_ZOOM,
+		startZoom,
 		temperatureBand,
 		WARM_C,
 		warmerSide,
@@ -155,7 +156,9 @@
 			leaflet = L;
 			map = L.map(container, {
 				center: [coordinates.lat, coordinates.lon],
-				zoom: RADAR_MAX_ZOOM,
+				zoom: startZoom(coordinates.lat),
+				// Quarter steps, so the starting zoom near the equator can sit between whole levels.
+				zoomSnap: 0.25,
 				minZoom: 5,
 				maxZoom: 9,
 				attributionControl: true

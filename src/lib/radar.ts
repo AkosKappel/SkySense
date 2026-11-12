@@ -95,3 +95,19 @@ export function temperatureBand(celsius: number): 'cold' | 'mild' | 'warm' {
 	if (celsius <= FREEZING_C) return 'cold';
 	return celsius >= WARM_C ? 'warm' : 'mild';
 }
+
+/** The grid's points are 0.3° of latitude apart, about 33 km (see `gridPoints` on the server). */
+const GRID_SPACING_M = 33_400;
+/** Map labels need about this much room between points to stay apart. */
+const LABEL_ROOM_PX = 38;
+
+/**
+ * The map's starting zoom: RADAR_MAX_ZOOM, or up to one level more (in quarter steps) where the
+ * grid would sit closer than LABEL_ROOM_PX. A web map shows more ground per pixel near the
+ * equator, so there the same 33 km is fewer pixels and the labels would touch.
+ */
+export function startZoom(lat: number): number {
+	const metresPerPixel = (156_543.03 * Math.cos((lat * Math.PI) / 180)) / 2 ** RADAR_MAX_ZOOM;
+	const extra = Math.ceil(Math.log2(LABEL_ROOM_PX / (GRID_SPACING_M / metresPerPixel)) * 4) / 4;
+	return RADAR_MAX_ZOOM + Math.min(1, Math.max(0, extra));
+}

@@ -2,7 +2,14 @@ import { describe, expect, it } from 'vitest';
 import bratislavaGrid from '#lib/server/fixtures/grid-bratislava.json';
 import frames from '#lib/server/fixtures/radar-frames.json';
 import { gridPoints, toGrid, toRadarFrames } from '#lib/server/open-meteo.js';
-import { firstWetHour, temperatureBand, warmerSide, windAround, type GridCell } from './radar.js';
+import {
+	firstWetHour,
+	startZoom,
+	temperatureBand,
+	warmerSide,
+	windAround,
+	type GridCell
+} from './radar.js';
 
 const cell = (rain: number[]): GridCell => ({
 	lat: 48,
@@ -90,6 +97,13 @@ describe('temperature and wind layers', () => {
 			'mild',
 			'warm'
 		]);
+	});
+
+	it('starts more zoomed in near the equator, so the labels keep apart', () => {
+		expect(startZoom(48.15)).toBe(7);
+		expect(startZoom(69.35)).toBe(7);
+		expect(startZoom(1.29)).toBe(7.5);
+		expect(startZoom(-1.29)).toBe(7.5);
 	});
 
 	it('averages wind directions as vectors and gives the strongest speed', () => {
