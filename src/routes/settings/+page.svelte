@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ArrowLeft, Check } from '@lucide/svelte';
+	import { ArrowLeft, Check, ChevronDown } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
@@ -105,15 +105,23 @@
 	<form method="POST" class="mt-6 space-y-6 glass p-6">
 		<div>
 			<label for="language" class="mb-2 question">{m.language()}</label>
-			<select
-				id="language"
-				name="language"
-				class="h-12 w-full rounded-2xl bg-veil/10 px-4 text-ink outline-1 outline-veil/20"
-			>
-				{#each locales as locale (locale)}
-					<option value={locale} selected={locale === getLocale()}>{languageNames[locale]}</option>
-				{/each}
-			</select>
+			<div class="relative">
+				<select
+					id="language"
+					name="language"
+					class="h-12 w-full cursor-pointer appearance-none rounded-2xl bg-veil/10 pr-12 pl-4 text-ink outline-1 outline-veil/20"
+				>
+					{#each locales as locale (locale)}
+						<option value={locale} selected={locale === getLocale()}>{languageNames[locale]}</option
+						>
+					{/each}
+				</select>
+				<ChevronDown
+					size={18}
+					class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-ink-muted"
+					aria-hidden="true"
+				/>
+			</div>
 		</div>
 
 		{#each groups as group (group.name)}

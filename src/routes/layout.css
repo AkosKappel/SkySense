@@ -129,6 +129,14 @@ body::before {
 	}
 }
 
+/* Dropdown lists: Chrome on Windows draws them white whatever the colour scheme, and the
+   options would inherit the select's white text, so they get the theme's own colours. The
+   arrow is a Lucide icon beside the select (`appearance-none`), placed like the other icons. */
+select option {
+	background-color: var(--color-surface);
+	color: var(--color-ink);
+}
+
 :focus-visible {
 	outline: 2px solid var(--color-ink);
 	outline-offset: 2px;
@@ -192,6 +200,8 @@ body::before {
 	details::details-content {
 		height: 0;
 		overflow: clip;
+		/* Outlines and focus rings sit outside their boxes; without this the clip cuts them. */
+		overflow-clip-margin: 4px;
 		transition:
 			height 200ms ease-out,
 			content-visibility 200ms allow-discrete;

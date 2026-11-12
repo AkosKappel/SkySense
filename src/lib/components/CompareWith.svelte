@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Scale } from '@lucide/svelte';
+	import { ChevronDown, Scale } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { m } from '#lib/paraglide/messages.js';
 	import { pageName, placeKey, savedPlaces } from '#lib/places.svelte.js';
@@ -28,14 +28,21 @@
 		<input type="hidden" name="bn" value={pageName(other)} />
 		<label class="flex min-w-0 flex-1 flex-col gap-1 text-sm text-ink-muted">
 			{m.compare_with()}
-			<select
-				bind:value={chosen}
-				class="h-11 min-w-0 rounded-xl bg-veil/10 px-3 text-ink outline-1 outline-veil/20"
-			>
-				{#each others as place, i (placeKey(place))}
-					<option value={i}>{place.live ? m.my_location() : place.name}</option>
-				{/each}
-			</select>
+			<span class="relative flex min-w-0">
+				<select
+					bind:value={chosen}
+					class="h-11 w-full min-w-0 cursor-pointer appearance-none rounded-xl bg-veil/10 pr-10 pl-3 text-ink outline-1 outline-veil/20"
+				>
+					{#each others as place, i (placeKey(place))}
+						<option value={i}>{place.live ? m.my_location() : place.name}</option>
+					{/each}
+				</select>
+				<ChevronDown
+					size={16}
+					class="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-ink-muted"
+					aria-hidden="true"
+				/>
+			</span>
 		</label>
 		<button
 			type="submit"
