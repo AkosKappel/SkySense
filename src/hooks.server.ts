@@ -1,6 +1,9 @@
+import { json } from '@sveltejs/kit';
 import { sequence, type Handle, type HandleServerError } from '@sveltejs/kit/hooks';
+import { SKYSENSE_FIXTURES } from '$app/env/private';
 import { getTextDirection } from '#lib/paraglide/runtime.js';
 import { paraglideMiddleware } from '#lib/paraglide/server.js';
+import { rateLimiter } from '#lib/server/rate-limit.js';
 
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request, locale }) => {
@@ -47,10 +50,27 @@ const handleSecurity: Handle = async ({ event, resolve }) => {
 			);
 		}
 	}
+	// Vercel's own hosts copy the site; only the real domain should be found by search engines.
+	if (event.url.hostname.endsWith('.vercel.app')) response.headers.set('x-robots-tag', 'noindex');
 	return response;
 };
 
-export const handle: Handle = sequence(handleSecurity, handleParaglide);
+// A page view makes about five API requests (the forecast while rendering, then climate, recent
+// rain and the like); the radar a few more. 120 a minute leaves room for quick browsing.
+const limitApi = rateLimiter(120, 60_000);
+
+const handleRateLimit: Handle = ({ event, resolve }) => {
+	// Recorded answers cost no quota, and the tests make many requests from one address.
+	if (!event.url.pathname.startsWith('/api/') || SKYSENSE_FIXTURES) return resolve(event);
+	const { allowed, retryAfter } = limitApi(event.getClientAddress());
+	if (allowed) return resolve(event);
+	return json(
+		{ message: 'Too many requests' },
+		{ status: 429, headers: { 'retry-after': String(retryAfter), 'cache-control': 'no-store' } }
+	);
+};
+
+export const handle: Handle = sequence(handleSecurity, handleRateLimit, handleParaglide);
 
 /**
  * Unexpected errors get a short id, logged with the route (not the URL, which names a place) and
