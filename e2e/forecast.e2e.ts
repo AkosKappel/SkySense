@@ -257,6 +257,14 @@ test('"My location" locates again when opened and names the town', async ({ cont
 	await expect(page.getByRole('link', { name: 'My location' })).toContainText('Madrid');
 });
 
+test('the health check answers for the uptime monitor, uncached', async ({ request }) => {
+	const health = await request.get('/api/health');
+	expect(health.status()).toBe(200);
+	expect(await health.json()).toMatchObject({ status: 'ok' });
+	expect(health.headers()['cache-control']).toBe('no-store');
+	expect((await request.head('/api/health')).status()).toBe(200);
+});
+
 test('the reverse geocoder answers with a town name and checks its input', async ({ request }) => {
 	const named = await request.get('/api/reverse?lat=69.65&lon=18.96&lang=en');
 	expect(await named.json()).toEqual({ name: 'Tromsø' });
