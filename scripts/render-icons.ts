@@ -1,6 +1,6 @@
 // Renders the logo (src/lib/assets/favicon.svg) to the PNG icons and the social preview in
 // static/. Run after changing the logo: `node scripts/render-icons.ts`.
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { chromium } from '@playwright/test';
 
 const logo = readFileSync('src/lib/assets/favicon.svg', 'utf8');
@@ -13,11 +13,31 @@ const maskable = logo
 const browser = await chromium.launch();
 const page = await browser.newPage();
 
-async function render(html: string, width: number, height: number, path: string) {
+async function render(html: string, width: number, height: number, path?: string) {
 	await page.setViewportSize({ width, height });
 	await page.setContent(`<body style="margin:0">${html}</body>`);
-	await page.screenshot({ path, omitBackground: true });
-	console.log('wrote', path);
+	const png = await page.screenshot({ path, omitBackground: true });
+	if (path) console.log('wrote', path);
+	return png;
+}
+
+/** An ICO file holding PNG images, which every browser since IE Vista reads. */
+function ico(images: { size: number; png: Buffer }[]) {
+	const header = Buffer.alloc(6 + 16 * images.length);
+	header.writeUInt16LE(1, 2); // type: icon
+	header.writeUInt16LE(images.length, 4);
+	let offset = header.length;
+	images.forEach(({ size, png }, i) => {
+		const entry = 6 + 16 * i;
+		header.writeUInt8(size, entry); // width and height; 0 would mean 256
+		header.writeUInt8(size, entry + 1);
+		header.writeUInt16LE(1, entry + 4); // colour planes
+		header.writeUInt16LE(32, entry + 6); // bits per pixel
+		header.writeUInt32LE(png.length, entry + 8);
+		header.writeUInt32LE(offset, entry + 12);
+		offset += png.length;
+	});
+	return Buffer.concat([header, ...images.map(({ png }) => png)]);
 }
 
 const sized = (svg: string, size: number) =>
@@ -26,6 +46,11 @@ await render(sized(logo, 192), 192, 192, 'static/icon-192.png');
 await render(sized(logo, 512), 512, 512, 'static/icon-512.png');
 await render(sized(maskable, 512), 512, 512, 'static/icon-maskable-512.png');
 await render(sized(maskable, 180), 180, 180, 'static/apple-touch-icon.png');
+// For crawlers and browsers that ask for /favicon.ico whatever the page links.
+const icons = [];
+for (const size of [16, 32, 48]) icons.push({ size, png: await render(sized(logo, size), size, size) });
+writeFileSync('static/favicon.ico', ico(icons));
+console.log('wrote static/favicon.ico');
 
 const font = 'font-family: system-ui, sans-serif';
 await render(
