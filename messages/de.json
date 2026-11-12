@@ -78,6 +78,9 @@
 	"dark_question": "Wann wird es dunkel?",
 	"data_attribution": "Wetterdaten von Open-Meteo.com",
 	"details": "Details",
+	"dew_muggy": "Schwül",
+	"dew_oppressive": "Drückend",
+	"dew_point": "Taupunkt",
 	"done": "Fertig",
 	"dry_days": [
 		{
@@ -128,6 +131,8 @@
 	"feature_sky": "Der Mond heute Nacht, Sonnenauf- und -untergang, der Luftdruck und ob er steigt oder fällt, und ein Himmel im Hintergrund, der Tageszeit und Wetter folgt.",
 	"feels_like": "Gefühlt {temp}",
 	"feels_like_line": "Gefühlt",
+	"fog_ahead": "Nebel wahrscheinlich von {from} bis {until}.",
+	"fog_now": "Nebel wahrscheinlich bis {until}.",
 	"go_out_question": "Wann soll ich rausgehen?",
 	"high": "Max.",
 	"high_low": "Max. {max} · Min. {min}",
@@ -404,6 +409,7 @@
 	"uv_low": "Niedrig",
 	"uv_moderate": "Mäßig",
 	"uv_very_high": "Sehr hoch",
+	"visibility": "Sichtweite",
 	"wear_arctic": "Warme Schichten, Wintermantel, Mütze, Handschuhe und Schal.",
 	"wear_label": "Was anziehen:",
 	"wear_layer": "Ein T-Shirt und eine leichte Schicht für später.",

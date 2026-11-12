@@ -8,6 +8,7 @@ import {
 	intlLocale
 } from '#lib/time.js';
 import {
+	formatDistance,
 	formatPressure,
 	formatRain,
 	formatWind,
@@ -35,6 +36,7 @@ export function formatter(locale: string, units: Units) {
 		windValue: (kmh: number) => windSpeed(kmh, units),
 		rain: (mm: number) => formatRain(mm, units, intl),
 		pressure: (hpa: number) => formatPressure(hpa, units, intl),
+		distance: (metres: number) => formatDistance(metres, units, intl),
 		percent: (value: number) =>
 			new Intl.NumberFormat(intl, { style: 'percent' }).format(value / 100)
 	};

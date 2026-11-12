@@ -257,6 +257,18 @@ test('"My location" locates again when opened and names the town', async ({ cont
 	await expect(page.getByRole('link', { name: 'My location' })).toContainText('Madrid');
 });
 
+test("today's details show dew point, visibility and fog ahead", async ({ page }) => {
+	await page.goto('/p/48.15,17.11/Bratislava');
+	const details = page.locator('section', { hasText: 'Today in detail' });
+	await expect(details.getByText('Visibility')).toBeVisible();
+	await expect(details.getByText('0.7 km')).toBeVisible();
+	await expect(details.getByText('Fog likely until 13:00.')).toBeVisible();
+	await page.goto('/p/1.29,103.85/Singapore');
+	await expect(
+		page.locator('section', { hasText: 'Today in detail' }).getByText(/· Oppressive$/)
+	).toBeVisible();
+});
+
 test('the health check answers for the uptime monitor, uncached', async ({ request }) => {
 	const health = await request.get('/api/health');
 	expect(health.status()).toBe(200);

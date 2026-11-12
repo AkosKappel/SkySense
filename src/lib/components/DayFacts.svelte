@@ -1,17 +1,34 @@
 <script lang="ts">
-	import { Droplets, Gauge } from '@lucide/svelte';
+	import { CloudFog, Droplets, Gauge } from '@lucide/svelte';
+	import { dewComfort, fogAhead } from '#lib/details.js';
 	import { uvLevel, type Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { pressureTrend, type Pressure } from '#lib/pressure.js';
-	import { RAIN_LIKELY, type Day } from '#lib/weather.js';
+	import { RAIN_LIKELY, type Day, type Hour } from '#lib/weather.js';
 
-	// Humidity and pressure are readings for now, so only today's tile passes them.
+	// Humidity, pressure and the hours ahead are readings for now, so only today's tile passes them.
 	let {
 		day,
 		f,
 		humidity,
-		pressure = null
-	}: { day: Day; f: Formatter; humidity?: number; pressure?: Pressure | null } = $props();
+		pressure = null,
+		ahead = []
+	}: {
+		day: Day;
+		f: Formatter;
+		humidity?: number;
+		pressure?: Pressure | null;
+		ahead?: Hour[];
+	} = $props();
+
+	const hour = $derived(ahead[0]);
+	const dewText = $derived.by(() => {
+		if (hour?.dewPoint === undefined) return null;
+		const feel = dewComfort(hour.dewPoint);
+		const word = feel && { muggy: m.dew_muggy, oppressive: m.dew_oppressive }[feel]();
+		return word ? `${f.temp(hour.dewPoint)} · ${word}` : f.temp(hour.dewPoint);
+	});
+	const fog = $derived(fogAhead(ahead));
 
 	const trends = {
 		risingFast: m.pressure_rising_fast,
@@ -43,6 +60,8 @@
 		[
 			[m.uv_index(), `${Math.round(day.uvMax)} · ${uvLabel}`],
 			humidity === undefined ? null : [m.humidity(), f.percent(humidity)],
+			dewText === null ? null : [m.dew_point(), dewText],
+			hour?.visibility === undefined ? null : [m.visibility(), f.distance(hour.visibility)],
 			[m.rain_amount(), f.rain(day.rain)],
 			[m.rain_chance_label(), f.percent(day.rainChance)],
 			[m.sunrise(), day.sunrise ? f.time(day.sunrise) : '–'],
@@ -69,6 +88,14 @@
 	<Droplets size={14} aria-hidden="true" />
 	{m.rain_likely_note({ percent: f.percent(RAIN_LIKELY) })}
 </p>
+{#if fog}
+	<p class="mt-2 flex items-start gap-1.5 text-sm text-ink-muted">
+		<CloudFog size={14} class="mt-0.5 shrink-0" aria-hidden="true" />
+		{fog.from === hour?.time
+			? m.fog_now({ until: f.time(fog.until) })
+			: m.fog_ahead({ from: f.time(fog.from), until: f.time(fog.until) })}
+	</p>
+{/if}
 {#if pressureText}
 	<p class="mt-2 flex items-start gap-1.5 text-sm text-ink-muted">
 		<Gauge size={14} class="mt-0.5 shrink-0" aria-hidden="true" />

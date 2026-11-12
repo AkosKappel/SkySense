@@ -78,6 +78,9 @@
 	"dark_question": "Kedy sa zotmie?",
 	"data_attribution": "Údaje o počasí: Open-Meteo.com",
 	"details": "Podrobnosti",
+	"dew_muggy": "Dusno",
+	"dew_oppressive": "Úmorne",
+	"dew_point": "Rosný bod",
 	"done": "Hotovo",
 	"dry_days": [
 		{
@@ -129,6 +132,8 @@
 	"feature_sky": "Dnešný mesiac, východ a západ slnka, tlak vzduchu a či stúpa alebo klesá, a obloha v pozadí, ktorá sa mení s dennou dobou a počasím.",
 	"feels_like": "Pocitovo {temp}",
 	"feels_like_line": "Pocitová",
+	"fog_ahead": "Hmla pravdepodobne od {from} do {until}.",
+	"fog_now": "Hmla pravdepodobne do {until}.",
 	"go_out_question": "Kedy ísť von?",
 	"high": "Max.",
 	"high_low": "Max. {max} · Min. {min}",
@@ -412,6 +417,7 @@
 	"uv_low": "Nízky",
 	"uv_moderate": "Stredný",
 	"uv_very_high": "Veľmi vysoký",
+	"visibility": "Viditeľnosť",
 	"wear_arctic": "Teplé vrstvy, zimná bunda, čiapka, rukavice a šál.",
 	"wear_label": "Čo si obliecť:",
 	"wear_layer": "Tričko a niečo ľahké na neskôr.",

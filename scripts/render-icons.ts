@@ -48,7 +48,8 @@ await render(sized(maskable, 512), 512, 512, 'static/icon-maskable-512.png');
 await render(sized(maskable, 180), 180, 180, 'static/apple-touch-icon.png');
 // For crawlers and browsers that ask for /favicon.ico whatever the page links.
 const icons = [];
-for (const size of [16, 32, 48]) icons.push({ size, png: await render(sized(logo, size), size, size) });
+for (const size of [16, 32, 48])
+	icons.push({ size, png: await render(sized(logo, size), size, size) });
 writeFileSync('static/favicon.ico', ico(icons));
 console.log('wrote static/favicon.ico');
 

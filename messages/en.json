@@ -78,6 +78,9 @@
 	"dark_question": "When does it get dark?",
 	"data_attribution": "Weather data by Open-Meteo.com",
 	"details": "Details",
+	"dew_muggy": "Muggy",
+	"dew_oppressive": "Oppressive",
+	"dew_point": "Dew point",
 	"done": "Done",
 	"dry_days": [
 		{
@@ -128,6 +131,8 @@
 	"feature_sky": "Tonight's moon, sunrise and sunset, the barometer and whether it is rising or falling, and a background sky that follows the time of day and the weather.",
 	"feels_like": "Feels like {temp}",
 	"feels_like_line": "Feels like",
+	"fog_ahead": "Fog likely from {from} until {until}.",
+	"fog_now": "Fog likely until {until}.",
 	"go_out_question": "When should I go out?",
 	"high": "High",
 	"high_low": "High {max} · Low {min}",
@@ -404,6 +409,7 @@
 	"uv_low": "Low",
 	"uv_moderate": "Moderate",
 	"uv_very_high": "Very high",
+	"visibility": "Visibility",
 	"wear_arctic": "Warm layers, a winter coat, hat, gloves and a scarf.",
 	"wear_label": "What to wear:",
 	"wear_layer": "A T-shirt, with a light layer for later.",

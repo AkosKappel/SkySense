@@ -78,6 +78,9 @@
 	"dark_question": "¿Cuándo anochece?",
 	"data_attribution": "Datos meteorológicos de Open-Meteo.com",
 	"details": "Detalles",
+	"dew_muggy": "Bochornoso",
+	"dew_oppressive": "Sofocante",
+	"dew_point": "Punto de rocío",
 	"done": "Listo",
 	"dry_days": [
 		{
@@ -128,6 +131,8 @@
 	"feature_sky": "La luna de esta noche, la salida y la puesta del sol, la presión y si sube o baja, y un cielo de fondo que sigue la hora del día y el tiempo.",
 	"feels_like": "Sensación de {temp}",
 	"feels_like_line": "Sensación",
+	"fog_ahead": "Probable niebla de las {from} a las {until}.",
+	"fog_now": "Probable niebla hasta las {until}.",
 	"go_out_question": "¿Cuándo salgo?",
 	"high": "Máx.",
 	"high_low": "Máx. {max} · Mín. {min}",
@@ -404,6 +409,7 @@
 	"uv_low": "Bajo",
 	"uv_moderate": "Moderado",
 	"uv_very_high": "Muy alto",
+	"visibility": "Visibilidad",
 	"wear_arctic": "Capas de abrigo, abrigo de invierno, gorro, guantes y bufanda.",
 	"wear_label": "Qué ponerte:",
 	"wear_layer": "Una camiseta y una capa ligera para después.",

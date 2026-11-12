@@ -73,6 +73,18 @@ export function formatRain(mm: number, units: Units, locale = 'en'): string {
  * Pressure in hPa, or inches of mercury for readers who chose inches for rain: there is no
  * separate setting, and the US is where barometers read inHg.
  */
+/**
+ * A distance such as visibility, in miles where the wind is in mph (the US and the UK, which
+ * measure road distances in miles) and kilometres elsewhere. One decimal below 10.
+ */
+export function formatDistance(metres: number, units: Units, locale = 'en'): string {
+	const miles = units.wind === 'mph';
+	const value = miles ? metres / 1609.344 : metres / 1000;
+	const digits = value < 10 ? 1 : 0;
+	const number = new Intl.NumberFormat(locale, { maximumFractionDigits: digits }).format(value);
+	return `${number} ${miles ? 'mi' : 'km'}`;
+}
+
 export function formatPressure(hpa: number, units: Units, locale = 'en'): string {
 	if (units.rain === 'in') {
 		const value = new Intl.NumberFormat(locale, {

@@ -31,6 +31,10 @@ export type Hour = {
 	wind: number;
 	gust: number;
 	uv: number;
+	/** Visibility in metres, dew point in °C and cloud cover in % (F-23); missing in older recordings. */
+	visibility?: number;
+	dewPoint?: number;
+	clouds?: number;
 	/** The ensemble's spread for this hour (C-01), missing when the ensemble is unavailable. */
 	spread?: Spread;
 	/** European Air Quality Index (H-03), missing where or when the air quality API has none. */

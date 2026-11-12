@@ -42,7 +42,10 @@ const hourly = [
 	'wind_gusts_10m',
 	'uv_index',
 	'is_day',
-	'pressure_msl'
+	'pressure_msl',
+	'visibility',
+	'dew_point_2m',
+	'cloud_cover'
 ] as const;
 
 const daily = [
@@ -96,7 +99,11 @@ const forecastSchema = z.object({
 		uv_index: numbers,
 		is_day: numbers,
 		// Optional: fixtures recorded before H-06 and some models lack it.
-		pressure_msl: numbers.optional()
+		pressure_msl: numbers.optional(),
+		// Optional for the same reason (F-23).
+		visibility: numbers.optional(),
+		dew_point_2m: numbers.optional(),
+		cloud_cover: numbers.optional()
 	}),
 	daily: z.object({
 		time: z.array(z.string()),
@@ -154,7 +161,10 @@ export function toForecast(raw: unknown): Forecast {
 			rain: h.precipitation[i] ?? 0,
 			wind: h.wind_speed_10m[i] ?? 0,
 			gust: h.wind_gusts_10m[i] ?? 0,
-			uv: h.uv_index[i] ?? 0
+			uv: h.uv_index[i] ?? 0,
+			visibility: h.visibility?.[i] ?? undefined,
+			dewPoint: h.dew_point_2m?.[i] ?? undefined,
+			clouds: h.cloud_cover?.[i] ?? undefined
 		});
 	}
 

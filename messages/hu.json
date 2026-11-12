@@ -78,6 +78,9 @@
 	"dark_question": "Mikor sötétedik?",
 	"data_attribution": "Időjárási adatok: Open-Meteo.com",
 	"details": "Részletek",
+	"dew_muggy": "Fülledt",
+	"dew_oppressive": "Nyomasztó",
+	"dew_point": "Harmatpont",
 	"done": "Kész",
 	"dry_days": [
 		{
@@ -128,6 +131,8 @@
 	"feature_sky": "A ma esti hold, a napkelte és a napnyugta, a légnyomás és hogy emelkedik-e vagy csökken, és a háttérben egy égbolt, amely követi a napszakot és az időjárást.",
 	"feels_like": "Hőérzet {temp}",
 	"feels_like_line": "Hőérzet",
+	"fog_ahead": "{from} és {until} között valószínű a köd.",
+	"fog_now": "{until}-ig valószínű a köd.",
 	"go_out_question": "Mikor menjek ki?",
 	"high": "Max.",
 	"high_low": "Max. {max} · Min. {min}",
@@ -359,6 +364,7 @@
 	"uv_low": "Alacsony",
 	"uv_moderate": "Mérsékelt",
 	"uv_very_high": "Nagyon magas",
+	"visibility": "Látótávolság",
 	"wear_arctic": "Meleg rétegek, télikabát, sapka, kesztyű és sál.",
 	"wear_label": "Mit vegyél fel:",
 	"wear_layer": "Póló, és egy vékony réteg későbbre.",
