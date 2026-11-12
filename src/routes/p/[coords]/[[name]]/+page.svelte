@@ -50,7 +50,7 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { moon } from '#lib/moon.js';
-	import { MAX_PLACES, rememberLastPlace, savedPlaces } from '#lib/places.svelte.js';
+	import { MAX_PLACES, pageName, rememberLastPlace, savedPlaces } from '#lib/places.svelte.js';
 	import { precipitation, skies, skyKind } from '#lib/sky.js';
 	import { summarize } from '#lib/summary.js';
 	import { whatToWear } from '#lib/wear.js';
@@ -209,7 +209,7 @@
 		const at = list.findIndex((p) => formatCoordinates(p) === formatCoordinates(place));
 		if (at === -1 || list.length < 2) return null;
 		const link = (p: (typeof list)[number]) => {
-			const label = p.live ? m.my_location() : p.name;
+			const label = pageName(p);
 			return {
 				label,
 				href: resolve('/p/[coords]/[[name]]', {

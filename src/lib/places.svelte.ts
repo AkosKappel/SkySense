@@ -1,10 +1,12 @@
 // Saved places stay on this device (D-07). Storage can be missing or blocked (private windows),
 // so every access is guarded and the app works without it.
 import { browser } from '$app/env';
+import { m } from '#lib/paraglide/messages.js';
 import { formatCoordinates, type Coordinates } from '#lib/weather.js';
 
 export type SavedPlace = Coordinates & {
 	name: string;
+	/** Region and country; for "My location", the town's name from the reverse geocoder. */
 	detail?: string;
 	/** "My location" (F-12): located again when opened; its coordinates are the last position. */
 	live?: true;
@@ -36,6 +38,10 @@ const same = (a: Coordinates, b: Coordinates) => formatCoordinates(a) === format
  * A saved place's key in lists. "My location" can round to the same coordinates as a saved
  * place, so it has its own key; there is only ever one.
  */
+/** The name a place's page shows: the town for "My location" when it is known. */
+export const pageName = (place: SavedPlace) =>
+	place.live ? (place.detail ?? m.my_location()) : place.name;
+
 export const placeKey = (place: SavedPlace) => (place.live ? 'live' : formatCoordinates(place));
 
 class SavedPlaces {
@@ -86,8 +92,8 @@ class SavedPlaces {
 	}
 
 	/** Saves the reader's position as the one "My location" entry, first in the list. */
-	setLive(place: Coordinates & { name: string }) {
-		const live: SavedPlace = { name: place.name, lat: place.lat, lon: place.lon, live: true };
+	setLive(place: Coordinates & { name: string; detail?: string }) {
+		const live: SavedPlace = { ...place, live: true };
 		this.list = [live, ...this.list.filter((p) => !p.live)];
 		this.save();
 	}

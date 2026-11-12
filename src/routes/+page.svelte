@@ -5,7 +5,7 @@
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
 	import { m } from '#lib/paraglide/messages.js';
 	import { openLive } from '#lib/open-live.js';
-	import { placeKey, savedPlaces, type SavedPlace } from '#lib/places.svelte.js';
+	import { pageName, placeKey, savedPlaces, type SavedPlace } from '#lib/places.svelte.js';
 	import { formatCoordinates } from '#lib/weather.js';
 
 	let removed = $state<{ place: SavedPlace; index: number } | null>(null);
@@ -66,7 +66,7 @@
 							<a
 								href={resolve('/p/[coords]/[[name]]', {
 									coords: formatCoordinates(place),
-									name: encodeURIComponent(place.live ? m.my_location() : place.name)
+									name: encodeURIComponent(pageName(place))
 								})}
 								onclick={(event) => place.live && openLive(event, place, m.my_location())}
 								class="flex min-h-14 min-w-0 flex-1 items-center gap-3 px-4"

@@ -5,15 +5,19 @@ import bratislavaAir from './fixtures/air-bratislava.json';
 import places from './fixtures/places-bratisl.json';
 import tromso from './fixtures/forecast-tromso.json';
 import heat from './fixtures/scenario-heat.json';
+import reverseBratislava from './fixtures/reverse-bratislava.json';
+import reverseTromso from './fixtures/reverse-tromso.json';
 import midnightSun from './fixtures/scenario-midnight-sun.json';
 import polarNight from './fixtures/scenario-polar-night.json';
 import { darkness } from '../daylight.js';
 import {
 	fetchForecast,
+	reverseGeocode,
 	searchPlaces,
 	toForecast,
 	toPlaces,
 	toAir,
+	toAreaName,
 	toSpread,
 	WeatherServiceError,
 	withSpread
@@ -246,5 +250,32 @@ describe('requests', () => {
 		await searchPlaces('Bratisl', 'hu', undefined, fetchFn);
 		const url = new URL(String((fetchFn.mock.calls[0] as unknown[])[0]));
 		expect(url.searchParams.get('language')).toBe('hu');
+	});
+});
+
+describe('reverse geocoding', () => {
+	it('names the city rather than its district, and the municipality where there is no city', () => {
+		expect(toAreaName(reverseBratislava)).toBe('Bratislava');
+		expect(toAreaName(reverseTromso)).toBe('Tromsø');
+	});
+
+	it('has no name for the open sea, and rejects an unexpected answer', () => {
+		expect(toAreaName({ error: 'Unable to geocode' })).toBeNull();
+		expect(() => toAreaName({ name: 42 })).toThrow(WeatherServiceError);
+	});
+
+	it("identifies the app, asks in the reader's language and skips a second request within a second", async () => {
+		const fetchFn = vi.fn<typeof fetch>(async () => Response.json(reverseBratislava));
+		expect(await reverseGeocode({ lat: 48.1512, lon: 17.1077 }, 'sk', fetchFn)).toBe('Bratislava');
+		const [input, init] = fetchFn.mock.calls[0];
+		const url = new URL(String(input));
+		expect(url.hostname).toBe('nominatim.openstreetmap.org');
+		expect(url.searchParams.get('lat')).toBe('48.15');
+		expect(url.searchParams.get('accept-language')).toBe('sk');
+		expect(new Headers(init?.headers).get('user-agent')).toContain('SkySense');
+		await expect(reverseGeocode({ lat: 40.42, lon: -3.7 }, 'en', fetchFn)).rejects.toThrow(
+			WeatherServiceError
+		);
+		expect(fetchFn).toHaveBeenCalledTimes(1);
 	});
 });

@@ -5,7 +5,7 @@
 	import PlaceSearch from '#lib/components/PlaceSearch.svelte';
 	import { m } from '#lib/paraglide/messages.js';
 	import { openLive } from '#lib/open-live.js';
-	import { placeKey, savedPlaces } from '#lib/places.svelte.js';
+	import { pageName, placeKey, savedPlaces } from '#lib/places.svelte.js';
 	import { formatCoordinates, type Coordinates } from '#lib/weather.js';
 
 	// Open state lives in shallow-routed history (`page.state.placeSheet`), so Back closes the
@@ -66,7 +66,7 @@
 							<a
 								href={resolve('/p/[coords]/[[name]]', {
 									coords: formatCoordinates(place),
-									name: encodeURIComponent(place.live ? m.my_location() : place.name)
+									name: encodeURIComponent(pageName(place))
 								})}
 								onclick={(event) => place.live && openLive(event, place, m.my_location(), true)}
 								data-sveltekit-replacestate

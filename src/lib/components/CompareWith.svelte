@@ -2,7 +2,7 @@
 	import { Scale } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { m } from '#lib/paraglide/messages.js';
-	import { placeKey, savedPlaces } from '#lib/places.svelte.js';
+	import { pageName, placeKey, savedPlaces } from '#lib/places.svelte.js';
 	import { formatCoordinates, type Coordinates } from '#lib/weather.js';
 
 	// "Compare with" another saved place (X-07). Saved places live in this browser, so this only
@@ -25,7 +25,7 @@
 		<input type="hidden" name="a" value={formatCoordinates(current)} />
 		<input type="hidden" name="an" value={current.name} />
 		<input type="hidden" name="b" value={formatCoordinates(other)} />
-		<input type="hidden" name="bn" value={other.live ? m.my_location() : other.name} />
+		<input type="hidden" name="bn" value={pageName(other)} />
 		<label class="flex min-w-0 flex-1 flex-col gap-1 text-sm text-ink-muted">
 			{m.compare_with()}
 			<select

@@ -238,19 +238,31 @@ test('downloads the good times for an activity as a calendar file', async ({ pag
 	expect(ics).toContain('DTSTART:20261110T150000Z');
 });
 
-test('"My location" locates again when opened', async ({ context, page }) => {
+test('"My location" locates again when opened and names the town', async ({ context, page }) => {
 	await context.grantPermissions(['geolocation']);
 	await context.setGeolocation({ latitude: 48.15, longitude: 17.11 });
 	await page.goto('/?choose');
 	await page.getByRole('button', { name: 'Use my location' }).click();
-	await expect(page).toHaveURL(/\/p\/48\.15,17\.11\/My%20location$/);
+	await expect(page).toHaveURL(/\/p\/48\.15,17\.11\/Bratislava$/);
+	await expect(page.getByRole('heading', { level: 1 })).toContainText('Bratislava');
 
 	await context.setGeolocation({ latitude: 40.42, longitude: -3.7 });
 	await page.goto('/?choose');
-	await page.getByRole('link', { name: 'My location' }).click();
-	await expect(page).toHaveURL(/\/p\/40\.42,-3\.7\/My%20location$/);
+	const live = page.getByRole('link', { name: 'My location' });
+	await expect(live).toContainText('Bratislava');
+	await live.click();
+	await expect(page).toHaveURL(/\/p\/40\.42,-3\.7\/Madrid$/);
 	await page.goto('/?choose');
 	await expect(page.getByRole('link', { name: 'My location' })).toHaveCount(1);
+	await expect(page.getByRole('link', { name: 'My location' })).toContainText('Madrid');
+});
+
+test('the reverse geocoder answers with a town name and checks its input', async ({ request }) => {
+	const named = await request.get('/api/reverse?lat=69.65&lon=18.96&lang=en');
+	expect(await named.json()).toEqual({ name: 'Tromsø' });
+	expect(named.headers()['cache-control']).toContain('s-maxage=2592000');
+	expect((await request.get('/api/reverse?lat=200&lon=0')).status()).toBe(400);
+	expect((await request.get('/api/reverse?lat=1&lon=2&lang=xx')).status()).toBe(400);
 });
 
 test('compares two saved places day by day', async ({ page }) => {

@@ -26,6 +26,10 @@ const ENSEMBLE_MODEL = 'ecmwf_ifs025_ensemble';
 const AIR_URL = 'https://air-quality-api.open-meteo.com/v1/air-quality';
 const ARCHIVE_URL = 'https://archive-api.open-meteo.com/v1/archive';
 const GEOCODING_URL = 'https://geocoding-api.open-meteo.com/v1/search';
+/** Open-Meteo has no reverse geocoding; OpenStreetMap's Nominatim names a position (F-12, 0006). */
+const REVERSE_URL = 'https://nominatim.openstreetmap.org/reverse';
+/** Nominatim's usage policy asks every app to identify itself. */
+const REVERSE_AGENT = 'SkySense (https://skysense.akoskappel.dev)';
 const DAYS = 10;
 
 const hourly = [
@@ -678,11 +682,11 @@ const RETRY_DELAY_MS = 300;
  * One retry for network errors and 5xx answers, which are usually a brief blip; 4xx answers
  * (including 429, the free tier's rate limit) are final.
  */
-async function getJson(url: URL, fetchFn: typeof fetch): Promise<unknown> {
+async function getJson(url: URL, fetchFn: typeof fetch, headers?: HeadersInit): Promise<unknown> {
 	for (let attempt = 1; ; attempt++) {
 		let response: Response;
 		try {
-			response = await fetchFn(url, { signal: AbortSignal.timeout(8000) });
+			response = await fetchFn(url, { headers, signal: AbortSignal.timeout(8000) });
 		} catch (cause) {
 			if (attempt < 2) {
 				await new Promise((done) => setTimeout(done, RETRY_DELAY_MS));
@@ -771,6 +775,56 @@ async function fetchSpread(
 		forecast_days: String(DAYS)
 	}).toString();
 	return toSpread(await getJson(url, fetchFn));
+}
+
+const reverseSchema = z.object({
+	name: z.string().optional(),
+	address: z
+		.object({
+			city: z.string().optional(),
+			town: z.string().optional(),
+			village: z.string().optional(),
+			municipality: z.string().optional()
+		})
+		.optional()
+});
+
+/** The name of the town or city at a position, or null where there is none (the open sea). */
+export function toAreaName(raw: unknown): string | null {
+	const parsed = reverseSchema.safeParse(raw);
+	if (!parsed.success) throw new WeatherServiceError('Unexpected reverse geocoding response');
+	const { name, address } = parsed.data;
+	// The city before the result's own name, which can be a district ("District of Bratislava I").
+	const area = address?.city ?? address?.town ?? address?.village ?? address?.municipality ?? name;
+	return area?.trim().slice(0, 80) || null;
+}
+
+/** Nominatim allows one request a second; a second one sooner is skipped, not queued. */
+const REVERSE_GAP_MS = 1000;
+let lastReverse = 0;
+
+export async function reverseGeocode(
+	coordinates: Coordinates,
+	language: string,
+	fetchFn: typeof fetch = fetch
+): Promise<string | null> {
+	const { lat, lon } = roundCoordinates(coordinates);
+	if (useFixtures()) {
+		return toAreaName(fixtures[`./fixtures/reverse-${nearestFixture({ lat, lon })}.json`].default);
+	}
+	const now = Date.now();
+	if (now - lastReverse < REVERSE_GAP_MS) throw new WeatherServiceError('Reverse geocoder busy');
+	lastReverse = now;
+	const url = new URL(REVERSE_URL);
+	url.search = new URLSearchParams({
+		lat: String(lat),
+		lon: String(lon),
+		format: 'jsonv2',
+		// City level: the town's name, not the street.
+		zoom: '10',
+		'accept-language': language
+	}).toString();
+	return toAreaName(await getJson(url, fetchFn, { 'user-agent': REVERSE_AGENT }));
 }
 
 export async function searchPlaces(

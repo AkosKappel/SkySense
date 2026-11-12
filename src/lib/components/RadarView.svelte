@@ -15,7 +15,7 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import type { Formatter } from '#lib/format.js';
-	import { savedPlaces } from '#lib/places.svelte.js';
+	import { pageName, savedPlaces } from '#lib/places.svelte.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import {
 		firstWetHour,
@@ -204,7 +204,7 @@
 	function addSavedPlaces(L: typeof import('leaflet'), map: LeafletMap) {
 		for (const saved of savedPlaces.list) {
 			if (formatCoordinates(saved) === formatCoordinates(coordinates)) continue;
-			const name = saved.live ? m.my_location() : saved.name;
+			const name = pageName(saved);
 			const link = document.createElement('a');
 			link.href = `${resolve('/p/[coords]/[[name]]', {
 				coords: formatCoordinates(saved),

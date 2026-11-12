@@ -42,6 +42,15 @@
 			{/each}
 		</ul>
 		<p>{m.about_data()}</p>
+		<p>
+			{m.about_places()}
+			<a
+				href="https://www.openstreetmap.org/copyright"
+				class="font-semibold underline underline-offset-4"
+				rel="noopener">© OpenStreetMap contributors</a
+			>
+			· ODbL
+		</p>
 		<p>{m.about_languages()}</p>
 		<p>
 			<a

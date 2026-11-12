@@ -6,6 +6,7 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { locate } from '#lib/locate.js';
+	import { areaName } from '#lib/open-live.js';
 	import { savedPlaces, type SavedPlace } from '#lib/places.svelte.js';
 	import { formatCoordinates } from '#lib/weather.js';
 
@@ -110,8 +111,9 @@
 		locating = true;
 		try {
 			const position = await locate();
-			savedPlaces.setLive({ name: m.my_location(), ...position });
-			openPlace({ name: m.my_location(), ...position }, false);
+			const area = await areaName(position);
+			savedPlaces.setLive({ name: m.my_location(), detail: area, ...position });
+			openPlace({ name: area ?? m.my_location(), ...position }, false);
 		} catch (error) {
 			locationError = error === 'denied' ? m.location_denied() : m.location_unavailable();
 		} finally {

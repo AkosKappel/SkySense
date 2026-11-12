@@ -20,6 +20,7 @@
 	<article class="mt-6 space-y-4 glass p-6 leading-relaxed">
 		<p class="answer">{m.privacy_summary()}</p>
 		<p>{m.privacy_location()}</p>
+		<p>{m.privacy_reverse()}</p>
 		<p>{m.privacy_radar()}</p>
 		<p>{m.privacy_device()}</p>
 		<p>{m.privacy_hosting()}</p>
