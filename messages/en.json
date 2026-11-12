@@ -127,7 +127,7 @@
 	"feature_offline": "Installs as an app, and shows places you opened before when you are offline.",
 	"feature_places": "Places you can save, rename and reorder, a \"My location\" entry that finds you again when opened, two places compared day by day, a search in your language, and a link to share any place.",
 	"feature_radar": "A rain radar for the last 2 hours and the model's rain for the next 3, on a map, with its temperature and wind too.",
-	"feature_settings": "Your units, 12 or 24-hour time and five languages.",
+	"feature_settings": "Your units, 12 or 24-hour time, a light or dark theme and five languages.",
 	"feature_sky": "Tonight's moon, sunrise and sunset, the barometer and whether it is rising or falling, and a background sky that follows the time of day and the weather.",
 	"feels_like": "Feels like {temp}",
 	"feels_like_line": "Feels like",

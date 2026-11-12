@@ -127,7 +127,7 @@
 	"feature_offline": "Lässt sich als App installieren und zeigt offline die Orte, die du schon geöffnet hast.",
 	"feature_places": "Orte, die du speichern, umbenennen und sortieren kannst, ein Eintrag „Mein Standort“, der dich beim Öffnen neu findet, zwei Orte im Vergleich Tag für Tag, eine Suche in deiner Sprache und ein Link zum Teilen jedes Ortes.",
 	"feature_radar": "Ein Regenradar der letzten 2 Stunden und der Modellregen der nächsten 3, auf einer Karte, dazu Temperatur und Wind.",
-	"feature_settings": "Deine Einheiten, 12- oder 24-Stunden-Zeit und fünf Sprachen.",
+	"feature_settings": "Deine Einheiten, 12- oder 24-Stunden-Zeit, ein helles oder dunkles Design und fünf Sprachen.",
 	"feature_sky": "Der Mond heute Nacht, Sonnenauf- und -untergang, der Luftdruck und ob er steigt oder fällt, und ein Himmel im Hintergrund, der Tageszeit und Wetter folgt.",
 	"feels_like": "Gefühlt {temp}",
 	"feels_like_line": "Gefühlt",

@@ -128,7 +128,7 @@
 	"feature_offline": "Dá sa nainštalovať ako aplikácia a bez pripojenia ukáže miesta, ktoré si už otvoril.",
 	"feature_places": "Miesta, ktoré si môžeš uložiť, premenovať a zoradiť, položka „Moja poloha“, ktorá ťa pri otvorení znova nájde, porovnanie dvoch miest deň po dni, vyhľadávanie v tvojom jazyku a odkaz na zdieľanie ktoréhokoľvek miesta.",
 	"feature_radar": "Zrážkový radar za posledné 2 hodiny a dážď podľa modelu na najbližšie 3, na mape, aj s teplotou a vetrom.",
-	"feature_settings": "Tvoje jednotky, 12- alebo 24-hodinový čas a päť jazykov.",
+	"feature_settings": "Tvoje jednotky, 12- alebo 24-hodinový čas, svetlý alebo tmavý vzhľad a päť jazykov.",
 	"feature_sky": "Dnešný mesiac, východ a západ slnka, tlak vzduchu a či stúpa alebo klesá, a obloha v pozadí, ktorá sa mení s dennou dobou a počasím.",
 	"feels_like": "Pocitovo {temp}",
 	"feels_like_line": "Pocitová",

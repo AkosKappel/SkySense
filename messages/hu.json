@@ -127,7 +127,7 @@
 	"feature_offline": "Alkalmazásként telepíthető, és offline is megmutatja a korábban megnyitott helyeket.",
 	"feature_places": "Helyek, amelyeket elmenthetsz, átnevezhetsz és sorba rendezhetsz, egy „Saját helyzetem” elem, amely megnyitáskor újra megtalál, két hely összehasonlítása napról napra, keresés a saját nyelveden, és bármely hely megosztható linkje.",
 	"feature_radar": "Esőradar az elmúlt 2 óráról és a modell esője a következő 3 órára, térképen, hőmérséklettel és széllel is.",
-	"feature_settings": "A saját mértékegységeid, 12 vagy 24 órás idő és öt nyelv.",
+	"feature_settings": "A saját mértékegységeid, 12 vagy 24 órás idő, világos vagy sötét téma és öt nyelv.",
 	"feature_sky": "A ma esti hold, a napkelte és a napnyugta, a légnyomás és hogy emelkedik-e vagy csökken, és a háttérben egy égbolt, amely követi a napszakot és az időjárást.",
 	"feels_like": "Hőérzet {temp}",
 	"feels_like_line": "Hőérzet",

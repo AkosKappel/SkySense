@@ -15,7 +15,7 @@ The weather, made sense of. Most weather apps show a grid of numbers and icons a
 
 ## What it answers
 
-- **What is the weather doing?** One or two plain sentences on top ("Rain until 16:00, then dry."), what to wear ("A warm jacket. Something waterproof too."), then tiles that each answer one question: do I need an umbrella, when does it get dark, how windy is it.
+- **What is the weather doing?** One or two plain sentences on top ("Rain until 16:00, then dry."), what to wear ("A warm jacket. Something waterproof too."), then tiles that each answer one question: do I need an umbrella, when does it get dark, how windy is it. Today's details add the dew point, visibility and coming fog ("Fog likely until 13:00."). Light and dark themes follow the system unless you pick one.
 - **When should I go out?** Every hour is scored for running, cycling, walking, hiking, a picnic, laundry outside, stargazing and golden hour photos. The tile names the best time today and in the next 10 days, or why there is none ("Too wet in the next 24 hours."), each score opens into the factors behind it, and the good times download as a calendar file. A comfort setting shifts the temperatures for people who get cold or warm easily.
 - **How sure is it?** 51 runs of the ECMWF ensemble give a likely range around the temperature line, "96% of model runs show it right now" under the umbrella answer, and "Less sure" or "Uncertain" on later days. The summary hedges when the runs disagree. Five weather models can be compared side by side.
 - **Is this normal?** Today's high against the 1991 to 2020 climate for the date ("3° colder than usual."), the same date in each of the last ten years, and how long it has been dry ("Dry for 9 days.").

@@ -127,7 +127,7 @@
 	"feature_offline": "Se instala como una app y muestra sin conexión los lugares que ya abriste.",
 	"feature_places": "Lugares que puedes guardar, renombrar y ordenar, una entrada «Mi ubicación» que te vuelve a encontrar al abrirla, dos lugares comparados día a día, una búsqueda en tu idioma y un enlace para compartir cualquier lugar.",
 	"feature_radar": "Un radar de lluvia de las últimas 2 horas y la lluvia del modelo para las próximas 3, en un mapa, también con temperatura y viento.",
-	"feature_settings": "Tus unidades, formato de 12 o 24 horas y cinco idiomas.",
+	"feature_settings": "Tus unidades, formato de 12 o 24 horas, tema claro u oscuro y cinco idiomas.",
 	"feature_sky": "La luna de esta noche, la salida y la puesta del sol, la presión y si sube o baja, y un cielo de fondo que sigue la hora del día y el tiempo.",
 	"feels_like": "Sensación de {temp}",
 	"feels_like_line": "Sensación",
