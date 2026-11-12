@@ -25,7 +25,6 @@
 	import CompareWith from '#lib/components/CompareWith.svelte';
 	import DayFacts from '#lib/components/DayFacts.svelte';
 	import ModelCompare from '#lib/components/ModelCompare.svelte';
-	import RadarView from '#lib/components/RadarView.svelte';
 	import YearView from '#lib/components/YearView.svelte';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
 	import NowTile from '#lib/components/NowTile.svelte';
@@ -317,14 +316,17 @@
 	{/if}
 
 	{#if showRadar}
-		<!-- The map is built once on mount, so another place's radar needs a fresh one. -->
+		<!-- The map is built once on mount, so another place's radar needs a fresh one. The view
+		     loads on demand: it needs the browser anyway, and it stays out of every forecast page. -->
 		{#key formatCoordinates(data.coordinates)}
-			<RadarView
-				coordinates={data.coordinates}
-				place={name}
-				utcOffsetSeconds={forecast.utcOffsetSeconds}
-				{f}
-			/>
+			{#await import('#lib/components/RadarView.svelte') then { default: RadarView }}
+				<RadarView
+					coordinates={data.coordinates}
+					place={name}
+					utcOffsetSeconds={forecast.utcOffsetSeconds}
+					{f}
+				/>
+			{/await}
 		{/key}
 	{:else if pastYear}
 		<YearView year={data.year} place={name} {f} />
