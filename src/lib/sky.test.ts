@@ -41,6 +41,34 @@ describe('sky contrast (WCAG AA, 4.5:1)', () => {
 	}
 });
 
+describe('light sky contrast (WCAG AA, 4.5:1)', () => {
+	const INK: Rgb = [15, 23, 42];
+	/** The `glass` utility in the light theme: white at 62% over the sky. */
+	const LIGHT_GLASS = 0.62;
+	/** `ink-muted` in the light theme: slate at 78%. */
+	const LIGHT_MUTED = 0.78;
+	/** The light theme's accent colours, used as text (layout.css). */
+	const accents = ['#92400e', '#075985', '#065f46', '#9f1239'];
+
+	for (const [kind, sky] of Object.entries(skies)) {
+		const backgrounds = sky.light.map(rgb);
+		if (sky.glow) {
+			const glow = rgb(sky.glow.color);
+			backgrounds.push(...backgrounds.map((bg) => mix(glow, sky.glow!.alpha, bg)));
+		}
+
+		it(`keeps muted text and accents readable on glass over light ${kind}`, () => {
+			for (const bg of backgrounds) {
+				const tile = mix(WHITE, LIGHT_GLASS, bg);
+				expect(contrast(mix(INK, LIGHT_MUTED, tile), tile)).toBeGreaterThanOrEqual(4.5);
+				for (const accent of accents) {
+					expect(contrast(rgb(accent), tile), accent).toBeGreaterThanOrEqual(4.5);
+				}
+			}
+		});
+	}
+});
+
 describe('skyKind', () => {
 	const day = { sunrise: '2026-11-10T06:50', sunset: '2026-11-10T16:19' };
 	const at = (time: string, isDay: boolean, condition = 'clear' as const): SkyKind =>

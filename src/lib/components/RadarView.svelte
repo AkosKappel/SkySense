@@ -177,8 +177,7 @@
 			map.attributionControl.addAttribution(
 				'Radar <a href="https://www.rainviewer.com/">RainViewer</a> · Forecast <a href="https://open-meteo.com/">Open-Meteo</a>'
 			);
-			const token = (name: string) =>
-				getComputedStyle(document.documentElement).getPropertyValue(name);
+			const token = (name: string) => getComputedStyle(container!).getPropertyValue(name);
 			L.circleMarker([coordinates.lat, coordinates.lon], {
 				radius: 6,
 				color: token('--color-ink'),
@@ -252,7 +251,7 @@
 			drawLabels(L, map, step.time);
 			return;
 		}
-		const rain = getComputedStyle(document.documentElement).getPropertyValue('--color-rain');
+		const rain = getComputedStyle(container!).getPropertyValue('--color-rain');
 		const half = { lat: 0.15, lon: Math.abs((grid[1]?.lon ?? 0) - (grid[0]?.lon ?? 0)) / 2 };
 		for (const cell of grid) {
 			const mm = cell.hours.find((h) => h.time === step.time)?.rain ?? 0;
@@ -392,7 +391,7 @@
 				temperature: m.radar_map_temperature,
 				wind: m.radar_map_wind
 			}[layer]({ place })}
-			class="mt-4 h-[60vh] max-h-[34rem] min-h-72 overflow-hidden rounded-2xl bg-map forced-color-adjust-none group-fullscreen:h-auto group-fullscreen:max-h-none group-fullscreen:flex-1"
+			class="dark-scope mt-4 h-[60vh] max-h-[34rem] min-h-72 overflow-hidden rounded-2xl bg-map forced-color-adjust-none group-fullscreen:h-auto group-fullscreen:max-h-none group-fullscreen:flex-1"
 		></div>
 
 		{#if grid.length}
@@ -401,7 +400,7 @@
 				<div class="flex flex-wrap gap-2">
 					{#each [['rain', m.radar_layer_rain], ['temperature', m.radar_layer_temperature], ['wind', m.radar_layer_wind]] as const as [value, text] (value)}
 						<label
-							class="flex min-h-11 cursor-pointer items-center rounded-full bg-white/10 px-4 font-semibold outline-1 outline-white/20 transition has-checked:bg-white has-checked:text-indigo-950 has-focus-visible:outline-2 has-focus-visible:outline-white"
+							class="flex min-h-11 cursor-pointer items-center rounded-full bg-veil/10 px-4 font-semibold outline-1 outline-veil/20 transition has-checked:bg-veil has-checked:text-on-veil has-focus-visible:outline-2 has-focus-visible:outline-veil"
 						>
 							<input
 								type="radio"

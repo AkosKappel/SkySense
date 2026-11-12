@@ -124,7 +124,7 @@
 						</thead>
 						<tbody>
 							{#each rows as time (time)}
-								<tr class="border-t border-white/10">
+								<tr class="border-t border-veil/10">
 									<th scope="row" class="py-1 text-left font-medium whitespace-nowrap">
 										{f.weekday(time.slice(0, 10))}
 										{f.time(time)}

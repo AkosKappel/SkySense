@@ -61,7 +61,7 @@
 		/>
 	{/each}
 	{#if band}
-		<path d={band} class="fill-white/20 forced-colors:hidden" />
+		<path d={band} class="fill-veil/20 forced-colors:hidden" />
 	{/if}
 	<path
 		d={line((h) => h.feels)}
@@ -89,7 +89,7 @@
 	</li>
 	{#if band}
 		<li class="flex items-center gap-1.5 forced-colors:hidden">
-			<span class="h-3 w-5 rounded-sm bg-white/20"></span>{m.range_line()}
+			<span class="h-3 w-5 rounded-sm bg-veil/20"></span>{m.range_line()}
 		</li>
 	{/if}
 	<li class="flex items-center gap-1.5">
@@ -118,7 +118,7 @@
 			</thead>
 			<tbody>
 				{#each hours as hour (hour.time)}
-					<tr class="border-t border-white/10">
+					<tr class="border-t border-veil/10">
 						<th scope="row" class="py-1 text-left font-medium">{f.time(hour.time)}</th>
 						<td>{f.temp(hour.temp)}</td>
 						<td>{f.temp(hour.feels)}</td>

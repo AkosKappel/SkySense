@@ -215,11 +215,22 @@ test('a place saved in one tab shows up in another', async ({ context }) => {
 	await expect(home.getByRole('link', { name: /Bratislava/ }).first()).toBeVisible();
 });
 
-test('the status bar colour follows the sky', async ({ page }) => {
+test('the status bar colour follows the sky in each theme', async ({ context, page }) => {
+	const meta = page.locator('meta[name="theme-color"]');
+	const theme = (value: string) =>
+		context.addCookies([{ name: 'skysense_theme', value, url: 'http://localhost:4173' }]);
+	await theme('dark');
 	await page.goto('/p/69.35,88.2/Norilsk');
-	await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#111827');
+	await expect(meta).toHaveAttribute('content', '#111827');
 	await page.goto('/settings');
-	await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#1e1b4b');
+	await expect(meta).toHaveAttribute('content', '#1e1b4b');
+	await theme('light');
+	await page.goto('/p/69.35,88.2/Norilsk');
+	await expect(meta).toHaveAttribute('content', '#94a3b8');
+	// Following the system, there is one colour per scheme until a place sets its own.
+	await theme('system');
+	await page.goto('/settings');
+	await expect(meta).toHaveCount(2);
 });
 
 test('downloads the good times for an activity as a calendar file', async ({ page }) => {
@@ -432,12 +443,15 @@ test('the map shortcut opens the radar for the last place', async ({ page }) => 
 test('settings change units and language', async ({ page }) => {
 	await page.goto('/settings');
 	await expectAccessible(page);
+	await expect(page.locator('html')).toHaveAttribute('data-theme', 'system');
 	await page.getByText('Fahrenheit (°F)').click();
+	await page.getByText('Light', { exact: true }).click();
 	await page.getByLabel('Language').selectOption('de');
 	await page.getByRole('button', { name: 'Save' }).click();
 
 	await expect(page.getByRole('status')).toHaveText('Einstellungen gespeichert.');
 	await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+	await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
 
 	await page.goto('/p/48.15,17.11/Bratislava');
 	await expect(

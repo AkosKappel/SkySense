@@ -7,14 +7,14 @@ Visual direction "Aurora answers", chosen on 2026-11-10 from six prototypes (bra
 - **Every tile answers a question.** A tile opens with a small question line ("Do I need an umbrella?") and answers it in one large line ("Yes, from 13:00 to 17:00."). Supporting data (a chart, a list) sits below the answer, never instead of it.
 - **Answer first, detail on demand.** On a phone the first screen shows now, the one-sentence summary and the umbrella answer. Everything else is one scroll or one tap away.
 - **The sky is the background.** Tiles are frosted glass over a gradient that matches the sky at the viewed place and hour (`src/lib/sky.ts`): clear or cloudy night, dawn, clear or cloudy day, dusk and storm, chosen from the forecast's sunrise, sunset and condition. Rain and snow fall over it. Pages without a place use dusk.
-- **One surface.** The `glass` tile is the only container style. No nested cards with their own shadows; inner rows use `bg-white/5` and a faint ring.
+- **One surface.** The `glass` tile is the only container style. No nested cards with their own shadows; inner rows use `bg-veil/5` and a faint ring.
 
 ## Tokens
 
 | Token               | Value                                                            | Use                                                            |
 | ------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------- |
 | `font-sans`         | Plus Jakarta Sans Variable (self-hosted, `@fontsource-variable`) | All text; no second family                                     |
-| `ink`               | white                                                            | Primary text, numbers, answers                                 |
+| `ink`               | white (slate 900 in the light theme)                             | Primary text, numbers, answers                                 |
 | `ink-muted`         | white at 85%                                                     | Question lines, secondary text. Never lower than this on glass |
 | `sun`, `sun-soft`   | amber 300 and 200                                                | Sun icons, warmth, highlights                                  |
 | `rain`, `rain-soft` | sky 300 and 200                                                  | Rain icons, rain bars, precipitation chance                    |
@@ -57,3 +57,7 @@ Lucide (`@lucide/svelte`), stroke icons only, imported by name. Weather states: 
 - Charts are `aria-hidden` and the answer line above them states the same fact in words.
 - `backdrop-filter` and gradients are decoration only: without them (old browsers, forced colors) the text still reads on the base indigo.
 - Motion (falling rain and snow, scrubbing) is disabled under `prefers-reduced-motion`; the sky gradient stays.
+
+## Light theme
+
+Added 2026-11-12 (U-05). Settings offers _Like the system_, _Dark_ and _Light_ (cookie `skysense_theme`, default the system). Every colour token is `light-dark(light, dark)` and `<html data-theme>` sets `color-scheme`, so one set of classes serves both: glass and lines use `veil` (white on dark, slate on light) instead of `white`, opaque surfaces use `surface`, and text on a solid `veil` uses `on-veil`. Each sky in `src/lib/sky.ts` has a pale `light` palette, and `sky.test.ts` checks muted slate text and the light accents (the -800 shades of amber, sky, emerald and rose) on white glass at 62% over every light sky. The radar map stays dark in both themes (`.dark-scope`).

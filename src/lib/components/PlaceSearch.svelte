@@ -147,7 +147,7 @@
 			aria-controls="place-results"
 			aria-autocomplete="list"
 			aria-activedescendant={open && active >= 0 ? `place-${results[active].id}` : undefined}
-			class="h-14 w-full rounded-2xl bg-white/10 pr-12 pl-12 text-lg text-ink outline-1 outline-white/20 placeholder:text-ink-muted focus:bg-white/15 focus:outline-2 focus:outline-white [&::-webkit-search-cancel-button]:hidden"
+			class="h-14 w-full rounded-2xl bg-veil/10 pr-12 pl-12 text-lg text-ink outline-1 outline-veil/20 placeholder:text-ink-muted focus:bg-veil/15 focus:outline-2 focus:outline-veil [&::-webkit-search-cancel-button]:hidden"
 		/>
 		{#if status === 'searching'}
 			<LoaderCircle
@@ -170,7 +170,7 @@
 			id="place-results"
 			role="listbox"
 			aria-label={m.search_label()}
-			class="absolute inset-x-0 top-full z-10 mt-2 overflow-hidden rounded-tile bg-indigo-950 p-1 shadow-2xl outline-1 outline-white/15"
+			class="absolute inset-x-0 top-full z-10 mt-2 overflow-hidden rounded-tile bg-surface p-1 shadow-2xl outline-1 outline-veil/15"
 		>
 			{#each results as result, i (result.id)}
 				<li
@@ -178,7 +178,7 @@
 					role="option"
 					aria-selected={i === active}
 					class="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl px-3 py-2 {i === active
-						? 'bg-white/15'
+						? 'bg-veil/15'
 						: ''}"
 					onpointerenter={() => (active = i)}
 					onclick={() => choose(result)}
@@ -204,7 +204,7 @@
 		type="button"
 		onclick={useMyLocation}
 		disabled={locating}
-		class="mt-2 flex h-12 cursor-pointer items-center gap-2 rounded-full bg-white/10 px-5 font-semibold outline-1 outline-white/20 transition hover:bg-white/20 disabled:cursor-wait"
+		class="mt-2 flex h-12 cursor-pointer items-center gap-2 rounded-full bg-veil/10 px-5 font-semibold outline-1 outline-veil/20 transition hover:bg-veil/20 disabled:cursor-wait"
 	>
 		{#if locating}
 			<LoaderCircle size={18} class="animate-spin motion-reduce:animate-none" aria-hidden="true" />

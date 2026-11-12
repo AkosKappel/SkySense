@@ -36,6 +36,18 @@ for (const path of pages) {
 	});
 }
 
+// The light theme (U-05) has its own colours, so its main pages go through axe too.
+for (const path of pages.slice(0, 10)) {
+	test(`${path} passes axe in the light theme`, async ({ context, page }) => {
+		await context.addCookies([
+			{ name: 'skysense_theme', value: 'light', url: 'http://localhost:4173' }
+		]);
+		await page.goto(path);
+		await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+		await expectAccessible(page);
+	});
+}
+
 test('everything Tab reaches on a place page shows where the focus is', async ({ page }) => {
 	await page.goto('/p/48.15,17.11/Bratislava');
 	const unseen: string[] = [];

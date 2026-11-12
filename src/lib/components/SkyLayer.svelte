@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { skies, skyBackground, type SkyKind } from '#lib/sky.js';
+	import { isLight } from '#lib/theme.js';
 
 	// The place's sky behind the tiles, plus falling rain or snow. Particles stay off under
 	// reduced motion and pause while the tab is hidden.
@@ -9,13 +10,11 @@
 
 	// The phone's status bar takes the top of the sky (U-05), and the default again on leaving.
 	$effect(() => {
-		const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
-		if (!meta) return;
-		const before = meta.content;
-		meta.content = skies[kind].stops[0];
-		return () => {
-			meta.content = before;
-		};
+		const metas = [...document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')];
+		const before = metas.map((meta) => meta.content);
+		const top = isLight() ? skies[kind].light[0] : skies[kind].stops[0];
+		for (const meta of metas) meta.content = top;
+		return () => metas.forEach((meta, i) => (meta.content = before[i]));
 	});
 
 	$effect(() => {
@@ -23,6 +22,7 @@
 		const context = canvas.getContext('2d');
 		if (!context) return;
 		const snow = falling === 'snow';
+		const light = isLight();
 		let width = 0;
 		let height = 0;
 		const resize = () => {
@@ -39,7 +39,9 @@
 		let frame = 0;
 		const draw = () => {
 			context.clearRect(0, 0, width, height);
-			context.fillStyle = context.strokeStyle = 'rgb(255 255 255 / 0.35)';
+			context.fillStyle = context.strokeStyle = light
+				? 'rgb(15 23 42 / 0.22)'
+				: 'rgb(255 255 255 / 0.35)';
 			context.lineWidth = 1;
 			for (const drop of drops) {
 				drop.y += drop.speed;

@@ -72,13 +72,13 @@
 
 <dl class="mt-4 grid grid-cols-2 gap-3">
 	{#each facts as [label, value] (label)}
-		<div class="rounded-2xl bg-white/5 p-4 outline-1 outline-white/10">
+		<div class="rounded-2xl bg-veil/5 p-4 outline-1 outline-veil/10">
 			<dt class="text-sm wrap-anywhere hyphens-auto text-ink-muted">{label}</dt>
 			<dd class="mt-1 text-xl font-bold tabular-nums">{value}</dd>
 		</div>
 	{/each}
 	{#if pressureText}
-		<div class="col-span-2 rounded-2xl bg-white/5 p-4 outline-1 outline-white/10">
+		<div class="col-span-2 rounded-2xl bg-veil/5 p-4 outline-1 outline-veil/10">
 			<dt class="text-sm text-ink-muted">{m.pressure()}</dt>
 			<dd class="mt-1 text-xl font-bold tabular-nums">{pressureText}</dd>
 		</div>

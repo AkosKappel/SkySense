@@ -158,7 +158,7 @@
 	<ul class="mt-3 space-y-2">
 		{#each rows as row (row.id)}
 			{@const Icon = icons[row.id]}
-			<li class="rounded-2xl bg-white/5 outline-1 outline-white/10">
+			<li class="rounded-2xl bg-veil/5 outline-1 outline-veil/10">
 				<details class="group">
 					<summary class="flex cursor-pointer list-none items-center gap-3 px-4 py-3">
 						<Icon size={20} class="shrink-0 text-ink-muted" aria-hidden="true" />
@@ -176,7 +176,7 @@
 							<span
 								class="shrink-0 rounded-full px-2.5 py-1 text-sm font-semibold {row.window.great
 									? 'bg-good/20 text-good'
-									: 'bg-white/10'}">{row.window.great ? m.window_great() : m.window_good()}</span
+									: 'bg-veil/10'}">{row.window.great ? m.window_great() : m.window_good()}</span
 							>
 						{/if}
 						{#if row.detail || row.week}
@@ -199,9 +199,9 @@
 									{#each row.detail.factors as factor (factor.id)}
 										<div class="grid grid-cols-[7rem_1fr_auto] items-center gap-3 text-sm">
 											<dt class="text-ink-muted">{factorNames[factor.id]()}</dt>
-											<div class="h-1.5 rounded-full bg-white/10" aria-hidden="true">
+											<div class="h-1.5 rounded-full bg-veil/10" aria-hidden="true">
 												<div
-													class="h-full rounded-full bg-white/70 forced-color-adjust-none forced-colors:bg-[CanvasText]"
+													class="h-full rounded-full bg-veil/70 forced-color-adjust-none forced-colors:bg-[CanvasText]"
 													style:width="{Math.round(factor.value * 100)}%"
 												></div>
 											</div>
@@ -240,7 +240,7 @@
 	<div class="flex flex-wrap gap-2 pt-1">
 		{#each activityIds as id (id)}
 			<label
-				class="flex min-h-11 cursor-pointer items-center gap-2 rounded-full bg-white/10 px-4 text-sm font-semibold outline-1 outline-white/20 has-checked:bg-white/25 has-checked:outline-white/60 has-focus-visible:outline-2 has-focus-visible:outline-white"
+				class="flex min-h-11 cursor-pointer items-center gap-2 rounded-full bg-veil/10 px-4 text-sm font-semibold outline-1 outline-veil/20 has-checked:bg-veil/25 has-checked:outline-veil/60 has-focus-visible:outline-2 has-focus-visible:outline-veil"
 			>
 				<input
 					type="checkbox"

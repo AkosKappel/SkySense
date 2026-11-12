@@ -61,7 +61,7 @@
 			</div>
 			<ul class="mt-3 space-y-2">
 				{#each savedPlaces.list as place, i (placeKey(place))}
-					<li class="flex items-center gap-1 rounded-2xl bg-white/5 outline-1 outline-white/10">
+					<li class="flex items-center gap-1 rounded-2xl bg-veil/5 outline-1 outline-veil/10">
 						{#if !editing}
 							<a
 								href={resolve('/p/[coords]/[[name]]', {
@@ -99,7 +99,7 @@
 									value={place.name}
 									maxlength="80"
 									enterkeyhint="done"
-									class="my-1.5 ml-1.5 h-11 min-w-0 flex-1 rounded-xl bg-white/10 px-3 font-semibold outline-1 outline-white/30 focus:outline-2 focus:outline-white"
+									class="my-1.5 ml-1.5 h-11 min-w-0 flex-1 rounded-xl bg-veil/10 px-3 font-semibold outline-1 outline-veil/30 focus:outline-2 focus:outline-veil"
 									onchange={(event) => savedPlaces.rename(i, event.currentTarget.value)}
 									onkeydown={(event) => event.key === 'Enter' && event.currentTarget.blur()}
 								/>

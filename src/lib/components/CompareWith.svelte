@@ -20,7 +20,7 @@
 	<form
 		action={resolve('/compare')}
 		method="get"
-		class="mt-4 flex flex-wrap items-end gap-2 border-t border-white/10 pt-4"
+		class="mt-4 flex flex-wrap items-end gap-2 border-t border-veil/10 pt-4"
 	>
 		<input type="hidden" name="a" value={formatCoordinates(current)} />
 		<input type="hidden" name="an" value={current.name} />
@@ -30,12 +30,10 @@
 			{m.compare_with()}
 			<select
 				bind:value={chosen}
-				class="h-11 min-w-0 rounded-xl bg-white/10 px-3 text-ink outline-1 outline-white/20"
+				class="h-11 min-w-0 rounded-xl bg-veil/10 px-3 text-ink outline-1 outline-veil/20"
 			>
 				{#each others as place, i (placeKey(place))}
-					<option value={i} class="text-slate-900"
-						>{place.live ? m.my_location() : place.name}</option
-					>
+					<option value={i}>{place.live ? m.my_location() : place.name}</option>
 				{/each}
 			</select>
 		</label>

@@ -119,7 +119,7 @@
 				</thead>
 				<tbody>
 					{#each year.months as month (month.month)}
-						<tr class="border-t border-white/10">
+						<tr class="border-t border-veil/10">
 							<th scope="row" class="py-1 text-left font-medium">{f.month(month.month, true)}</th>
 							<td>{f.temp(month.meanMax)}</td>
 							<td>{f.rain(month.rain)}</td>

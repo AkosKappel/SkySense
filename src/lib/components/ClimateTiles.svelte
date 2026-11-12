@@ -105,7 +105,7 @@
 				</thead>
 				<tbody>
 					{#each day.past as past (past.date)}
-						<tr class="border-t border-white/10">
+						<tr class="border-t border-veil/10">
 							<th scope="row" class="py-1.5 pr-3 text-left font-semibold"
 								>{past.date.slice(0, 4)}</th
 							>

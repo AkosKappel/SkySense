@@ -7,7 +7,7 @@
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import type { LayoutProps } from './$types';
 
-	let { children }: LayoutProps = $props();
+	let { children, data }: LayoutProps = $props();
 
 	// Place switches and day views cross-fade (U-08), where the browser supports it and the reader
 	// has not asked for less motion.
@@ -39,7 +39,13 @@
 	<link rel="icon" href={favicon} />
 	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 	<link rel="manifest" href="/manifest.webmanifest" />
-	<meta name="theme-color" content="#1e1b4b" />
+	<!-- The browser's bar matches the default sky; SkyLayer sets a place's own. -->
+	{#if data.theme === 'system'}
+		<meta name="theme-color" content="#c7d2fe" media="(prefers-color-scheme: light)" />
+		<meta name="theme-color" content="#1e1b4b" media="(prefers-color-scheme: dark)" />
+	{:else}
+		<meta name="theme-color" content={data.theme === 'light' ? '#c7d2fe' : '#1e1b4b'} />
+	{/if}
 </svelte:head>
 
 <!-- A thin bar while a client navigation loads; the old page stays put, so nothing jumps. -->

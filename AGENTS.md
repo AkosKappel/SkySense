@@ -53,7 +53,7 @@ Run `lint`, `check`, `test` and `build` before committing; CI runs the same plus
 - WCAG 2.2 AA. One `main` and one `h1` per page. Text contrast is checked against every sky state, not only the default.
 - Charts always have a text equivalent; color is never the only signal.
 - Anything animated respects `prefers-reduced-motion`.
-- Colors and spacing are Tailwind tokens in `src/routes/layout.css`; no hard-coded hex values in components.
+- Colors and spacing are Tailwind tokens in `src/routes/layout.css`; no hard-coded hex values in components. Each token is `light-dark(light, dark)` for the light theme (U-05, `docs/design.md`): use `veil`, `surface` and `on-veil`, never `white` or `indigo-*`. The CSS build fixes a token's `light-dark()` where the token is defined, so a part that stays dark (`.dark-scope`, the radar map) sets the tokens it uses again, and code that reads a token with `getComputedStyle` reads it from the element that shows it.
 - The visual direction is "Aurora answers" (`docs/design.md`): frosted `glass` tiles over a sky gradient, each tile a `question` line plus an `answer` line, Plus Jakarta Sans (self-hosted), Lucide icons.
 
 ## Data source

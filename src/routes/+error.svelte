@@ -35,7 +35,7 @@
 				<button
 					type="button"
 					onclick={() => location.reload()}
-					class="flex h-12 cursor-pointer items-center rounded-full bg-white px-5 font-bold text-indigo-950"
+					class="flex h-12 cursor-pointer items-center rounded-full bg-veil px-5 font-bold text-on-veil"
 					>{m.try_again()}</button
 				>
 			{/if}

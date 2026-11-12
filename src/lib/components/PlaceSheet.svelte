@@ -44,7 +44,7 @@
 	}}
 	onclick={(event) => event.target === dialog && dismiss()}
 	aria-labelledby="place-sheet-title"
-	class="mx-0 mt-auto mb-0 max-h-[85dvh] w-full max-w-none rounded-t-tile bg-indigo-950 text-ink shadow-2xl outline-1 outline-white/15 backdrop:bg-black/50 md:mx-auto md:mb-auto md:max-w-lg md:rounded-tile"
+	class="mx-0 mt-auto mb-0 max-h-[85dvh] w-full max-w-none rounded-t-tile bg-surface text-ink shadow-2xl outline-1 outline-veil/15 backdrop:bg-black/50 md:mx-auto md:mb-auto md:max-w-lg md:rounded-tile"
 >
 	{#if open}
 		<div class="p-6">
@@ -71,9 +71,9 @@
 								onclick={(event) => place.live && openLive(event, place, m.my_location(), true)}
 								data-sveltekit-replacestate
 								aria-current={here ? 'page' : undefined}
-								class="flex min-h-14 items-center gap-3 rounded-2xl px-4 outline-1 outline-white/10 {here
-									? 'bg-white/15'
-									: 'bg-white/5 hover:bg-white/10'}"
+								class="flex min-h-14 items-center gap-3 rounded-2xl px-4 outline-1 outline-veil/10 {here
+									? 'bg-veil/15'
+									: 'bg-veil/5 hover:bg-veil/10'}"
 							>
 								{#if place.live}<LocateFixed
 										size={18}

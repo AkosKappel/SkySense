@@ -22,7 +22,7 @@
 			<li
 				class="relative flex min-w-15 flex-col items-center gap-2 rounded-2xl px-1 py-3 {i === 0 &&
 				fromNow
-					? 'bg-white/15 outline-1 outline-white/25'
+					? 'bg-veil/15 outline-1 outline-veil/25'
 					: ''}"
 			>
 				<span class="text-xs font-medium text-ink-muted"

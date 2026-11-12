@@ -19,7 +19,7 @@
 	const position = (t: number) => ((t - low) / Math.max(1, high - low)) * 100;
 </script>
 
-<ul class="mt-3 divide-y divide-white/10">
+<ul class="mt-3 divide-y divide-veil/10">
 	{#each days as day, i (day.date)}
 		<li>
 			<a
@@ -27,7 +27,7 @@
 					coords: page.params.coords ?? '',
 					name: encodeURIComponent(page.params.name ?? '')
 				})}?day={day.date}"
-				class="grid min-h-11 grid-cols-[3.25rem_1.75rem_2.75rem_2.5rem_1fr_2.5rem] items-center gap-1.5 rounded-xl py-2.5 text-sm transition hover:bg-white/5 min-[380px]:grid-cols-[4.5rem_1.75rem_2.75rem_2.5rem_1fr_2.5rem_1rem] min-[380px]:gap-2"
+				class="grid min-h-11 grid-cols-[3.25rem_1.75rem_2.75rem_2.5rem_1fr_2.5rem] items-center gap-1.5 rounded-xl py-2.5 text-sm transition hover:bg-veil/5 min-[380px]:grid-cols-[4.5rem_1.75rem_2.75rem_2.5rem_1fr_2.5rem_1rem] min-[380px]:gap-2"
 			>
 				<span class="leading-tight">
 					<span class="block font-semibold">{i === 0 ? m.today() : f.weekday(day.date)}</span>
@@ -46,7 +46,7 @@
 				<span class="text-right text-ink-muted tabular-nums">
 					<span class="sr-only">{`${m.low()} `}</span>{f.temp(day.min)}
 				</span>
-				<span class="relative h-1.5 rounded-full bg-white/10" aria-hidden="true">
+				<span class="relative h-1.5 rounded-full bg-veil/10" aria-hidden="true">
 					<span
 						class="absolute inset-y-0 rounded-full bg-linear-to-r from-cold to-warm forced-color-adjust-none forced-colors:bg-[CanvasText]"
 						style="left: {position(day.min)}%; right: {100 - position(day.max)}%"

@@ -20,11 +20,20 @@
 	};
 
 	const groups: {
-		name: keyof Units | 'comfort';
+		name: keyof Units | 'comfort' | 'theme';
 		legend: () => string;
 		note?: () => string;
 		options: [string, () => string][];
 	}[] = [
+		{
+			name: 'theme',
+			legend: m.theme,
+			options: [
+				['system', m.theme_system],
+				['dark', m.theme_dark],
+				['light', m.theme_light]
+			]
+		},
 		{
 			name: 'temperature',
 			legend: m.temperature,
@@ -71,7 +80,7 @@
 			]
 		}
 	];
-	const chosen = $derived({ ...data.units, comfort: data.comfort });
+	const chosen = $derived({ ...data.units, comfort: data.comfort, theme: data.theme });
 </script>
 
 <svelte:head>
@@ -99,12 +108,10 @@
 			<select
 				id="language"
 				name="language"
-				class="h-12 w-full rounded-2xl bg-white/10 px-4 text-ink outline-1 outline-white/20"
+				class="h-12 w-full rounded-2xl bg-veil/10 px-4 text-ink outline-1 outline-veil/20"
 			>
 				{#each locales as locale (locale)}
-					<option value={locale} selected={locale === getLocale()} class="text-slate-900"
-						>{languageNames[locale]}</option
-					>
+					<option value={locale} selected={locale === getLocale()}>{languageNames[locale]}</option>
 				{/each}
 			</select>
 		</div>
@@ -115,7 +122,7 @@
 				<div class="flex flex-wrap gap-2">
 					{#each group.options as [value, label] (value)}
 						<label
-							class="flex min-h-11 cursor-pointer items-center rounded-full bg-white/10 px-4 font-semibold outline-1 outline-white/20 transition has-checked:bg-white has-checked:text-indigo-950 has-focus-visible:outline-2 has-focus-visible:outline-white"
+							class="flex min-h-11 cursor-pointer items-center rounded-full bg-veil/10 px-4 font-semibold outline-1 outline-veil/20 transition has-checked:bg-veil has-checked:text-on-veil has-focus-visible:outline-2 has-focus-visible:outline-veil"
 						>
 							<input
 								type="radio"
@@ -134,7 +141,7 @@
 
 		<button
 			type="submit"
-			class="h-12 w-full cursor-pointer rounded-full bg-white font-bold text-indigo-950 transition hover:bg-white/90"
+			class="h-12 w-full cursor-pointer rounded-full bg-veil font-bold text-on-veil transition hover:bg-veil/90"
 			>{m.save()}</button
 		>
 	</form>

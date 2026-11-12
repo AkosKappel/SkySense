@@ -97,7 +97,7 @@
 				</thead>
 				<tbody>
 					{#each days as day, i (day.date)}
-						<tr class="border-t border-white/10">
+						<tr class="border-t border-veil/10">
 							<th scope="row" class="py-2 pr-2 text-left font-semibold">
 								{i === 0 ? m.today() : f.weekday(day.date)}
 							</th>

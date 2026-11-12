@@ -4,6 +4,7 @@ import { SKYSENSE_FIXTURES } from '$app/env/private';
 import { getTextDirection } from '#lib/paraglide/runtime.js';
 import { paraglideMiddleware } from '#lib/paraglide/server.js';
 import { rateLimiter } from '#lib/server/rate-limit.js';
+import { readTheme, THEME_COOKIE } from '#lib/theme.js';
 
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ request, locale }) => {
@@ -22,6 +23,7 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 					html
 						.replace('%paraglide.lang%', locale)
 						.replace('%paraglide.dir%', getTextDirection(locale))
+						.replace('%skysense.theme%', readTheme(event.cookies.get(THEME_COOKIE)))
 			}
 		);
 	});
