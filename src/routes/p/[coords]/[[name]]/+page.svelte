@@ -317,12 +317,15 @@
 	{/if}
 
 	{#if showRadar}
-		<RadarView
-			coordinates={data.coordinates}
-			place={name}
-			utcOffsetSeconds={forecast.utcOffsetSeconds}
-			{f}
-		/>
+		<!-- The map is built once on mount, so another place's radar needs a fresh one. -->
+		{#key formatCoordinates(data.coordinates)}
+			<RadarView
+				coordinates={data.coordinates}
+				place={name}
+				utcOffsetSeconds={forecast.utcOffsetSeconds}
+				{f}
+			/>
+		{/key}
 	{:else if pastYear}
 		<YearView year={data.year} place={name} {f} />
 	{:else if comparing}

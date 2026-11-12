@@ -15,6 +15,7 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import type { Formatter } from '#lib/format.js';
+	import { savedPlaces } from '#lib/places.svelte.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import {
 		firstWetHour,
@@ -23,7 +24,7 @@
 		type GridCell,
 		type RadarFrames
 	} from '#lib/radar.js';
-	import type { Coordinates } from '#lib/weather.js';
+	import { formatCoordinates, type Coordinates } from '#lib/weather.js';
 
 	// The rain radar (M-01): RainViewer's last two hours, then the model's next hours from a grid of
 	// forecasts. Leaflet loads only here, when the view opens, never with the forecast page.
@@ -136,6 +137,7 @@
 				fillColor: token('--color-sun'),
 				interactive: false
 			}).addTo(map);
+			addSavedPlaces(L, map);
 			show();
 		})();
 		return () => {
@@ -144,6 +146,38 @@
 			map?.remove();
 		};
 	});
+
+	/**
+	 * The other saved places (M-03), each a link to its own radar. Real links rather than Leaflet's
+	 * keyboard markers, so they are tabbable, open with Enter and are announced by name.
+	 */
+	function addSavedPlaces(L: typeof import('leaflet'), map: LeafletMap) {
+		for (const saved of savedPlaces.list) {
+			if (formatCoordinates(saved) === formatCoordinates(coordinates)) continue;
+			const name = saved.live ? m.my_location() : saved.name;
+			const link = document.createElement('a');
+			link.href = `${resolve('/p/[coords]/[[name]]', {
+				coords: formatCoordinates(saved),
+				name: encodeURIComponent(name)
+			})}?radar`;
+			link.className =
+				'pointer-events-auto flex items-center gap-1.5 rounded-sm whitespace-nowrap text-sm font-semibold text-ink! [text-shadow:0_1px_3px_black] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sun';
+			link.setAttribute('aria-label', m.radar_title({ place: name }));
+			const dot = document.createElement('span');
+			dot.className = 'size-3 shrink-0 rounded-full border-2 border-ink bg-rain';
+			link.append(dot, name);
+			// Tabbing to a place off the map would scroll the map's box; bring the place into view instead.
+			link.addEventListener('focus', () => {
+				container?.scrollTo(0, 0);
+				map.panTo([saved.lat, saved.lon]);
+			});
+			L.marker([saved.lat, saved.lon], {
+				icon: L.divIcon({ html: link, className: '', iconSize: undefined, iconAnchor: [6, 6] }),
+				interactive: false,
+				keyboard: false
+			}).addTo(map);
+		}
+	}
 
 	/** Puts the current step on the map: its radar layer, or the model's grid for that hour. */
 	function show() {

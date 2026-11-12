@@ -341,6 +341,22 @@ test('shows the rain radar, then the model, from the umbrella tile', async ({ pa
 	await expect(page.getByRole('button', { name: 'Full screen' })).toBeVisible();
 });
 
+test('the radar shows the other saved places and opens their radar', async ({ page }) => {
+	await blankMapTiles(page);
+	await page.goto('/p/48.21,16.37/Vienna');
+	await savePlace(page);
+	await page.goto('/p/48.15,17.11/Bratislava');
+	await savePlace(page);
+	await page.goto('/p/48.15,17.11/Bratislava?radar');
+	const map = page.getByRole('region', { name: 'Map of rain around Bratislava' });
+	await expect(map.getByRole('link', { name: 'Rain radar around Bratislava' })).toHaveCount(0);
+	await expectAccessible(page);
+	await map.getByRole('link', { name: 'Rain radar around Vienna' }).click();
+	await expect(page).toHaveURL(/\/p\/48\.21,16\.37\/Vienna\?radar$/);
+	await expect(page.getByRole('region', { name: 'Map of rain around Vienna' })).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Rain radar around Bratislava' })).toBeVisible();
+});
+
 test('the map shortcut opens the radar for the last place', async ({ page }) => {
 	await page.goto('/map');
 	await expect(page).toHaveURL(/\/\?choose$/);
