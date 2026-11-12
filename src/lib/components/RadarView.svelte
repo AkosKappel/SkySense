@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ArrowLeft, CloudRain, Pause, Play } from '@lucide/svelte';
+	import { ArrowLeft, ChevronLeft, ChevronRight, CloudRain, Pause, Play } from '@lucide/svelte';
 	import type { Map as LeafletMap, Rectangle, TileLayer } from 'leaflet';
 	import { onMount } from 'svelte';
 	import { CARTO_BASEMAP_KEY } from '$app/env/public';
@@ -128,16 +128,18 @@
 	function show() {
 		const L = leaflet;
 		if (!L || !map || !radar || !step) return;
+		const layerFor = (path: string) =>
+			(radarLayers[path] ??= L.tileLayer(`${radar!.host}${path}/256/{z}/{x}/{y}/2/1_1.png`, {
+				maxNativeZoom: RADAR_MAX_ZOOM,
+				opacity: 0
+			}).addTo(map!));
+		if (step.kind === 'radar') layerFor(step.path);
 		for (const [path, layer] of Object.entries(radarLayers)) {
 			layer.setOpacity(path === step.path ? 0.75 : 0);
 		}
-		if (step.kind === 'radar' && !radarLayers[step.path]) {
-			const layer = L.tileLayer(`${radar.host}${step.path}/256/{z}/{x}/{y}/2/1_1.png`, {
-				maxNativeZoom: RADAR_MAX_ZOOM,
-				opacity: 0.75
-			}).addTo(map);
-			radarLayers[step.path] = layer;
-		}
+		// The next frame loads hidden while this one shows, so playing does not flash an empty map.
+		const next = steps[index + 1];
+		if (next?.kind === 'radar') layerFor(next.path);
 		for (const cell of cells) cell.remove();
 		cells = [];
 		if (step.kind !== 'model') return;
@@ -167,6 +169,12 @@
 		void step;
 		show();
 	});
+
+	/** Steps one frame back or forward and stops playing, for reading the map frame by frame. */
+	function stepBy(delta: number) {
+		playing = false;
+		index = Math.min(steps.length - 1, Math.max(0, index + delta));
+	}
 
 	// Playing is something the reader starts, so it runs under reduced motion too; it never starts
 	// on its own.
@@ -217,33 +225,55 @@
 		></div>
 
 		{#if steps.length}
-			<div class="mt-4 flex items-center gap-3 px-2">
-				<button
-					type="button"
-					class="grid size-11 shrink-0 pill cursor-pointer place-items-center"
-					aria-label={playing ? m.radar_pause() : m.radar_play()}
-					aria-pressed={playing}
-					onclick={() => (playing = !playing)}
-				>
-					{#if playing}<Pause size={18} aria-hidden="true" />{:else}<Play
-							size={18}
-							aria-hidden="true"
-						/>{/if}
-				</button>
-				<label class="flex min-w-0 flex-1 flex-col gap-1 text-sm">
-					<span class="sr-only">{m.radar_time()}</span>
-					<input
-						type="range"
-						min="0"
-						max={steps.length - 1}
-						bind:value={index}
-						aria-valuetext={step ? label(step) : ''}
-						class="w-full accent-sun"
-					/>
-				</label>
-				<span class="shrink-0 text-sm font-semibold tabular-nums" aria-hidden="true"
-					>{step ? f.time(step.time) : ''}</span
-				>
+			<div class="mt-4 flex flex-wrap items-center gap-3 px-2">
+				<div class="flex gap-2">
+					<button
+						type="button"
+						class="grid size-11 shrink-0 pill cursor-pointer place-items-center disabled:opacity-50"
+						aria-label={m.radar_previous()}
+						disabled={index === 0}
+						onclick={() => stepBy(-1)}
+					>
+						<ChevronLeft size={18} aria-hidden="true" />
+					</button>
+					<button
+						type="button"
+						class="grid size-11 shrink-0 pill cursor-pointer place-items-center"
+						aria-label={playing ? m.radar_pause() : m.radar_play()}
+						aria-pressed={playing}
+						onclick={() => (playing = !playing)}
+					>
+						{#if playing}<Pause size={18} aria-hidden="true" />{:else}<Play
+								size={18}
+								aria-hidden="true"
+							/>{/if}
+					</button>
+					<button
+						type="button"
+						class="grid size-11 shrink-0 pill cursor-pointer place-items-center disabled:opacity-50"
+						aria-label={m.radar_next()}
+						disabled={index === steps.length - 1}
+						onclick={() => stepBy(1)}
+					>
+						<ChevronRight size={18} aria-hidden="true" />
+					</button>
+				</div>
+				<div class="flex min-w-48 flex-1 items-center gap-3">
+					<label class="flex min-w-0 flex-1 flex-col gap-1 text-sm">
+						<span class="sr-only">{m.radar_time()}</span>
+						<input
+							type="range"
+							min="0"
+							max={steps.length - 1}
+							bind:value={index}
+							aria-valuetext={step ? label(step) : ''}
+							class="w-full accent-sun"
+						/>
+					</label>
+					<span class="shrink-0 text-sm font-semibold tabular-nums" aria-hidden="true"
+						>{step ? f.time(step.time) : ''}</span
+					>
+				</div>
 			</div>
 			<ul class="mt-3 flex flex-wrap gap-x-4 gap-y-1 px-2 text-sm text-ink-muted">
 				<li class="flex items-center gap-1.5">

@@ -331,6 +331,9 @@ test('shows the rain radar, then the model, from the umbrella tile', async ({ pa
 	await slider.focus();
 	await page.keyboard.press('End');
 	await expect(slider).toHaveAttribute('aria-valuetext', '13:00, model forecast');
+	await expect(page.getByRole('button', { name: 'Next frame' })).toBeDisabled();
+	await page.getByRole('button', { name: 'Previous frame' }).click();
+	await expect(slider).toHaveAttribute('aria-valuetext', '12:00, model forecast');
 	await expectAccessible(page);
 });
 
