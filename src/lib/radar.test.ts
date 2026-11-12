@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import bratislavaGrid from '#lib/server/fixtures/grid-bratislava.json';
 import frames from '#lib/server/fixtures/radar-frames.json';
 import { gridPoints, toGrid, toRadarFrames } from '#lib/server/open-meteo.js';
-import { firstWetHour, warmerSide, windAround, type GridCell } from './radar.js';
+import { firstWetHour, temperatureBand, warmerSide, windAround, type GridCell } from './radar.js';
 
 const cell = (rain: number[]): GridCell => ({
 	lat: 48,
@@ -80,6 +80,16 @@ describe('temperature and wind layers', () => {
 		// The recorded grids list points south to north; sides come from the coordinates.
 		expect(warmerSide(temperatures([8, 8, 8, 6, 6, 6, 4, 4, 4]).reverse(), TIME)?.side).toBe('n');
 		expect(warmerSide([], TIME)).toBeNull();
+	});
+
+	it('colours temperatures blue at freezing and below, yellow from 25°', () => {
+		expect([-3, 0, 0.5, 24.9, 25].map(temperatureBand)).toEqual([
+			'cold',
+			'cold',
+			'mild',
+			'mild',
+			'warm'
+		]);
 	});
 
 	it('averages wind directions as vectors and gives the strongest speed', () => {

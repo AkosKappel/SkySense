@@ -219,7 +219,7 @@
 	"radar_layer_wind": "Wind",
 	"radar_legend_model": "Model: rain that hour; the stronger the colour, the more",
 	"radar_legend_radar": "Radar: light to heavy rain",
-	"radar_legend_temperature": "Model: the temperature that hour at each point",
+	"radar_legend_temperature": "Model: the temperature that hour at each point; blue at {cold} or colder, yellow at {hot} or warmer",
 	"radar_legend_wind": "Model: arrows show where the wind blows, numbers its speed",
 	"radar_link": "Rain radar",
 	"radar_map": "Map of rain around {place}",

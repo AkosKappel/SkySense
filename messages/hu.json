@@ -219,7 +219,7 @@
 	"radar_layer_wind": "Szél",
 	"radar_legend_model": "Modell: az adott óra esője; minél élénkebb a szín, annál több",
 	"radar_legend_radar": "Radar: gyengétől az erős esőig",
-	"radar_legend_temperature": "Modell: a hőmérséklet abban az órában minden ponton",
+	"radar_legend_temperature": "Modell: a hőmérséklet abban az órában minden ponton; kék: {cold} vagy hidegebb, sárga: {hot} vagy melegebb",
 	"radar_legend_wind": "Modell: a nyilak a szél irányát, a számok az erősségét mutatják",
 	"radar_link": "Esőradar",
 	"radar_map": "Csapadéktérkép: {place} környéke",

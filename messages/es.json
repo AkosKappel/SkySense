@@ -219,7 +219,7 @@
 	"radar_layer_wind": "Viento",
 	"radar_legend_model": "Modelo: lluvia en esa hora; cuanto más intenso el color, más",
 	"radar_legend_radar": "Radar: de lluvia débil a fuerte",
-	"radar_legend_temperature": "Modelo: la temperatura a esa hora en cada punto",
+	"radar_legend_temperature": "Modelo: la temperatura a esa hora en cada punto; azul con {cold} o menos, amarillo con {hot} o más",
 	"radar_legend_wind": "Modelo: las flechas muestran hacia dónde sopla el viento; los números, su velocidad",
 	"radar_link": "Radar de lluvia",
 	"radar_map": "Mapa de lluvia alrededor de {place}",

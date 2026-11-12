@@ -23,7 +23,8 @@ test('finds a place and shows its forecast', async ({ page }) => {
 	await expect(page.getByText('Rain until 16:00, then dry.')).toBeVisible();
 	await expect(page.getByText('Do I need an umbrella?')).toBeVisible();
 	await expect(page.getByText('When does it get dark?')).toBeVisible();
-	await expect(page.getByText('Updated just now')).toBeVisible();
+	// The server keeps forecasts for a few minutes, so later in a run this place can be a minute old.
+	await expect(page.getByText(/^Updated (just now|\d+ minutes? ago)$/)).toBeVisible();
 	await expect(page.getByText(/From the east · 12 km\/h/)).toBeVisible();
 	await expect(
 		page.locator('section', { hasText: 'When does it get dark?' }).getByText('16:19')

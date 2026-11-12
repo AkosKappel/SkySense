@@ -219,7 +219,7 @@
 	"radar_layer_wind": "Wind",
 	"radar_legend_model": "Modell: Regen in der Stunde; je kräftiger die Farbe, desto mehr",
 	"radar_legend_radar": "Radar: leichter bis starker Regen",
-	"radar_legend_temperature": "Modell: die Temperatur zu dieser Stunde an jedem Punkt",
+	"radar_legend_temperature": "Modell: die Temperatur zu dieser Stunde an jedem Punkt; blau bei {cold} oder kälter, gelb bei {hot} oder wärmer",
 	"radar_legend_wind": "Modell: Pfeile zeigen, wohin der Wind weht, Zahlen seine Stärke",
 	"radar_link": "Regenradar",
 	"radar_map": "Karte des Regens um {place}",

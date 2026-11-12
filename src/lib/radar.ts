@@ -86,3 +86,12 @@ export function windAround(
 	const y = hours.reduce((sum, h) => sum + h.wind * Math.cos(rad(h.windFrom)), 0);
 	return { from: compass((Math.atan2(x, y) * 180) / Math.PI), max };
 }
+
+/** Temperature labels on the map turn blue from here down and yellow from WARM_C up (°C). */
+export const FREEZING_C = 0;
+export const WARM_C = 25;
+
+export function temperatureBand(celsius: number): 'cold' | 'mild' | 'warm' {
+	if (celsius <= FREEZING_C) return 'cold';
+	return celsius >= WARM_C ? 'warm' : 'mild';
+}

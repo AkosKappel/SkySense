@@ -220,7 +220,7 @@
 	"radar_layer_wind": "Vietor",
 	"radar_legend_model": "Model: dážď v danej hodine; čím sýtejšia farba, tým viac",
 	"radar_legend_radar": "Radar: slabý až silný dážď",
-	"radar_legend_temperature": "Model: teplota v danej hodine v každom bode",
+	"radar_legend_temperature": "Model: teplota v danej hodine v každom bode; modrá pri {cold} alebo chladnejšie, žltá pri {hot} alebo teplejšie",
 	"radar_legend_wind": "Model: šípky ukazujú, kam fúka vietor, čísla jeho rýchlosť",
 	"radar_link": "Zrážkový radar",
 	"radar_map": "Mapa zrážok okolo miesta {place}",

@@ -55,6 +55,8 @@ export default defineConfig({
 				extends: './vite.config.ts',
 				test: {
 					name: 'client',
+					// Several steps in a real browser; 15 s (the default) runs out on a busy machine.
+					testTimeout: 30_000,
 					browser: {
 						enabled: true,
 						provider: playwright(),

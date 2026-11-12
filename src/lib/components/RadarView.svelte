@@ -20,7 +20,10 @@
 	import {
 		firstWetHour,
 		GRID_WET_MM,
+		FREEZING_C,
 		RADAR_MAX_ZOOM,
+		temperatureBand,
+		WARM_C,
 		warmerSide,
 		windAround,
 		type GridCell,
@@ -270,6 +273,12 @@
 
 	/** The model's temperature, or its wind as an arrow and a speed, at each point of the grid. */
 	function drawLabels(L: typeof import('leaflet'), map: LeafletMap, time: string) {
+		// The point nearest the place gets its label above the place's dot instead of on it.
+		const distance = (c: GridCell) => Math.hypot(c.lat - coordinates.lat, c.lon - coordinates.lon);
+		const nearest = grid.reduce<GridCell | undefined>(
+			(best, c) => (!best || distance(c) < distance(best) ? c : best),
+			undefined
+		);
 		for (const cell of grid) {
 			const hour = cell.hours.find((h) => h.time === time);
 			if (!hour || Number.isNaN(hour.temperature)) continue;
@@ -278,6 +287,12 @@
 				'flex items-center justify-center gap-0.5 whitespace-nowrap text-xs font-bold text-ink [text-shadow:0_1px_3px_black]';
 			if (layer === 'temperature') {
 				tag.textContent = f.temp(hour.temperature);
+				tag.classList.remove('text-ink');
+				tag.classList.add(
+					{ cold: 'text-cold', mild: 'text-ink', warm: 'text-warm' }[
+						temperatureBand(hour.temperature)
+					]
+				);
 			} else {
 				// The arrow points where the wind goes: down for a north wind, turned by its direction.
 				const arrow = document.createElement('span');
@@ -288,7 +303,12 @@
 			}
 			cells.push(
 				L.marker([cell.lat, cell.lon], {
-					icon: L.divIcon({ html: tag, className: '', iconSize: [44, 18], iconAnchor: [22, 9] }),
+					icon: L.divIcon({
+						html: tag,
+						className: '',
+						iconSize: [44, 18],
+						iconAnchor: [22, cell === nearest ? 22 : 9]
+					}),
 					interactive: false,
 					keyboard: false
 				}).addTo(map)
@@ -456,7 +476,9 @@
 				</div>
 			</div>
 			{#if layer === 'temperature'}
-				<p class="mt-3 px-2 text-sm text-ink-muted">{m.radar_legend_temperature()}</p>
+				<p class="mt-3 px-2 text-sm text-ink-muted">
+					{m.radar_legend_temperature({ cold: f.temp(FREEZING_C), hot: f.temp(WARM_C) })}
+				</p>
 			{:else if layer === 'wind'}
 				<p class="mt-3 px-2 text-sm text-ink-muted">{m.radar_legend_wind()}</p>
 			{:else}
