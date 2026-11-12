@@ -526,7 +526,10 @@ const gridSchema = z.array(
 		hourly: z.object({
 			time: z.array(z.string()),
 			precipitation: numbers,
-			precipitation_probability: numbers
+			precipitation_probability: numbers,
+			temperature_2m: numbers,
+			wind_speed_10m: numbers,
+			wind_direction_10m: numbers
 		})
 	})
 );
@@ -560,12 +563,15 @@ export function toGrid(raw: unknown): GridCell[] {
 		hours: point.hourly.time.map((time, i) => ({
 			time,
 			rain: point.hourly.precipitation[i] ?? 0,
-			chance: point.hourly.precipitation_probability[i] ?? 0
+			chance: point.hourly.precipitation_probability[i] ?? 0,
+			temperature: point.hourly.temperature_2m[i] ?? NaN,
+			wind: point.hourly.wind_speed_10m[i] ?? 0,
+			windFrom: point.hourly.wind_direction_10m[i] ?? 0
 		}))
 	}));
 }
 
-/** The model's rain for the next hours around a place: one request for all 25 points. */
+/** The model's rain, temperature and wind for the next hours around a place: one request for all 25 points. */
 export async function fetchGrid(
 	coordinates: Coordinates,
 	fetchFn: typeof fetch = fetch
@@ -579,7 +585,8 @@ export async function fetchGrid(
 	url.search = new URLSearchParams({
 		latitude: points.map((p) => p.lat).join(','),
 		longitude: points.map((p) => p.lon).join(','),
-		hourly: 'precipitation,precipitation_probability',
+		hourly:
+			'precipitation,precipitation_probability,temperature_2m,wind_speed_10m,wind_direction_10m',
 		timezone: 'auto',
 		forecast_hours: String(GRID_HOURS + 1)
 	}).toString();

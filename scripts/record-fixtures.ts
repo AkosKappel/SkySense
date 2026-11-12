@@ -247,7 +247,7 @@ async function recordRecent(name: string, lat: number, lon: number, firstHour: s
 	);
 }
 
-// The radar frames (M-01) and a 5 × 5 rain grid per place are recorded separately: the frames'
+// The radar frames (M-01) and a 5 × 5 weather grid per place (rain, temperature, wind) are recorded separately: the frames'
 // times are shifted to end at the forecast fixtures' "now" (2026-11-10 09:00 UTC) so the radar
 // view's timeline joins up, and their tiles are never fetched in tests (Playwright answers them).
 

@@ -7,7 +7,14 @@ import {
 	formatWeekday,
 	intlLocale
 } from '#lib/time.js';
-import { formatPressure, formatRain, formatWind, temperature, type Units } from '#lib/units.js';
+import {
+	formatPressure,
+	formatRain,
+	formatWind,
+	temperature,
+	windSpeed,
+	type Units
+} from '#lib/units.js';
 
 /** Formatting bound to the reader's language and units, for components. */
 export function formatter(locale: string, units: Units) {
@@ -24,6 +31,8 @@ export function formatter(locale: string, units: Units) {
 		pastDate: (date: string) => formatPastDate(date, intl),
 		month: (month: string, withYear = false) => formatMonth(month, intl, withYear),
 		wind: (kmh: number) => formatWind(kmh, units),
+		/** The wind's number alone, for labels on a map whose legend names the unit. */
+		windValue: (kmh: number) => windSpeed(kmh, units),
 		rain: (mm: number) => formatRain(mm, units, intl),
 		pressure: (hpa: number) => formatPressure(hpa, units, intl),
 		percent: (value: number) =>

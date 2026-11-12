@@ -20,7 +20,7 @@ The weather, made sense of. Most weather apps show a grid of numbers and icons a
 - **How sure is it?** 51 runs of the ECMWF ensemble give a likely range around the temperature line, "96% of model runs show it right now" under the umbrella answer, and "Less sure" or "Uncertain" on later days. The summary hedges when the runs disagree. Five weather models can be compared side by side.
 - **Is this normal?** Today's high against the 1991 to 2020 climate for the date ("3° colder than usual."), the same date in each of the last ten years, and how long it has been dry ("Dry for 9 days.").
 - **Anything else I should know?** Air quality and pollen when they matter, tonight's moon, whether the pressure is rising or falling, strong gusts, frost and heat, and how far the place's clock is from yours.
-- **Is rain coming my way?** A radar map of the last 2 hours, then the model's rain for the next 3, said in words too ("The model shows rain within about 60 km from 11:00.").
+- **Is rain coming my way?** A radar map of the last 2 hours, then the model's rain for the next 3, said in words too ("The model shows rain within about 60 km from 11:00."). The same map switches to the model's temperature and wind ("Warmer to the south, by about 2°."), shows the other saved places, and opens full screen.
 - **Where is it nicer?** Two saved places side by side, day by day, with the nicer one marked.
 
 Mobile first, installable and usable offline for places opened before, with a "My location" entry that finds you again. No accounts, no tracking. In English, German, Slovak, Hungarian and Spanish.

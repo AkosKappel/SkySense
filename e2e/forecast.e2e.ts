@@ -341,6 +341,33 @@ test('shows the rain radar, then the model, from the umbrella tile', async ({ pa
 	await expect(page.getByRole('button', { name: 'Full screen' })).toBeVisible();
 });
 
+test('the radar map switches to the model temperature and wind, said in words', async ({
+	page
+}) => {
+	await blankMapTiles(page);
+	await page.goto('/p/48.15,17.11/Bratislava?radar');
+	const slider = page.getByRole('slider', { name: 'Time' });
+	await expect(slider).toHaveAttribute('aria-valuetext', '10:00, radar');
+
+	await page.getByText('Temperature', { exact: true }).click();
+	await expect(page.getByText('Much the same temperature all around.')).toBeVisible();
+	await expect(slider).toHaveAttribute('aria-valuetext', '10:00, model forecast');
+	await slider.focus();
+	await page.keyboard.press('End');
+	await expect(slider).toHaveAttribute('aria-valuetext', '13:00, model forecast');
+	await expect(page.getByText('Warmer to the south, by about 2°.')).toBeVisible();
+
+	await page.getByText('Wind', { exact: true }).click();
+	await expect(
+		page.getByText('Wind from the southeast, up to 22 km/h within about 60 km.')
+	).toBeVisible();
+	await expectAccessible(page);
+
+	await page.getByText('Rain', { exact: true }).click();
+	await expect(page.getByText('The model shows rain within about 60 km from 10:00.')).toBeVisible();
+	await expect(slider).toHaveAttribute('aria-valuetext', '10:00, radar');
+});
+
 test('the radar shows the other saved places and opens their radar', async ({ page }) => {
 	await blankMapTiles(page);
 	await page.goto('/p/48.21,16.37/Vienna');

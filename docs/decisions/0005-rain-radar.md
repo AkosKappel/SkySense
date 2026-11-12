@@ -24,5 +24,5 @@ The CARTO key is the public `CARTO_BASEMAP_KEY` variable: it ends up in tile URL
 
 - Zoom 7 is about 1.2 km per pixel: a regional view. The map can zoom in, stretching the radar.
 - Radar and model can disagree (radar shows rain the model does not); the view shows both and says which is which.
-- The grid is one request per place, counted as 25 forecast calls, cached for 10 minutes in memory and 15 on the CDN.
+- The grid is one request per place, counted as 25 forecast calls, cached for 10 minutes in memory and 15 on the CDN. Since 2026-11-12 the same request also asks for temperature and wind, for the map's other two layers (M-05); one request for all three keeps it at 25 calls.
 - Owner steps: request a CARTO key (one for the site's hosts, one for localhost), set `CARTO_BASEMAP_KEY` in Vercel. Tests never load tiles: Playwright answers them with a blank image.

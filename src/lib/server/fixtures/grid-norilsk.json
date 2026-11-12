@@ -7,11 +7,21 @@
 		"timezone": "Asia/Krasnoyarsk",
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 43,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0.1, 0, 0.1, 0],
-			"precipitation_probability": [39, 33, 20, 10]
+			"precipitation_probability": [39, 33, 20, 10],
+			"temperature_2m": [-6, -5.9, -5.8, -6],
+			"wind_speed_10m": [15.6, 15.1, 15.6, 16.4],
+			"wind_direction_10m": [169, 168, 169, 171]
 		}
 	},
 	{
@@ -23,11 +33,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 286,
 		"location_id": 1,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0.1, 0.2, 0.1, 0],
-			"precipitation_probability": [39, 48, 55, 55]
+			"precipitation_probability": [39, 48, 55, 55],
+			"temperature_2m": [-8.2, -7.8, -7.6, -7.7],
+			"wind_speed_10m": [16.1, 19.5, 18.9, 18.9],
+			"wind_direction_10m": [153, 166, 167, 169]
 		}
 	},
 	{
@@ -39,11 +59,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 471,
 		"location_id": 2,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0, 0, 0.1, 0.1],
-			"precipitation_probability": [51, 61, 76, 84]
+			"precipitation_probability": [51, 61, 76, 84],
+			"temperature_2m": [-10.1, -10.2, -10.3, -10.5],
+			"wind_speed_10m": [18.6, 13.7, 12.5, 12.4],
+			"wind_direction_10m": [162, 142, 135, 137]
 		}
 	},
 	{
@@ -55,11 +85,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 132,
 		"location_id": 3,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0.1, 0.1, 0.2, 0.1],
-			"precipitation_probability": [45, 48, 54, 57]
+			"precipitation_probability": [45, 48, 54, 57],
+			"temperature_2m": [-7.7, -7.6, -7.5, -7.9],
+			"wind_speed_10m": [14.5, 13, 13.3, 14],
+			"wind_direction_10m": [155, 156, 157, 154]
 		}
 	},
 	{
@@ -71,11 +111,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 83,
 		"location_id": 4,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0.1, 0, 0, 0.1],
-			"precipitation_probability": [33, 28, 21, 14]
+			"precipitation_probability": [33, 28, 21, 14],
+			"temperature_2m": [-7.2, -7.3, -7.7, -8.5],
+			"wind_speed_10m": [8.9, 9.8, 9.7, 10.2],
+			"wind_direction_10m": [114, 114, 112, 113]
 		}
 	},
 	{
@@ -87,11 +137,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 72,
 		"location_id": 5,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0.2, 0.1, 0.1, 0.1],
-			"precipitation_probability": [49, 49, 44, 37]
+			"precipitation_probability": [49, 49, 44, 37],
+			"temperature_2m": [-6.4, -6.2, -6.1, -6.3],
+			"wind_speed_10m": [16.2, 16.2, 16.1, 15.8],
+			"wind_direction_10m": [168, 168, 166, 165]
 		}
 	},
 	{
@@ -103,11 +163,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 145,
 		"location_id": 6,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0.1, 0.2, 0.1, 0],
-			"precipitation_probability": [16, 22, 27, 29]
+			"precipitation_probability": [16, 22, 27, 29],
+			"temperature_2m": [-7.4, -7.3, -7, -7.1],
+			"wind_speed_10m": [20.8, 20.4, 18.6, 17.6],
+			"wind_direction_10m": [171, 169, 168, 166]
 		}
 	},
 	{
@@ -119,11 +189,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 351,
 		"location_id": 7,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0, 0, 0, 0],
-			"precipitation_probability": [14, 22, 30, 33]
+			"precipitation_probability": [14, 22, 30, 33],
+			"temperature_2m": [-9.6, -9.8, -9.8, -10.1],
+			"wind_speed_10m": [23.8, 22.7, 23.3, 22.4],
+			"wind_direction_10m": [172, 167, 162, 158]
 		}
 	},
 	{
@@ -135,11 +215,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 78,
 		"location_id": 8,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0, 0, 0, 0.1],
-			"precipitation_probability": [2, 3, 5, 8]
+			"precipitation_probability": [2, 3, 5, 8],
+			"temperature_2m": [-6.8, -6.7, -6.6, -7.3],
+			"wind_speed_10m": [14.2, 13.8, 13.2, 12.2],
+			"wind_direction_10m": [154, 160, 158, 156]
 		}
 	},
 	{
@@ -151,11 +241,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 470,
 		"location_id": 9,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0, 0, 0, 0.1],
-			"precipitation_probability": [94, 91, 87, 78]
+			"precipitation_probability": [94, 91, 87, 78],
+			"temperature_2m": [-11.5, -11.5, -11.7, -11.7],
+			"wind_speed_10m": [10.7, 10.2, 9.3, 10.3],
+			"wind_direction_10m": [149, 143, 134, 126]
 		}
 	},
 	{
@@ -167,11 +267,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 10,
 		"location_id": 10,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0.1, 0.1, 0.1, 0.1],
-			"precipitation_probability": [27, 32, 34, 33]
+			"precipitation_probability": [27, 32, 34, 33],
+			"temperature_2m": [-6.2, -6.1, -6, -6.1],
+			"wind_speed_10m": [14.1, 14.6, 15, 15.5],
+			"wind_direction_10m": [167, 167, 167, 162]
 		}
 	},
 	{
@@ -183,11 +293,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 147,
 		"location_id": 11,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0.1, 0.2, 0.1, 0.1],
-			"precipitation_probability": [12, 17, 23, 24]
+			"precipitation_probability": [12, 17, 23, 24],
+			"temperature_2m": [-6.8, -6.7, -6.6, -6.7],
+			"wind_speed_10m": [17.6, 19.6, 18.3, 17.8],
+			"wind_direction_10m": [174, 173, 170, 168]
 		}
 	},
 	{
@@ -199,11 +319,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 79,
 		"location_id": 12,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0, 0, 0, 0],
-			"precipitation_probability": [2, 4, 7, 8]
+			"precipitation_probability": [2, 4, 7, 8],
+			"temperature_2m": [-7.8, -7.3, -7.5, -8],
+			"wind_speed_10m": [12.2, 14.8, 14.4, 14],
+			"wind_direction_10m": [154, 159, 157, 149]
 		}
 	},
 	{
@@ -215,11 +345,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 42,
 		"location_id": 13,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0, 0.1, 0, 0],
-			"precipitation_probability": [0, 1, 2, 2]
+			"precipitation_probability": [0, 1, 2, 2],
+			"temperature_2m": [-7.1, -6.8, -6.8, -7.5],
+			"wind_speed_10m": [15, 13.8, 13.7, 9],
+			"wind_direction_10m": [173, 174, 181, 167]
 		}
 	},
 	{
@@ -231,11 +371,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 75,
 		"location_id": 14,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0, 0, 0, 0],
-			"precipitation_probability": [2, 1, 1, 0]
+			"precipitation_probability": [2, 1, 1, 0],
+			"temperature_2m": [-8.7, -8.9, -9.6, -10.5],
+			"wind_speed_10m": [8.1, 9.3, 9.4, 10.6],
+			"wind_direction_10m": [122, 112, 108, 104]
 		}
 	},
 	{
@@ -247,11 +397,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 74,
 		"location_id": 15,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0, 0.1, 0.1, 0.1],
-			"precipitation_probability": [24, 31, 39, 41]
+			"precipitation_probability": [24, 31, 39, 41],
+			"temperature_2m": [-7.1, -6.9, -6.8, -7],
+			"wind_speed_10m": [17.3, 15.9, 16.1, 15.7],
+			"wind_direction_10m": [171, 165, 164, 162]
 		}
 	},
 	{
@@ -263,11 +423,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 102,
 		"location_id": 16,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0, 0.2, 0.1, 0.1],
-			"precipitation_probability": [22, 37, 54, 61]
+			"precipitation_probability": [22, 37, 54, 61],
+			"temperature_2m": [-7.2, -6.8, -6.6, -6.8],
+			"wind_speed_10m": [14.9, 14.5, 15.9, 15.7],
+			"wind_direction_10m": [182, 172, 174, 167]
 		}
 	},
 	{
@@ -279,11 +449,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 93,
 		"location_id": 17,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0, 0, 0, 0.1],
-			"precipitation_probability": [0, 5, 11, 14]
+			"precipitation_probability": [0, 5, 11, 14],
+			"temperature_2m": [-7.6, -7.4, -7.3, -7.6],
+			"wind_speed_10m": [20.6, 22, 22.2, 22],
+			"wind_direction_10m": [144, 147, 150, 150]
 		}
 	},
 	{
@@ -295,11 +475,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 422,
 		"location_id": 18,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0.2, 0.3, 0.2, 0.1],
-			"precipitation_probability": [59, 66, 75, 80]
+			"precipitation_probability": [59, 66, 75, 80],
+			"temperature_2m": [-10.1, -10, -10, -10.4],
+			"wind_speed_10m": [11.7, 12.6, 13.1, 12],
+			"wind_direction_10m": [149, 149, 153, 145]
 		}
 	},
 	{
@@ -311,11 +501,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 98,
 		"location_id": 19,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0.1, 0.1, 0.1, 0],
-			"precipitation_probability": [100, 100, 97, 86]
+			"precipitation_probability": [100, 100, 97, 86],
+			"temperature_2m": [-6.8, -7.3, -7.3, -8.5],
+			"wind_speed_10m": [5.3, 3.8, 4, 4.4],
+			"wind_direction_10m": [156, 131, 111, 111]
 		}
 	},
 	{
@@ -327,11 +527,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 67,
 		"location_id": 20,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0, 0, 0, 0],
-			"precipitation_probability": [22, 22, 19, 16]
+			"precipitation_probability": [22, 22, 19, 16],
+			"temperature_2m": [-6.7, -6.6, -6.6, -6.8],
+			"wind_speed_10m": [17.5, 17.2, 16.4, 16.1],
+			"wind_direction_10m": [175, 174, 167, 164]
 		}
 	},
 	{
@@ -343,11 +553,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 57,
 		"location_id": 21,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0.1, 0, 0.1, 0.1],
-			"precipitation_probability": [18, 29, 40, 45]
+			"precipitation_probability": [18, 29, 40, 45],
+			"temperature_2m": [-6.9, -6.8, -6.8, -7.1],
+			"wind_speed_10m": [16.9, 16, 15.4, 15.1],
+			"wind_direction_10m": [178, 171, 164, 163]
 		}
 	},
 	{
@@ -359,11 +579,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 133,
 		"location_id": 22,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0, 0, 0.1, 0.1],
-			"precipitation_probability": [0, 5, 12, 16]
+			"precipitation_probability": [0, 5, 12, 16],
+			"temperature_2m": [-7.2, -7, -6.9, -7.3],
+			"wind_speed_10m": [18.2, 17.2, 18.7, 18],
+			"wind_direction_10m": [175, 174, 173, 173]
 		}
 	},
 	{
@@ -375,11 +605,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 471,
 		"location_id": 23,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0, 0, 0.1, 0],
-			"precipitation_probability": [0, 2, 5, 6]
+			"precipitation_probability": [0, 2, 5, 6],
+			"temperature_2m": [-9.3, -9.3, -9, -9.3],
+			"wind_speed_10m": [27.8, 27.6, 28.2, 27.8],
+			"wind_direction_10m": [170, 168, 170, 166]
 		}
 	},
 	{
@@ -391,11 +631,21 @@
 		"timezone_abbreviation": "GMT+7",
 		"elevation": 236,
 		"location_id": 24,
-		"hourly_units": { "time": "iso8601", "precipitation": "mm", "precipitation_probability": "%" },
+		"hourly_units": {
+			"time": "iso8601",
+			"precipitation": "mm",
+			"precipitation_probability": "%",
+			"temperature_2m": "°C",
+			"wind_speed_10m": "km/h",
+			"wind_direction_10m": "°"
+		},
 		"hourly": {
 			"time": ["2026-11-10T16:00", "2026-11-10T17:00", "2026-11-10T18:00", "2026-11-10T19:00"],
 			"precipitation": [0.2, 0.2, 0.2, 0.2],
-			"precipitation_probability": [84, 81, 77, 67]
+			"precipitation_probability": [84, 81, 77, 67],
+			"temperature_2m": [-10.6, -10.7, -10.7, -11.1],
+			"wind_speed_10m": [14, 14.7, 13.6, 12.1],
+			"wind_direction_10m": [173, 169, 163, 152]
 		}
 	}
 ]

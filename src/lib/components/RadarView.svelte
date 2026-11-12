@@ -9,7 +9,7 @@
 		Pause,
 		Play
 	} from '@lucide/svelte';
-	import type { Map as LeafletMap, Rectangle, TileLayer } from 'leaflet';
+	import type { Layer, Map as LeafletMap, TileLayer } from 'leaflet';
 	import { onMount } from 'svelte';
 	import { CARTO_BASEMAP_KEY } from '$app/env/public';
 	import { resolve } from '$app/paths';
@@ -21,13 +21,17 @@
 		firstWetHour,
 		GRID_WET_MM,
 		RADAR_MAX_ZOOM,
+		warmerSide,
+		windAround,
 		type GridCell,
+		type GridLayer,
 		type RadarFrames
 	} from '#lib/radar.js';
 	import { formatCoordinates, type Coordinates } from '#lib/weather.js';
 
 	// The rain radar (M-01): RainViewer's last two hours, then the model's next hours from a grid of
-	// forecasts. Leaflet loads only here, when the view opens, never with the forecast page.
+	// forecasts, which also gives the temperature and wind layers (M-05). Leaflet loads only here,
+	// when the view opens, never with the forecast page.
 	let {
 		coordinates,
 		place,
@@ -40,6 +44,7 @@
 	let failed = $state(false);
 	let index = $state(0);
 	let playing = $state(false);
+	let layer = $state<GridLayer>('rain');
 	let container = $state<HTMLDivElement>();
 	let section = $state<HTMLElement>();
 	let fullscreen = $state(false);
@@ -51,7 +56,15 @@
 		new Date((seconds + utcOffsetSeconds) * 1000).toISOString().slice(0, 16);
 
 	// One timeline: the radar frames, then the model's hours that come after the last of them.
+	// Temperature and wind come from the model only, so their timeline is its hours.
 	const steps = $derived.by(() => {
+		if (layer !== 'rain') {
+			return (grid[0]?.hours ?? []).map((h) => ({
+				kind: 'model' as const,
+				time: h.time,
+				path: ''
+			}));
+		}
 		const past = (radar?.frames ?? []).map((frame) => ({
 			kind: 'radar' as const,
 			time: placeTime(frame.time),
@@ -65,6 +78,36 @@
 	});
 	const step = $derived(steps[index]);
 	const wetFrom = $derived(firstWetHour(grid));
+	// The layer's answer in words, the text equivalent of what the map shows.
+	const answer = $derived.by(() => {
+		if (layer === 'rain') {
+			return wetFrom ? m.radar_model_wet({ time: f.time(wetFrom) }) : m.radar_model_dry();
+		}
+		if (!step) return '';
+		if (layer === 'temperature') {
+			const warmer = warmerSide(grid, step.time);
+			if (!warmer) return m.radar_temperature_even();
+			const difference = f.tempDelta(warmer.by);
+			return {
+				n: m.radar_warmer_n,
+				e: m.radar_warmer_e,
+				s: m.radar_warmer_s,
+				w: m.radar_warmer_w
+			}[warmer.side]({ difference });
+		}
+		const wind = windAround(grid, step.time);
+		if (!wind) return m.radar_wind_calm();
+		return {
+			n: m.radar_wind_n,
+			ne: m.radar_wind_ne,
+			e: m.radar_wind_e,
+			se: m.radar_wind_se,
+			s: m.radar_wind_s,
+			sw: m.radar_wind_sw,
+			w: m.radar_wind_w,
+			nw: m.radar_wind_nw
+		}[wind.from]({ speed: f.wind(wind.max) });
+	});
 	const label = (s: (typeof steps)[number]) =>
 		s.kind === 'radar'
 			? m.radar_frame_radar({ time: f.time(s.time) })
@@ -74,7 +117,8 @@
 	let leaflet: typeof import('leaflet') | undefined;
 	// One layer per radar frame, made when first shown; not state, the map draws them.
 	const radarLayers: Record<string, TileLayer> = {};
-	let cells: Rectangle[] = [];
+	// What the model's layer draws for the current hour: rain cells, or temperature and wind labels.
+	let cells: Layer[] = [];
 
 	onMount(() => {
 		let cancelled = false;
@@ -198,6 +242,10 @@
 		for (const cell of cells) cell.remove();
 		cells = [];
 		if (step.kind !== 'model') return;
+		if (layer !== 'rain') {
+			drawLabels(L, map, step.time);
+			return;
+		}
 		const rain = getComputedStyle(document.documentElement).getPropertyValue('--color-rain');
 		const half = { lat: 0.15, lon: Math.abs((grid[1]?.lon ?? 0) - (grid[0]?.lon ?? 0)) / 2 };
 		for (const cell of grid) {
@@ -220,10 +268,45 @@
 		}
 	}
 
+	/** The model's temperature, or its wind as an arrow and a speed, at each point of the grid. */
+	function drawLabels(L: typeof import('leaflet'), map: LeafletMap, time: string) {
+		for (const cell of grid) {
+			const hour = cell.hours.find((h) => h.time === time);
+			if (!hour || Number.isNaN(hour.temperature)) continue;
+			const tag = document.createElement('span');
+			tag.className =
+				'flex items-center justify-center gap-0.5 whitespace-nowrap text-xs font-bold text-ink [text-shadow:0_1px_3px_black]';
+			if (layer === 'temperature') {
+				tag.textContent = f.temp(hour.temperature);
+			} else {
+				// The arrow points where the wind goes: down for a north wind, turned by its direction.
+				const arrow = document.createElement('span');
+				arrow.className = 'inline-block text-sm';
+				arrow.textContent = '↓';
+				arrow.style.transform = `rotate(${hour.windFrom}deg)`;
+				tag.append(arrow, String(f.windValue(hour.wind)));
+			}
+			cells.push(
+				L.marker([cell.lat, cell.lon], {
+					icon: L.divIcon({ html: tag, className: '', iconSize: [44, 18], iconAnchor: [22, 9] }),
+					interactive: false,
+					keyboard: false
+				}).addTo(map)
+			);
+		}
+	}
+
 	$effect(() => {
 		void step;
+		void layer;
 		show();
 	});
+
+	function chooseLayer(next: GridLayer) {
+		playing = false;
+		layer = next;
+		index = next === 'rain' ? Math.max(0, (radar?.frames.length ?? 0) - 1) : 0;
+	}
 
 	function toggleFullscreen() {
 		if (document.fullscreenElement) void document.exitFullscreen();
@@ -270,10 +353,8 @@
 	>
 		<p class="question px-2"><CloudRain size={18} aria-hidden="true" /> {m.radar_link()}</p>
 		{#if radar}
-			<p class="mt-2 px-2 answer">
-				{wetFrom ? m.radar_model_wet({ time: f.time(wetFrom) }) : m.radar_model_dry()}
-			</p>
-			{#if radar.frames.length}
+			<p class="mt-2 px-2 answer">{answer}</p>
+			{#if layer === 'rain' && radar.frames.length}
 				<p class="mt-1 px-2 text-sm text-ink-muted">
 					{m.radar_latest({ time: f.time(placeTime(radar.frames.at(-1)!.time)) })}
 				</p>
@@ -286,6 +367,29 @@
 			aria-label={m.radar_map({ place })}
 			class="mt-4 h-[60vh] max-h-[34rem] min-h-72 overflow-hidden rounded-2xl bg-map forced-color-adjust-none group-fullscreen:h-auto group-fullscreen:max-h-none group-fullscreen:flex-1"
 		></div>
+
+		{#if grid.length}
+			<fieldset class="mt-4 px-2">
+				<legend class="sr-only">{m.radar_layer()}</legend>
+				<div class="flex flex-wrap gap-2">
+					{#each [['rain', m.radar_layer_rain], ['temperature', m.radar_layer_temperature], ['wind', m.radar_layer_wind]] as const as [value, text] (value)}
+						<label
+							class="flex min-h-11 cursor-pointer items-center rounded-full bg-white/10 px-4 font-semibold outline-1 outline-white/20 transition has-checked:bg-white has-checked:text-indigo-950 has-focus-visible:outline-2 has-focus-visible:outline-white"
+						>
+							<input
+								type="radio"
+								name="radar-layer"
+								{value}
+								checked={layer === value}
+								onchange={() => chooseLayer(value)}
+								class="sr-only"
+							/>
+							{text()}
+						</label>
+					{/each}
+				</div>
+			</fieldset>
+		{/if}
 
 		{#if steps.length}
 			<div class="mt-4 flex flex-wrap items-center gap-3 px-2">
@@ -351,20 +455,26 @@
 					>
 				</div>
 			</div>
-			<ul class="mt-3 flex flex-wrap gap-x-4 gap-y-1 px-2 text-sm text-ink-muted">
-				<li class="flex items-center gap-1.5">
-					<span
-						class="h-3 w-16 rounded-sm bg-(image:--radar-legend) forced-color-adjust-none"
-						aria-hidden="true"
-					></span>
-					{m.radar_legend_radar()}
-				</li>
-				<li class="flex items-center gap-1.5">
-					<span class="size-3 rounded-sm bg-rain/50 forced-color-adjust-none" aria-hidden="true"
-					></span>
-					{m.radar_legend_model()}
-				</li>
-			</ul>
+			{#if layer === 'temperature'}
+				<p class="mt-3 px-2 text-sm text-ink-muted">{m.radar_legend_temperature()}</p>
+			{:else if layer === 'wind'}
+				<p class="mt-3 px-2 text-sm text-ink-muted">{m.radar_legend_wind()}</p>
+			{:else}
+				<ul class="mt-3 flex flex-wrap gap-x-4 gap-y-1 px-2 text-sm text-ink-muted">
+					<li class="flex items-center gap-1.5">
+						<span
+							class="h-3 w-16 rounded-sm bg-(image:--radar-legend) forced-color-adjust-none"
+							aria-hidden="true"
+						></span>
+						{m.radar_legend_radar()}
+					</li>
+					<li class="flex items-center gap-1.5">
+						<span class="size-3 rounded-sm bg-rain/50 forced-color-adjust-none" aria-hidden="true"
+						></span>
+						{m.radar_legend_model()}
+					</li>
+				</ul>
+			{/if}
 		{/if}
 	</section>
 {/if}
