@@ -14,7 +14,8 @@ export default defineConfig({
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
-			adapter: adapter(),
+			// Node 24 like CI; Frankfurt, near most readers and Open-Meteo's servers.
+			adapter: adapter({ runtime: 'nodejs24.x', regions: ['fra1'] }),
 			csp: {
 				mode: 'auto',
 				directives: {
