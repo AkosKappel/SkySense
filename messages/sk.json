@@ -211,6 +211,8 @@
 	"privacy_summary": "Žiadne účty, žiadne sledovanie, žiadne reklamy.",
 	"radar_frame_model": "{time}, predpoveď modelu",
 	"radar_frame_radar": "{time}, radar",
+	"radar_fullscreen": "Celá obrazovka",
+	"radar_fullscreen_leave": "Ukončiť celú obrazovku",
 	"radar_latest": "Radar každých 10 minút za posledné 2 hodiny, do {time}; potom model, hodinu po hodine.",
 	"radar_legend_model": "Model: dážď v danej hodine; čím sýtejšia farba, tým viac",
 	"radar_legend_radar": "Radar: slabý až silný dážď",

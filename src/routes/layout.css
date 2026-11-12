@@ -1,6 +1,9 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/plus-jakarta-sans';
 
+/* The radar view in full screen (M-06). */
+@custom-variant fullscreen (&:fullscreen);
+
 /* Design tokens: docs/design.md. Components use these, never raw hex values. */
 @theme {
 	--font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;

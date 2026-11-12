@@ -335,6 +335,19 @@ test('shows the rain radar, then the model, from the umbrella tile', async ({ pa
 	await page.getByRole('button', { name: 'Previous frame' }).click();
 	await expect(slider).toHaveAttribute('aria-valuetext', '12:00, model forecast');
 	await expectAccessible(page);
+
+	await page.getByRole('button', { name: 'Full screen' }).click();
+	await page.getByRole('button', { name: 'Leave full screen' }).click();
+	await expect(page.getByRole('button', { name: 'Full screen' })).toBeVisible();
+});
+
+test('the map shortcut opens the radar for the last place', async ({ page }) => {
+	await page.goto('/map');
+	await expect(page).toHaveURL(/\/\?choose$/);
+	await page.goto('/p/48.15,17.11/Bratislava');
+	await placeReady(page);
+	await page.goto('/map');
+	await expect(page).toHaveURL(/\/p\/48\.15,17\.11\/Bratislava\?radar$/);
 });
 
 test('settings change units and language', async ({ page }) => {

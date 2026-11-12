@@ -210,6 +210,8 @@
 	"privacy_summary": "Keine Konten, kein Tracking, keine Werbung.",
 	"radar_frame_model": "{time}, Modellvorhersage",
 	"radar_frame_radar": "{time}, Radar",
+	"radar_fullscreen": "Vollbild",
+	"radar_fullscreen_leave": "Vollbild beenden",
 	"radar_latest": "Radar alle 10 Minuten für die letzten 2 Stunden, bis {time}; danach das Modell, Stunde für Stunde.",
 	"radar_legend_model": "Modell: Regen in der Stunde; je kräftiger die Farbe, desto mehr",
 	"radar_legend_radar": "Radar: leichter bis starker Regen",

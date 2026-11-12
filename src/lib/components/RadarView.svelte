@@ -1,5 +1,14 @@
 <script lang="ts">
-	import { ArrowLeft, ChevronLeft, ChevronRight, CloudRain, Pause, Play } from '@lucide/svelte';
+	import {
+		ArrowLeft,
+		ChevronLeft,
+		ChevronRight,
+		CloudRain,
+		Maximize,
+		Minimize,
+		Pause,
+		Play
+	} from '@lucide/svelte';
 	import type { Map as LeafletMap, Rectangle, TileLayer } from 'leaflet';
 	import { onMount } from 'svelte';
 	import { CARTO_BASEMAP_KEY } from '$app/env/public';
@@ -31,6 +40,10 @@
 	let index = $state(0);
 	let playing = $state(false);
 	let container = $state<HTMLDivElement>();
+	let section = $state<HTMLElement>();
+	let fullscreen = $state(false);
+	// iPhone Safari has no element full screen, so the button only shows where it works.
+	let canFullscreen = $state(false);
 
 	/** A RainViewer time (UTC seconds) as the place's wall clock, like the forecast's times. */
 	const placeTime = (seconds: number) =>
@@ -64,6 +77,13 @@
 
 	onMount(() => {
 		let cancelled = false;
+		canFullscreen = document.fullscreenEnabled;
+		// Esc leaves full screen without our button, so the state follows the document.
+		const onFullscreenChange = () => {
+			fullscreen = document.fullscreenElement === section;
+			map?.invalidateSize();
+		};
+		document.addEventListener('fullscreenchange', onFullscreenChange);
 		(async () => {
 			const query = `lat=${coordinates.lat}&lon=${coordinates.lon}`;
 			const [frames, gridCells] = await Promise.all([
@@ -120,6 +140,7 @@
 		})();
 		return () => {
 			cancelled = true;
+			document.removeEventListener('fullscreenchange', onFullscreenChange);
 			map?.remove();
 		};
 	});
@@ -170,6 +191,11 @@
 		show();
 	});
 
+	function toggleFullscreen() {
+		if (document.fullscreenElement) void document.exitFullscreen();
+		else void section?.requestFullscreen();
+	}
+
 	/** Steps one frame back or forward and stops playing, for reading the map frame by frame. */
 	function stepBy(delta: number) {
 		playing = false;
@@ -204,7 +230,10 @@
 {#if failed}
 	<p class="mt-4 glass p-6">{m.radar_unavailable()}</p>
 {:else}
-	<section class="mt-4 glass p-4 md:p-6">
+	<section
+		bind:this={section}
+		class="group mt-4 glass p-4 md:p-6 fullscreen:flex fullscreen:flex-col fullscreen:overflow-auto fullscreen:rounded-none fullscreen:bg-(image:--sky-dusk)"
+	>
 		<p class="question px-2"><CloudRain size={18} aria-hidden="true" /> {m.radar_link()}</p>
 		{#if radar}
 			<p class="mt-2 px-2 answer">
@@ -221,7 +250,7 @@
 			bind:this={container}
 			role="region"
 			aria-label={m.radar_map({ place })}
-			class="mt-4 h-[60vh] max-h-[34rem] min-h-72 overflow-hidden rounded-2xl bg-map forced-color-adjust-none"
+			class="mt-4 h-[60vh] max-h-[34rem] min-h-72 overflow-hidden rounded-2xl bg-map forced-color-adjust-none group-fullscreen:h-auto group-fullscreen:max-h-none group-fullscreen:flex-1"
 		></div>
 
 		{#if steps.length}
@@ -257,6 +286,19 @@
 					>
 						<ChevronRight size={18} aria-hidden="true" />
 					</button>
+					{#if canFullscreen}
+						<button
+							type="button"
+							class="grid size-11 shrink-0 pill cursor-pointer place-items-center"
+							aria-label={fullscreen ? m.radar_fullscreen_leave() : m.radar_fullscreen()}
+							onclick={toggleFullscreen}
+						>
+							{#if fullscreen}<Minimize size={18} aria-hidden="true" />{:else}<Maximize
+									size={18}
+									aria-hidden="true"
+								/>{/if}
+						</button>
+					{/if}
 				</div>
 				<div class="flex min-w-48 flex-1 items-center gap-3">
 					<label class="flex min-w-0 flex-1 flex-col gap-1 text-sm">

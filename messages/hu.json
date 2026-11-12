@@ -210,6 +210,8 @@
 	"privacy_summary": "Nincs fiók, nincs követés, nincs reklám.",
 	"radar_frame_model": "{time}, modell-előrejelzés",
 	"radar_frame_radar": "{time}, radar",
+	"radar_fullscreen": "Teljes képernyő",
+	"radar_fullscreen_leave": "Kilépés a teljes képernyőből",
 	"radar_latest": "Radarkép 10 percenként az elmúlt 2 órából, {time}-ig; utána a modell, óránként.",
 	"radar_legend_model": "Modell: az adott óra esője; minél élénkebb a szín, annál több",
 	"radar_legend_radar": "Radar: gyengétől az erős esőig",
