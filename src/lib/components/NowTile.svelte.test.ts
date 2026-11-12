@@ -37,7 +37,7 @@ const props = { now, hours, days, f, updated: null, place: 'Tokyo', utcOffsetSec
 
 describe('NowTile', () => {
 	it('shows the hour under the scrubber and goes back to now', async () => {
-		const screen = render(NowTile, props);
+		const screen = await render(NowTile, props);
 		const slider = screen.getByRole('slider', { name: 'Look ahead' });
 		await expect.element(screen.getByText('Now · Tue 10:00')).toBeVisible();
 
@@ -53,23 +53,23 @@ describe('NowTile', () => {
 	});
 
 	it('says how far ahead or behind the place is, only when it differs', async () => {
-		const ahead = render(NowTile, { ...props, utcOffsetSeconds: here + 8 * 3600 });
+		const ahead = await render(NowTile, { ...props, utcOffsetSeconds: here + 8 * 3600 });
 		await expect
 			.element(ahead.getByText('Local time in Tokyo, 8 hours ahead of you.'))
 			.toBeVisible();
 		ahead.unmount();
 
-		const behind = render(NowTile, { ...props, utcOffsetSeconds: here - 3600 });
+		const behind = await render(NowTile, { ...props, utcOffsetSeconds: here - 3600 });
 		await expect.element(behind.getByText('Local time in Tokyo, 1 hour behind you.')).toBeVisible();
 		behind.unmount();
 
-		const same = render(NowTile, props);
+		const same = await render(NowTile, props);
 		await expect.element(same.getByText('Now · Tue 10:00')).toBeVisible();
 		expect(same.container.textContent).not.toContain('Local time');
 	});
 
 	it('says what to wear, with the extras', async () => {
-		const screen = render(NowTile, { ...props, wear: { layer: 'warm', extras: ['rain'] } });
+		const screen = await render(NowTile, { ...props, wear: { layer: 'warm', extras: ['rain'] } });
 		await expect
 			.element(screen.getByText('A warm jacket. Something waterproof too.'))
 			.toBeVisible();

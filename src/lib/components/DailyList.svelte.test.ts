@@ -43,7 +43,7 @@ describe('DailyList', () => {
 	const days = [day('2026-11-10'), day('2026-11-11', { rainChance: 10, condition: 'clear' })];
 
 	it('reads each day out with its low, high, rain chance and condition', async () => {
-		const screen = render(DailyList, {
+		const screen = await render(DailyList, {
 			days,
 			hours: [...hours('2026-11-10', 1), ...hours('2026-11-11', 1)],
 			f
@@ -60,7 +60,7 @@ describe('DailyList', () => {
 	});
 
 	it('marks the days the model runs disagree on, and explains the mark', async () => {
-		const screen = render(DailyList, {
+		const screen = await render(DailyList, {
 			days,
 			hours: [...hours('2026-11-10', 1), ...hours('2026-11-11', 8)],
 			f
@@ -70,7 +70,7 @@ describe('DailyList', () => {
 	});
 
 	it('says nothing about confidence when every day is sure', async () => {
-		const screen = render(DailyList, { days, hours: hours('2026-11-10', 1), f });
+		const screen = await render(DailyList, { days, hours: hours('2026-11-10', 1), f });
 		expect(screen.container.textContent).not.toContain('51 runs');
 	});
 });

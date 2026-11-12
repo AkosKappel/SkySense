@@ -35,18 +35,18 @@ describe('ActivityTile', () => {
 	beforeEach(() => localStorage.clear());
 
 	it('says "that day" in a day view and "in the next 24 hours" on the overview', async () => {
-		const dayView = render(ActivityTile, { hours: hours(-30), days: [day], f, scope: 'day' });
+		const dayView = await render(ActivityTile, { hours: hours(-30), days: [day], f, scope: 'day' });
 		await expect.element(dayView.getByText('Too cold that day.').first()).toBeVisible();
 		dayView.unmount();
 
-		const overview = render(ActivityTile, { hours: hours(-30), days: [day], f });
+		const overview = await render(ActivityTile, { hours: hours(-30), days: [day], f });
 		await expect
 			.element(overview.getByText('Too cold in the next 24 hours.').first())
 			.toBeVisible();
 	});
 
 	it('shows a good time with its badge', async () => {
-		const screen = render(ActivityTile, { hours: hours(12), days: [day], f });
+		const screen = await render(ActivityTile, { hours: hours(12), days: [day], f });
 		await expect
 			.element(screen.getByRole('listitem').filter({ hasText: 'Run' }))
 			.toHaveTextContent(/07:00 to 08:00.*Great/);

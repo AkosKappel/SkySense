@@ -27,7 +27,7 @@ describe('PlaceSearch', () => {
 
 	it('clears the field with its button and focuses it with /', async () => {
 		answer(Response.json(places));
-		const screen = render(PlaceSearch);
+		const screen = await render(PlaceSearch);
 		const field = screen.getByRole('combobox', { name: 'Search for a place' });
 
 		await field.fill('Bratisl');
@@ -43,7 +43,7 @@ describe('PlaceSearch', () => {
 
 	it('lists matches and opens the chosen place with the keyboard', async () => {
 		answer(Response.json(places));
-		const screen = render(PlaceSearch);
+		const screen = await render(PlaceSearch);
 		const field = screen.getByRole('combobox', { name: 'Search for a place' });
 
 		await field.fill('Bratisl');
@@ -68,7 +68,7 @@ describe('PlaceSearch', () => {
 
 	it('asks in the current language and closes on Escape', async () => {
 		answer(Response.json(places));
-		const screen = render(PlaceSearch);
+		const screen = await render(PlaceSearch);
 		await screen.getByRole('combobox').fill('Bratisl');
 		await expect.element(screen.getByRole('listbox')).toBeVisible();
 		expect(String(vi.mocked(fetch).mock.calls[0][0])).toContain('lang=en');
@@ -79,21 +79,21 @@ describe('PlaceSearch', () => {
 
 	it('says when nothing matches', async () => {
 		answer(Response.json([]));
-		const screen = render(PlaceSearch);
+		const screen = await render(PlaceSearch);
 		await screen.getByRole('combobox').fill('Qqqq');
 		await expect.element(screen.getByText('No places found for “Qqqq”.')).toBeVisible();
 	});
 
 	it('says when search is unavailable', async () => {
 		answer(new Response('down', { status: 502 }));
-		const screen = render(PlaceSearch);
+		const screen = await render(PlaceSearch);
 		await screen.getByRole('combobox').fill('Bratisl');
 		await expect.element(screen.getByText("Place search isn't available right now.")).toBeVisible();
 	});
 
 	it('does not search for a single letter', async () => {
 		answer(Response.json(places));
-		const screen = render(PlaceSearch);
+		const screen = await render(PlaceSearch);
 		await screen.getByRole('combobox').fill('B');
 		await new Promise((done) => setTimeout(done, 400));
 		expect(fetch).not.toHaveBeenCalled();

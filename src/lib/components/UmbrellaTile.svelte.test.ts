@@ -23,37 +23,37 @@ const hours = (chances: number[], wet: Hour['condition'] = 'rain'): Hour[] =>
 
 describe('UmbrellaTile', () => {
 	it('says no when no hour is likely to be wet', async () => {
-		const screen = render(UmbrellaTile, { hours: hours([10, 20, 30]), f });
+		const screen = await render(UmbrellaTile, { hours: hours([10, 20, 30]), f });
 		await expect.element(screen.getByText('No, it should stay dry.')).toBeVisible();
 	});
 
 	it('says when rain goes on past the hours shown', async () => {
-		const screen = render(UmbrellaTile, { hours: hours([10, 10, 70, 80]), f, fromNow: false });
+		const screen = await render(UmbrellaTile, { hours: hours([10, 10, 70, 80]), f, fromNow: false });
 		await expect.element(screen.getByText('Yes, from 10:00 on.')).toBeVisible();
 	});
 
 	it('says all day when every hour is wet', async () => {
-		const screen = render(UmbrellaTile, { hours: hours([70, 80, 90]), f });
+		const screen = await render(UmbrellaTile, { hours: hours([70, 80, 90]), f });
 		await expect.element(screen.getByText('Yes, all day.')).toBeVisible();
 	});
 
 	it('says when rain that is falling stops', async () => {
-		const screen = render(UmbrellaTile, { hours: hours([90, 80, 10]), f });
+		const screen = await render(UmbrellaTile, { hours: hours([90, 80, 10]), f });
 		await expect.element(screen.getByText('Yes, until 10:00.')).toBeVisible();
 	});
 
 	it('says when rain starts and stops', async () => {
-		const screen = render(UmbrellaTile, { hours: hours([10, 10, 70, 60, 20]), f });
+		const screen = await render(UmbrellaTile, { hours: hours([10, 10, 70, 60, 20]), f });
 		await expect.element(screen.getByText('Yes, from 10:00 to 12:00.')).toBeVisible();
 	});
 
 	it('says when it snows instead', async () => {
-		const screen = render(UmbrellaTile, { hours: hours([10, 80, 80, 10], 'snow'), f });
+		const screen = await render(UmbrellaTile, { hours: hours([10, 80, 80, 10], 'snow'), f });
 		await expect.element(screen.getByText('Not rain but snow, from 09:00 to 11:00.')).toBeVisible();
 	});
 
 	it('warns about thunderstorms', async () => {
-		const screen = render(UmbrellaTile, { hours: hours([70, 10], 'thunder'), f });
+		const screen = await render(UmbrellaTile, { hours: hours([70, 10], 'thunder'), f });
 		await expect.element(screen.getByText('Yes, with thunderstorms until 09:00.')).toBeVisible();
 	});
 
@@ -62,7 +62,7 @@ describe('UmbrellaTile', () => {
 			...h,
 			spread: { low: 7, high: 9, rain: i === 1 ? 65 : 10 }
 		}));
-		const screen = render(UmbrellaTile, { hours: list, f });
+		const screen = await render(UmbrellaTile, { hours: list, f });
 		await expect.element(screen.getByText('65% of model runs show it at 09:00.')).toBeVisible();
 	});
 });
