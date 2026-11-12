@@ -71,7 +71,8 @@ describe('NowTile', () => {
 	it('says what to wear, with the extras', async () => {
 		const screen = await render(NowTile, { ...props, wear: { layer: 'warm', extras: ['rain'] } });
 		await expect
-			.element(screen.getByText('A warm jacket. Something waterproof too.'))
+			// The line starts with a visually hidden label, so match part of it.
+			.element(screen.getByText('A warm jacket. Something waterproof too.', { exact: false }))
 			.toBeVisible();
 	});
 });

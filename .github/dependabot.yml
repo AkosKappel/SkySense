@@ -6,6 +6,13 @@ updates:
       interval: weekly
       day: monday
     open-pull-requests-limit: 5
+    ignore:
+      # typescript-eslint does not support TypeScript 7 yet (2026-11-12); drop this once it does.
+      - dependency-name: typescript
+        versions: ['>=7']
+      # The types follow the Node major the app runs on (Node 24 on Vercel and in CI).
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
     groups:
       svelte:
         patterns:

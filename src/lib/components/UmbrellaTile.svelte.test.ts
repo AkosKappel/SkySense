@@ -28,7 +28,11 @@ describe('UmbrellaTile', () => {
 	});
 
 	it('says when rain goes on past the hours shown', async () => {
-		const screen = await render(UmbrellaTile, { hours: hours([10, 10, 70, 80]), f, fromNow: false });
+		const screen = await render(UmbrellaTile, {
+			hours: hours([10, 10, 70, 80]),
+			f,
+			fromNow: false
+		});
 		await expect.element(screen.getByText('Yes, from 10:00 on.')).toBeVisible();
 	});
 

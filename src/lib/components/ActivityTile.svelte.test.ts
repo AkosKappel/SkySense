@@ -49,6 +49,6 @@ describe('ActivityTile', () => {
 		const screen = await render(ActivityTile, { hours: hours(12), days: [day], f });
 		await expect
 			.element(screen.getByRole('listitem').filter({ hasText: 'Run' }))
-			.toHaveTextContent(/07:00 to 08:00.*Great/);
+			.toMatchTextContent(/07:00 to 08:00.*Great/);
 	});
 });
