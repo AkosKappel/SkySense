@@ -225,6 +225,8 @@
 	"radar_legend_wind": "Modell: a nyilak a szél irányát, a számok az erősségét mutatják",
 	"radar_link": "Esőradar",
 	"radar_map": "Csapadéktérkép: {place} környéke",
+	"radar_map_temperature": "Hőmérséklet-térkép: {place} környéke",
+	"radar_map_wind": "Széltérkép: {place} környéke",
 	"radar_model_dry": "A modell szerint a következő 3 órában nem lesz eső kb. 60 km-en belül.",
 	"radar_model_wet": "A modell szerint {time} után eső várható kb. 60 km-en belül.",
 	"radar_next": "Következő kép",

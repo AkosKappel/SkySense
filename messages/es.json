@@ -225,6 +225,8 @@
 	"radar_legend_wind": "Modelo: las flechas muestran hacia dónde sopla el viento; los números, su velocidad",
 	"radar_link": "Radar de lluvia",
 	"radar_map": "Mapa de lluvia alrededor de {place}",
+	"radar_map_temperature": "Mapa de temperatura alrededor de {place}",
+	"radar_map_wind": "Mapa de viento alrededor de {place}",
 	"radar_model_dry": "El modelo no muestra lluvia a menos de unos 60 km en las próximas 3 horas.",
 	"radar_model_wet": "El modelo muestra lluvia a menos de unos 60 km desde las {time}.",
 	"radar_next": "Fotograma siguiente",

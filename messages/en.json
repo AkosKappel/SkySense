@@ -225,6 +225,8 @@
 	"radar_legend_wind": "Model: arrows show where the wind blows, numbers its speed",
 	"radar_link": "Rain radar",
 	"radar_map": "Map of rain around {place}",
+	"radar_map_temperature": "Map of temperature around {place}",
+	"radar_map_wind": "Map of wind around {place}",
 	"radar_model_dry": "The model shows no rain within about 60 km in the next 3 hours.",
 	"radar_model_wet": "The model shows rain within about 60 km from {time}.",
 	"radar_next": "Next frame",

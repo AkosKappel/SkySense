@@ -372,6 +372,9 @@ test('the radar map switches to the model temperature and wind, said in words', 
 
 	await page.getByText('Temperature', { exact: true }).click();
 	await expect(page.getByText('Much the same temperature all around.')).toBeVisible();
+	await expect(
+		page.getByRole('region', { name: 'Map of temperature around Bratislava' })
+	).toBeVisible();
 	await expect(slider).toHaveAttribute('aria-valuetext', '10:00, model forecast');
 	await slider.focus();
 	await page.keyboard.press('End');

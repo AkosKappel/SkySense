@@ -225,6 +225,8 @@
 	"radar_legend_wind": "Modell: Pfeile zeigen, wohin der Wind weht, Zahlen seine Stärke",
 	"radar_link": "Regenradar",
 	"radar_map": "Karte des Regens um {place}",
+	"radar_map_temperature": "Karte der Temperatur um {place}",
+	"radar_map_wind": "Karte des Windes um {place}",
 	"radar_model_dry": "Das Modell zeigt in den nächsten 3 Stunden keinen Regen im Umkreis von etwa 60 km.",
 	"radar_model_wet": "Das Modell zeigt ab {time} Regen im Umkreis von etwa 60 km.",
 	"radar_next": "Nächstes Bild",

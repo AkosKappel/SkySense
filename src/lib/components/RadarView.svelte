@@ -387,7 +387,11 @@
 		<div
 			bind:this={container}
 			role="region"
-			aria-label={m.radar_map({ place })}
+			aria-label={{
+				rain: m.radar_map,
+				temperature: m.radar_map_temperature,
+				wind: m.radar_map_wind
+			}[layer]({ place })}
 			class="mt-4 h-[60vh] max-h-[34rem] min-h-72 overflow-hidden rounded-2xl bg-map forced-color-adjust-none group-fullscreen:h-auto group-fullscreen:max-h-none group-fullscreen:flex-1"
 		></div>
 
