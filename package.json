@@ -28,7 +28,7 @@
 		"@axe-core/playwright": "^4.14.0",
 		"@eslint/js": "^10.0.1",
 		"@fontsource-variable/plus-jakarta-sans": "^5.3.0",
-		"@inlang/paraglide-js": "^2.18.2",
+		"@inlang/paraglide-js": "^3.2.1",
 		"@lucide/svelte": "^1.70.0",
 		"@playwright/test": "^1.60.0",
 		"@sveltejs/adapter-vercel": "^7.0.0",
