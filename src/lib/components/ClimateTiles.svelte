@@ -53,7 +53,7 @@
 	});
 </script>
 
-<div class="flex flex-col gap-4 self-start lg:col-span-2">
+<div class="flex flex-col gap-4 self-start">
 	{#if day?.normal && comparison}
 		<section class="glass p-6">
 			<p class="question"><CalendarClock size={18} aria-hidden="true" /> {m.normal_question()}</p>
@@ -82,7 +82,7 @@
 </div>
 
 {#if day && extremes}
-	<section class="glass p-6 lg:col-span-2">
+	<section class="glass p-6">
 		<p class="question"><History size={18} aria-hidden="true" /> {m.past_question()}</p>
 		<p class="mt-2 text-lg font-semibold">
 			{m.past_answer({

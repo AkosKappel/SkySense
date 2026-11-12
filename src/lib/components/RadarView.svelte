@@ -1,6 +1,5 @@
 <script lang="ts">
 	import {
-		ArrowLeft,
 		ChevronLeft,
 		ChevronRight,
 		CloudRain,
@@ -13,7 +12,6 @@
 	import { onMount } from 'svelte';
 	import { CARTO_BASEMAP_KEY } from '$app/env/public';
 	import { resolve } from '$app/paths';
-	import { page } from '$app/state';
 	import type { Formatter } from '#lib/format.js';
 	import { pageName, savedPlaces } from '#lib/places.svelte.js';
 	import { m } from '#lib/paraglide/messages.js';
@@ -351,20 +349,6 @@
 		return () => clearInterval(timer);
 	});
 </script>
-
-<div class="mt-5 flex items-center gap-3">
-	<a
-		href={resolve('/p/[coords]/[[name]]', {
-			coords: page.params.coords ?? '',
-			name: encodeURIComponent(page.params.name ?? '')
-		})}
-		aria-label={m.back_to_forecast()}
-		class="grid size-11 shrink-0 pill place-items-center"
-	>
-		<ArrowLeft size={18} aria-hidden="true" />
-	</a>
-	<h1 class="text-2xl font-extrabold">{m.radar_title({ place })}</h1>
-</div>
 
 {#if failed}
 	<p class="mt-4 glass p-6">{m.radar_unavailable()}</p>

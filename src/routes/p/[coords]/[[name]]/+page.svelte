@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {
+		ArrowLeft,
 		ChevronDown,
 		ChevronLeft,
 		ChevronRight,
@@ -256,7 +257,7 @@
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
-<main class="mx-auto flex min-h-dvh max-w-6xl flex-col px-4 pt-4 md:px-8 md:pt-8">
+<main class="mx-auto flex min-h-dvh max-w-[88rem] flex-col px-4 pt-4 md:px-8 md:pt-8">
 	<header class="flex items-center justify-between gap-2">
 		<a
 			href="{resolve('/')}?choose"
@@ -318,6 +319,21 @@
 	{#if showRadar}
 		<!-- The map is built once on mount, so another place's radar needs a fresh one. The view
 		     loads on demand: it needs the browser anyway, and it stays out of every forecast page. -->
+		<!-- The radar's header is here, not in the view, so the page has its heading before the view
+		     has loaded (and without JavaScript). -->
+		<div class="mt-5 flex items-center gap-3">
+			<a
+				href={resolve('/p/[coords]/[[name]]', {
+					coords: page.params.coords ?? '',
+					name: encodeURIComponent(page.params.name ?? '')
+				})}
+				aria-label={m.back_to_forecast()}
+				class="grid size-11 shrink-0 pill place-items-center"
+			>
+				<ArrowLeft size={18} aria-hidden="true" />
+			</a>
+			<h1 class="text-2xl font-extrabold">{m.radar_title({ place: name })}</h1>
+		</div>
 		{#key formatCoordinates(data.coordinates)}
 			{#await import('#lib/components/RadarView.svelte') then { default: RadarView }}
 				<RadarView
@@ -344,145 +360,160 @@
 	{:else}
 		<h1 class="sr-only">{m.weather_in({ place: name })}</h1>
 
-		<section class="mt-5 px-1" aria-label={m.summary_label()}>
-			<SummaryLine sentences={summarize(forecast.hours, now.temp)} {f} />
-			<ShareCardButton card={shareCard} filename="skysense-{today.date}.png" />
-		</section>
-
-		<div
-			class="mt-5 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-flow-dense md:grid-cols-2 lg:grid-cols-4 [&>*]:min-w-0"
-		>
-			{#if air.air || air.pollen}
-				<section class="glass p-5 md:col-span-2 lg:col-span-4">
-					<AirTile summary={air} {f} />
-				</section>
-			{/if}
-
-			<section class="glass p-6 md:col-span-2 md:p-8 lg:row-span-2">
-				<NowTile
-					{now}
-					hours={forecast.hours.slice(0, 49)}
-					days={forecast.days}
-					{f}
-					{updated}
-					place={name}
-					utcOffsetSeconds={forecast.utcOffsetSeconds}
-					wear={whatToWear(forecast.hours, comfortShift[data.comfort])}
-					bind:selected={scrubbed}
-				/>
-			</section>
-
-			<section class="glass p-6 md:col-span-2">
-				<UmbrellaTile hours={forecast.hours} {f} />
-				<a
-					href="{resolve('/p/[coords]/[[name]]', {
-						coords: page.params.coords ?? '',
-						name: encodeURIComponent(page.params.name ?? '')
-					})}?radar"
-					class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
-					>{m.radar_link()} <ChevronRight size={16} aria-hidden="true" /></a
-				>
-			</section>
-
-			<section class="glass p-6 md:col-span-2 lg:col-span-4">
-				<ActivityTile
-					hours={forecast.hours.slice(0, 24)}
-					week={forecast.hours}
-					place={name}
-					timeZone={forecast.timezone}
-					days={forecast.days}
-					{f}
-					comfort={data.comfort}
-				/>
-			</section>
-
-			<section class="glass p-5 md:col-span-2 lg:col-span-4">
-				<h2 class="question">{m.next_hours()}</h2>
-				<HourlyStrip hours={forecast.hours.slice(0, 24)} {f} />
-			</section>
-
-			<section class="glass p-6 md:col-span-2 lg:col-span-4">
-				<TempChart hours={forecast.hours.slice(0, 25)} {f} />
-				<a
-					href="{resolve('/p/[coords]/[[name]]', {
-						coords: page.params.coords ?? '',
-						name: encodeURIComponent(page.params.name ?? '')
-					})}?models"
-					class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
-					>{m.compare_models()} <ChevronRight size={16} aria-hidden="true" /></a
-				>
-			</section>
-
-			<!-- After the activities on a phone (docs/design.md); the dense grid still puts them beside
-				the umbrella on wider screens. -->
-			<section class="glass p-6">
-				<p class="question"><Sunset size={18} aria-hidden="true" /> {m.dark_question()}</p>
-				{#if dark.kind === 'sets'}
-					<p class="mt-2 answer">{f.time(dark.at)}</p>
-					{#if today.sunrise}<p class="mt-2 text-sm text-ink-muted">
-							{m.sunrise_was({ time: f.time(today.sunrise) })}
-						</p>{/if}
-				{:else if dark.kind === 'dark'}
-					<p class="mt-2 answer">{m.dark_now()}</p>
-					{#if dark.sunrise}<p class="mt-2 text-sm text-ink-muted">
-							{m.sunrise_at({ time: f.time(dark.sunrise) })}
-						</p>{/if}
-				{:else if dark.kind === 'polar-night'}
-					<p class="mt-2 answer">{m.polar_night()}</p>
-				{:else}
-					<p class="mt-2 answer">{m.midnight_sun()}</p>
-				{/if}
-				<p class="mt-2 flex items-center gap-1.5 text-sm text-ink-muted">
-					<Moon size={14} aria-hidden="true" />
-					{m.moon_line({ phase: moonPhase, percent: f.percent(tonight.illumination * 100) })}
-				</p>
-			</section>
-
-			<section class="glass p-6">
-				<p class="question"><Wind size={18} aria-hidden="true" /> {m.wind_question()}</p>
-				<p class="mt-2 answer">{windAnswer}</p>
-				<p class="mt-2 flex items-center gap-1.5 text-sm text-ink-muted">
-					<Navigation
-						size={14}
-						aria-hidden="true"
-						style="transform: rotate({now.windDirection + 180}deg)"
-					/>
-					{direction} · {m.wind_detail({ speed: f.wind(now.wind), gust: f.wind(now.gust) })}
-				</p>
-				{#if strongestGust >= STRONG_GUST_KMH}
-					<p class="mt-3 flex items-start gap-1.5 text-sm font-semibold text-sun">
-						<TriangleAlert size={16} class="mt-0.5 shrink-0" aria-hidden="true" />
-						{m.wind_gust_warning({ gust: f.wind(strongestGust) })}
-					</p>
-				{/if}
-			</section>
-
-			<section class="glass p-6 lg:col-span-2 lg:row-span-2">
-				<h2 class="question">{m.ten_days()}</h2>
-				<DailyList days={forecast.days} hours={forecast.hours} {f} />
-				<CompareWith current={place} />
-			</section>
-
-			<section class="glass p-6 lg:col-span-2 lg:row-span-2">
-				<h2 class="question">{m.today_details()}</h2>
-				<DayFacts
-					day={today}
-					{f}
-					humidity={now.humidity}
-					pressure={now.pressure}
-					ahead={forecast.hours}
-				/>
-			</section>
-
-			<ClimateTiles
-				coordinates={data.coordinates}
-				date={today.date}
-				max={today.max}
-				place={name}
-				{f}
+		<!-- From 1280 px: the answer and now stay on the left while the evidence scrolls on the right.
+		     Pinned only when the window is tall enough to show the whole column. -->
+		<div class="xl:grid xl:grid-cols-[minmax(24rem,28rem)_minmax(0,1fr)] xl:items-start xl:gap-8">
+			<aside
+				class="flex min-w-0 flex-col gap-4 xl:top-8 xl:[@media(min-height:56rem)]:sticky"
+				aria-label={m.summary_label()}
 			>
-				<DryTile coordinates={data.coordinates} today={today.date} {f} />
-			</ClimateTiles>
+				<section class="mt-5 px-1 xl:mt-6 xl:mb-2">
+					<SummaryLine sentences={summarize(forecast.hours, now.temp)} {f} large />
+					<ShareCardButton card={shareCard} filename="skysense-{today.date}.png" />
+				</section>
+
+				<section class="glass p-6 md:p-8">
+					<NowTile
+						{now}
+						hours={forecast.hours.slice(0, 49)}
+						days={forecast.days}
+						{f}
+						{updated}
+						place={name}
+						utcOffsetSeconds={forecast.utcOffsetSeconds}
+						wear={whatToWear(forecast.hours, comfortShift[data.comfort])}
+						bind:selected={scrubbed}
+					/>
+				</section>
+
+				{#if air.air || air.pollen}
+					<section class="glass p-5">
+						<AirTile summary={air} {f} />
+					</section>
+				{/if}
+			</aside>
+
+			<div
+				class="mt-4 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-flow-dense md:grid-cols-2 xl:mt-6 [&>*]:min-w-0"
+			>
+				<section class="flex flex-col glass p-6">
+					<UmbrellaTile hours={forecast.hours} {f} />
+					<a
+						href="{resolve('/p/[coords]/[[name]]', {
+							coords: page.params.coords ?? '',
+							name: encodeURIComponent(page.params.name ?? '')
+						})}?radar"
+						class="mt-auto inline-flex min-h-11 items-center gap-1.5 pt-2 text-sm font-semibold underline-offset-4 hover:underline"
+						>{m.radar_link()} <ChevronRight size={16} aria-hidden="true" /></a
+					>
+				</section>
+
+				<section class="glass p-6">
+					<ActivityTile
+						hours={forecast.hours.slice(0, 24)}
+						week={forecast.hours}
+						place={name}
+						timeZone={forecast.timezone}
+						days={forecast.days}
+						{f}
+						comfort={data.comfort}
+					/>
+				</section>
+
+				<section class="glass p-5 md:col-span-2">
+					<h2 class="question">{m.next_hours()}</h2>
+					<HourlyStrip hours={forecast.hours.slice(0, 24)} {f} />
+				</section>
+
+				<section class="glass p-6 md:col-span-2">
+					<TempChart hours={forecast.hours.slice(0, 25)} {f} />
+					<a
+						href="{resolve('/p/[coords]/[[name]]', {
+							coords: page.params.coords ?? '',
+							name: encodeURIComponent(page.params.name ?? '')
+						})}?models"
+						class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
+						>{m.compare_models()} <ChevronRight size={16} aria-hidden="true" /></a
+					>
+				</section>
+
+				<!-- Wide screens: the tiles below differ a lot in height, so they flow in two balanced columns
+				     instead of grid rows that stretch the short ones. Narrower screens keep the grid order. -->
+				<div
+					class="contents lg:col-span-2 lg:block lg:columns-2 lg:gap-4 lg:[&>*]:mb-4 lg:[&>*]:break-inside-avoid"
+				>
+					<!-- After the activities on a phone (docs/design.md); the dense grid still puts them beside
+				the umbrella on wider screens. -->
+					<section class="glass p-6">
+						<p class="question"><Sunset size={18} aria-hidden="true" /> {m.dark_question()}</p>
+						{#if dark.kind === 'sets'}
+							<p class="mt-2 answer">{f.time(dark.at)}</p>
+							{#if today.sunrise}<p class="mt-2 text-sm text-ink-muted">
+									{m.sunrise_was({ time: f.time(today.sunrise) })}
+								</p>{/if}
+						{:else if dark.kind === 'dark'}
+							<p class="mt-2 answer">{m.dark_now()}</p>
+							{#if dark.sunrise}<p class="mt-2 text-sm text-ink-muted">
+									{m.sunrise_at({ time: f.time(dark.sunrise) })}
+								</p>{/if}
+						{:else if dark.kind === 'polar-night'}
+							<p class="mt-2 answer">{m.polar_night()}</p>
+						{:else}
+							<p class="mt-2 answer">{m.midnight_sun()}</p>
+						{/if}
+						<p class="mt-2 flex items-center gap-1.5 text-sm text-ink-muted">
+							<Moon size={14} aria-hidden="true" />
+							{m.moon_line({ phase: moonPhase, percent: f.percent(tonight.illumination * 100) })}
+						</p>
+					</section>
+
+					<section class="glass p-6">
+						<p class="question"><Wind size={18} aria-hidden="true" /> {m.wind_question()}</p>
+						<p class="mt-2 answer">{windAnswer}</p>
+						<p class="mt-2 flex items-center gap-1.5 text-sm text-ink-muted">
+							<Navigation
+								size={14}
+								aria-hidden="true"
+								style="transform: rotate({now.windDirection + 180}deg)"
+							/>
+							{direction} · {m.wind_detail({ speed: f.wind(now.wind), gust: f.wind(now.gust) })}
+						</p>
+						{#if strongestGust >= STRONG_GUST_KMH}
+							<p class="mt-3 flex items-start gap-1.5 text-sm font-semibold text-sun">
+								<TriangleAlert size={16} class="mt-0.5 shrink-0" aria-hidden="true" />
+								{m.wind_gust_warning({ gust: f.wind(strongestGust) })}
+							</p>
+						{/if}
+					</section>
+
+					<section class="glass p-6">
+						<h2 class="question">{m.ten_days()}</h2>
+						<DailyList days={forecast.days} hours={forecast.hours} {f} />
+						<CompareWith current={place} />
+					</section>
+
+					<section class="glass p-6">
+						<h2 class="question">{m.today_details()}</h2>
+						<DayFacts
+							day={today}
+							{f}
+							humidity={now.humidity}
+							pressure={now.pressure}
+							ahead={forecast.hours}
+						/>
+					</section>
+
+					<ClimateTiles
+						coordinates={data.coordinates}
+						date={today.date}
+						max={today.max}
+						place={name}
+						{f}
+					>
+						<DryTile coordinates={data.coordinates} today={today.date} {f} />
+					</ClimateTiles>
+				</div>
+			</div>
 		</div>
 	{/if}
 

@@ -2,10 +2,24 @@ import { expect, test } from '@playwright/test';
 import { expectAccessible } from './axe.js';
 import { blankMapTiles, placeReady, savePlace } from './helpers.js';
 
+test('the home page shows live answers for three places, switched by the reader', async ({
+	page
+}) => {
+	await page.goto('/');
+	await expect(page.getByText('Right now in Bratislava')).toBeVisible();
+	await page.getByText('Madrid', { exact: true }).click();
+	await expect(page.getByText('Right now in Madrid')).toBeVisible();
+	await page.getByRole('link', { name: 'See the full forecast for Madrid' }).click();
+	await expect(page).toHaveURL(/\/p\/40\.42,-3\.7\/Madrid$/);
+});
+
 test('finds a place and shows its forecast', async ({ page }) => {
 	await page.goto('/');
 	await expect(
-		page.getByRole('heading', { level: 1, name: 'Where should we look?' })
+		page.getByRole('heading', { level: 1, name: 'The weather, made sense of.' })
+	).toBeVisible();
+	await expect(
+		page.getByRole('heading', { level: 2, name: 'Where should we look?' })
 	).toBeVisible();
 	await expectAccessible(page);
 

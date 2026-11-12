@@ -68,69 +68,79 @@
 	};
 </script>
 
-<div class="flex items-start justify-between gap-4">
-	<div>
-		<p class="text-sm font-medium text-ink-muted">
-			{selected === 0 ? m.now_at({ time: when }) : m.at_time({ time: when })}
-		</p>
-		<p class="mt-2 text-8xl font-bold tracking-tight tabular-nums">{f.temp(shown.temp)}</p>
-		<p class="mt-1 text-lg">
-			{conditionLabel(shown.condition, shown.isDay)} · {m.feels_like({ temp: f.temp(shown.feels) })}
-		</p>
-	</div>
-	<WeatherIcon
-		condition={shown.condition}
-		isDay={shown.isDay}
-		size={88}
-		strokeWidth={1.25}
-		class="shrink-0 drop-shadow-[0_0_24px_rgba(251,191,36,.35)]"
-	/>
-</div>
-<p class="mt-6 text-lg text-ink-muted">
-	{m.high_low({ max: f.temp(day.max), min: f.temp(day.min) })}
-</p>
-{#if wear}
-	<p class="mt-2 flex items-start gap-2">
-		<Shirt size={18} class="mt-0.5 shrink-0 text-ink-muted" aria-hidden="true" />
-		<span>
-			<span class="sr-only">{m.wear_label()}</span>
-			{[layers[wear.layer](), ...wear.extras.map((extra) => extras[extra]())].join(' ')}
-		</span>
-	</p>
-{/if}
+<!-- Wide (a tablet, or the full-width tile between 1024 and 1280 px): the reading on the left,
+     the day and the scrubber on the right. -->
+<div class="@container">
+	<div class="@2xl:grid @2xl:grid-cols-2 @2xl:items-center @2xl:gap-x-12">
+		<div class="flex items-start justify-between gap-4">
+			<div>
+				<p class="text-sm font-medium text-ink-muted">
+					{selected === 0 ? m.now_at({ time: when }) : m.at_time({ time: when })}
+				</p>
+				<p class="mt-2 text-8xl font-bold tracking-tight tabular-nums">{f.temp(shown.temp)}</p>
+				<p class="mt-1 text-lg">
+					{conditionLabel(shown.condition, shown.isDay)} · {m.feels_like({
+						temp: f.temp(shown.feels)
+					})}
+				</p>
+			</div>
+			<WeatherIcon
+				condition={shown.condition}
+				isDay={shown.isDay}
+				size={88}
+				strokeWidth={1.25}
+				class="shrink-0 drop-shadow-[0_0_24px_rgba(251,191,36,.35)]"
+			/>
+		</div>
+		<div class="@2xl:[&>:first-child]:mt-0">
+			<p class="mt-6 text-lg text-ink-muted">
+				{m.high_low({ max: f.temp(day.max), min: f.temp(day.min) })}
+			</p>
+			{#if wear}
+				<p class="mt-2 flex items-start gap-2">
+					<Shirt size={18} class="mt-0.5 shrink-0 text-ink-muted" aria-hidden="true" />
+					<span>
+						<span class="sr-only">{m.wear_label()}</span>
+						{[layers[wear.layer](), ...wear.extras.map((extra) => extras[extra]())].join(' ')}
+					</span>
+				</p>
+			{/if}
 
-<div class="mt-4">
-	<div class="flex min-h-11 items-center justify-between gap-2">
-		<label for="scrubber" class="question">{m.look_ahead()}</label>
-		{#if selected > 0}
-			<button
-				type="button"
-				class="flex min-h-11 cursor-pointer items-center gap-1.5 px-1 text-sm font-semibold"
-				onclick={() => (selected = 0)}
-			>
-				<RotateCcw size={14} aria-hidden="true" />
-				{m.back_to_now()}
-			</button>
-		{/if}
-	</div>
-	<input
-		id="scrubber"
-		type="range"
-		min="0"
-		max={hours.length - 1}
-		step="1"
-		bind:value={selected}
-		aria-valuetext={spoken(hours[selected] ?? hours[0])}
-		class="h-11 w-full cursor-pointer rounded-full accent-sun"
-	/>
-	<div class="flex justify-between text-xs text-ink-muted" aria-hidden="true">
-		<span>{m.now()}</span>
-		<span>{m.in_hours({ hours: Math.floor((hours.length - 1) / 2) })}</span>
-		<span>{m.in_hours({ hours: hours.length - 1 })}</span>
+			<div class="mt-4">
+				<div class="flex min-h-11 items-center justify-between gap-2">
+					<label for="scrubber" class="question">{m.look_ahead()}</label>
+					{#if selected > 0}
+						<button
+							type="button"
+							class="flex min-h-11 cursor-pointer items-center gap-1.5 px-1 text-sm font-semibold"
+							onclick={() => (selected = 0)}
+						>
+							<RotateCcw size={14} aria-hidden="true" />
+							{m.back_to_now()}
+						</button>
+					{/if}
+				</div>
+				<input
+					id="scrubber"
+					type="range"
+					min="0"
+					max={hours.length - 1}
+					step="1"
+					bind:value={selected}
+					aria-valuetext={spoken(hours[selected] ?? hours[0])}
+					class="h-11 w-full cursor-pointer rounded-full accent-sun"
+				/>
+				<div class="flex justify-between text-xs text-ink-muted" aria-hidden="true">
+					<span>{m.now()}</span>
+					<span>{m.in_hours({ hours: Math.floor((hours.length - 1) / 2) })}</span>
+					<span>{m.in_hours({ hours: hours.length - 1 })}</span>
+				</div>
+			</div>
+
+			<p class="mt-2 text-sm text-ink-muted">
+				{updated ? m.updated_ago({ ago: updated }) : m.updated_just_now()}
+			</p>
+			{#if zoneNote}<p class="mt-1 text-sm text-ink-muted">{zoneNote}</p>{/if}
+		</div>
 	</div>
 </div>
-
-<p class="mt-2 text-sm text-ink-muted">
-	{updated ? m.updated_ago({ ago: updated }) : m.updated_just_now()}
-</p>
-{#if zoneNote}<p class="mt-1 text-sm text-ink-muted">{zoneNote}</p>{/if}
