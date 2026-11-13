@@ -503,5 +503,8 @@
 	"week_best_question": "Welcher Tag ist am besten?",
 	"week_best_day": "{activity}: bester Tag ist {day}, {from} bis {until}.",
 	"week_best_none": "{activity}: diese Woche keine gute Zeit.",
-	"week_legend": "Balken zeigen die Temperatur, heller am Tag; Blau zeigt die Regenwahrscheinlichkeit."
+	"week_legend": "Balken zeigen die Temperatur, heller am Tag; Blau zeigt die Regenwahrscheinlichkeit.",
+	"feature_week": "Eine Wochenseite: der beste Tag dieser Woche für jede deiner Aktivitäten und jeder Tag Stunde für Stunde.",
+	"feature_better": "Eine Karte, wo das Wetter an einem Tag für eine Aktivität besser ist, bis etwa 75 km entfernt, mit dem besten Ort beim Namen.",
+	"feature_wall": "Eine Wandanzeige für ein Tablet oder altes Handy, das den ganzen Tag läuft: große Uhr und das Wetter, nachts gedimmt."
 }

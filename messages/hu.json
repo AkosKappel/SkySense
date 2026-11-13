@@ -458,5 +458,8 @@
 	"week_best_question": "Melyik nap a legjobb?",
 	"week_best_day": "{activity}: a legjobb nap {day}, {from} és {until} között.",
 	"week_best_none": "{activity}: ezen a héten nincs jó időszak.",
-	"week_legend": "Az oszlopok a hőmérsékletet mutatják, nappal világosabban; a kék az eső esélyét."
+	"week_legend": "Az oszlopok a hőmérsékletet mutatják, nappal világosabban; a kék az eső esélyét.",
+	"feature_week": "Heti oldal: a hét legjobb napja minden tevékenységedhez, és minden nap óráról órára.",
+	"feature_better": "Térkép arról, hol jobb az idő egy adott napon egy tevékenységhez, nagyjából 75 km-es körzetben, a legjobb hely nevével.",
+	"feature_wall": "Falikijelző egész nap bekapcsolva hagyott tablethez vagy régi telefonhoz: nagy óra és az időjárás, éjszaka elsötétítve."
 }

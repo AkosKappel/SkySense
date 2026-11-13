@@ -511,5 +511,8 @@
 	"week_best_question": "Ktorý deň je najlepší?",
 	"week_best_day": "{activity}: najlepší deň je {day}, {from} až {until}.",
 	"week_best_none": "{activity}: tento týždeň žiadny dobrý čas.",
-	"week_legend": "Stĺpce ukazujú teplotu, cez deň svetlejšie; modrá ukazuje pravdepodobnosť zrážok."
+	"week_legend": "Stĺpce ukazujú teplotu, cez deň svetlejšie; modrá ukazuje pravdepodobnosť zrážok.",
+	"feature_week": "Týždenná stránka: najlepší deň tohto týždňa pre každú tvoju aktivitu a každý deň po hodinách.",
+	"feature_better": "Mapa, kde je v daný deň lepšie počasie na aktivitu, do vzdialenosti asi 75 km, s menom najlepšieho miesta.",
+	"feature_wall": "Nástenný displej pre tablet alebo starý telefón zapnutý celý deň: veľké hodiny a počasie, v noci stlmené."
 }

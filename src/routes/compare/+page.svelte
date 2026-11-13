@@ -38,8 +38,9 @@
 </svelte:head>
 
 {#snippet cell(day: Day, nicer: boolean)}
-	<td class="py-2 pr-2 {nicer ? 'bg-good/15' : ''}">
-		<span class="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+	<td class="py-2 pr-1.5 pl-1.5 {nicer ? 'bg-good/15' : ''}">
+		<!-- On one line from 380 px; the check mark used to drop under the temperatures. Narrower, it wraps. -->
+		<span class="flex items-center gap-x-1.5 whitespace-nowrap max-[379px]:flex-wrap">
 			<WeatherIcon condition={day.condition} size={20} />
 			<span class="tabular-nums">
 				<span class="font-semibold">{f.temp(day.max)}</span>

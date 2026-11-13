@@ -18,7 +18,7 @@
 	const low = $derived(Math.min(...values) - 1);
 	const high = $derived(Math.max(...values) + 1);
 	// Temperatures use the top 70%; rain bars sit in the bottom 30%.
-	const y = (temp: number) => 5 + (1 - (temp - low) / (high - low)) * 60;
+	const y = (temp: number) => 4 + (1 - (temp - low) / (high - low)) * 64;
 	const line = (pick: (h: Hour) => number) =>
 		hours.map((h, i) => `${i ? 'L' : 'M'}${i * STEP},${y(pick(h)).toFixed(1)}`).join('');
 
@@ -48,7 +48,7 @@
 <svg
 	viewBox="0 0 {width} {HEIGHT}"
 	preserveAspectRatio="none"
-	class="mt-4 h-36 w-full overflow-visible"
+	class="mt-4 h-36 w-full overflow-visible md:h-48"
 	aria-hidden="true"
 >
 	{#each hours as hour, i (hour.time)}

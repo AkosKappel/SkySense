@@ -69,19 +69,20 @@
 <p class="question"><Umbrella size={18} aria-hidden="true" /> {m.umbrella_question()}</p>
 <p class="mt-2 answer">{answer}</p>
 {#if agreement}<p class="mt-1 text-sm text-ink-muted">{agreement}</p>{/if}
-<div class="mt-4 flex items-end gap-0.5" aria-hidden="true">
+<!-- The bars grow with the tile: beside a taller tile they fill its height instead of leaving a gap. -->
+<div class="mt-4 flex max-h-48 min-h-16 flex-1 gap-0.5" aria-hidden="true">
 	{#each day as hour, i (hour.time)}
 		<div class="flex flex-1 flex-col items-center gap-1">
-			<div
-				class="w-full rounded-sm forced-color-adjust-none forced-colors:bg-[CanvasText] {hour.condition ===
-				'snow'
-					? 'bg-ink'
-					: 'bg-rain'}"
-				style="height: {Math.max(3, hour.rainChance * 0.5)}px; opacity: {hour.rainChance >=
-				RAIN_LIKELY
-					? 1
-					: 0.35}"
-			></div>
+			<div class="flex w-full flex-1 items-end">
+				<div
+					class="w-full rounded-sm forced-color-adjust-none forced-colors:bg-[CanvasText] {hour.condition ===
+					'snow'
+						? 'bg-ink'
+						: 'bg-rain'}"
+					style:height="{Math.max(5, hour.rainChance)}%"
+					style:opacity={hour.rainChance >= RAIN_LIKELY ? 1 : 0.35}
+				></div>
+			</div>
 			<span class="h-4 text-[11px] font-semibold text-ink-muted"
 				>{i % 6 === 0 ? (i === 0 && fromNow ? m.now() : f.hour(hour.time)) : ''}</span
 			>

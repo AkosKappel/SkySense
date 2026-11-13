@@ -267,8 +267,12 @@ test('"My location" locates again when opened and names the town', async ({ cont
 	await context.grantPermissions(['geolocation']);
 	await context.setGeolocation({ latitude: 48.15, longitude: 17.11 });
 	await page.goto('/?choose');
-	await page.getByRole('button', { name: 'Use my location' }).click();
-	await expect(page).toHaveURL(/\/p\/48\.15,17\.11\/Bratislava$/);
+	// A click before the page has hydrated does nothing (the button needs JavaScript), so it is
+	// retried until the page moves on.
+	await expect(async () => {
+		await page.getByRole('button', { name: 'Use my location' }).click({ timeout: 2000 });
+		await expect(page).toHaveURL(/\/p\/48\.15,17\.11\/Bratislava$/, { timeout: 3000 });
+	}).toPass({ timeout: 20_000 });
 	await expect(page.getByRole('heading', { level: 1 })).toContainText('Bratislava');
 
 	await context.setGeolocation({ latitude: 40.42, longitude: -3.7 });
@@ -562,7 +566,7 @@ test('the map shows where the weather is better and opens a square from the keyb
 	await page.getByRole('link', { name: 'Where is it better?' }).click();
 	await expect(
 		page.getByRole('heading', { name: 'Where is the weather better around Madrid?' })
-	).toBeVisible();
+	).toBeVisible({ timeout: 15_000 });
 	await page.getByLabel('Activity').selectOption('run');
 	// The grid and the best square's name are two requests after the view loads; a busy machine
 	// (the full suite on mobile) needs longer than the default 5 seconds for them.
@@ -572,6 +576,9 @@ test('the map shows where the weather is better and opens a square from the keyb
 
 	const map = page.getByRole('application', { name: 'Map of scores around Madrid' });
 	await expect(map).toHaveClass(/leaflet-container/);
+	// Hovering a square moves the cursor to it; a pointer left resting on the map would make the
+	// arrow keys start from that square instead of the middle.
+	await page.mouse.move(0, 0);
 	await map.focus();
 	await expect(page.getByText(/^Here: score \d+/)).toBeVisible();
 	await page.keyboard.press('ArrowDown');

@@ -503,5 +503,8 @@
 	"week_best_question": "Which day is best?",
 	"week_best_day": "{activity}: best on {day}, {from} to {until}.",
 	"week_best_none": "{activity}: no good time this week.",
-	"week_legend": "Bars show the temperature, lighter by day; blue shows the chance of rain."
+	"week_legend": "Bars show the temperature, lighter by day; blue shows the chance of rain.",
+	"feature_week": "A week page: the best day this week for each of your activities, and every day hour by hour.",
+	"feature_better": "A map of where the weather is better for an activity on a given day, up to about 75 km away, with the best spot named.",
+	"feature_wall": "A wall display for a tablet or an old phone left on all day: a big clock and the weather, dimmed at night."
 }

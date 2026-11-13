@@ -503,5 +503,8 @@
 	"week_best_question": "¿Qué día es mejor?",
 	"week_best_day": "{activity}: el mejor día es el {day}, de {from} a {until}.",
 	"week_best_none": "{activity}: no hay buen momento esta semana.",
-	"week_legend": "Las barras muestran la temperatura, más claras de día; el azul, la probabilidad de lluvia."
+	"week_legend": "Las barras muestran la temperatura, más claras de día; el azul, la probabilidad de lluvia.",
+	"feature_week": "Una página de la semana: el mejor día de esta semana para cada actividad y cada día hora a hora.",
+	"feature_better": "Un mapa de dónde hace mejor tiempo para una actividad un día concreto, hasta unos 75 km, con el mejor sitio por su nombre.",
+	"feature_wall": "Una pantalla de pared para una tableta o un móvil viejo encendido todo el día: un reloj grande y el tiempo, atenuado de noche."
 }
