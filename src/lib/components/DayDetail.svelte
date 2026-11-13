@@ -62,8 +62,13 @@
 	</section>
 
 	<!-- When to go out that day: the same tile as the overview, for this day's hours. -->
-	<section class="glass p-6 md:col-span-2">
+	<section class="glass p-6">
 		<ActivityTile {hours} {days} {f} {comfort} scope="day" />
+	</section>
+
+	<section class="glass p-6">
+		<h2 class="question">{m.details()}</h2>
+		<DayFacts {day} {f} />
 	</section>
 
 	<section class="glass p-5 md:col-span-2">
@@ -76,9 +81,4 @@
 			<TempChart {hours} {f} />
 		</section>
 	{/if}
-
-	<section class="glass p-6 md:col-span-2">
-		<h2 class="question">{m.details()}</h2>
-		<DayFacts {day} {f} />
-	</section>
 </div>

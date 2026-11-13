@@ -25,8 +25,8 @@
 	<ol class="flex gap-1">
 		{#each hours as hour, i (hour.time)}
 			<li
-				class="relative flex min-w-15 flex-col items-center gap-2 rounded-2xl px-1 py-3 {i === 0 &&
-				fromNow
+				class="relative flex min-w-15 flex-1 flex-col items-center gap-2 rounded-2xl px-1 py-3 {i ===
+					0 && fromNow
 					? 'bg-veil/15 outline-1 outline-veil/25'
 					: ''}"
 			>

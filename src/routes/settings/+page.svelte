@@ -1,5 +1,16 @@
 <script lang="ts">
-	import { ArrowLeft, Check, ChevronDown } from '@lucide/svelte';
+	import {
+		ArrowLeft,
+		Check,
+		ChevronDown,
+		Clock,
+		Droplets,
+		Languages,
+		Palette,
+		Shirt,
+		Thermometer,
+		Wind
+	} from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
@@ -22,11 +33,13 @@
 	const groups: {
 		name: keyof Units | 'comfort' | 'theme';
 		legend: () => string;
+		icon: typeof Clock;
 		note?: () => string;
 		options: [string, () => string][];
 	}[] = [
 		{
 			name: 'theme',
+			icon: Palette,
 			legend: m.theme,
 			options: [
 				['system', m.theme_system],
@@ -36,6 +49,7 @@
 		},
 		{
 			name: 'temperature',
+			icon: Thermometer,
 			legend: m.temperature,
 			options: [
 				['c', m.celsius],
@@ -44,6 +58,7 @@
 		},
 		{
 			name: 'wind',
+			icon: Wind,
 			legend: m.wind_speed,
 			options: [
 				['kmh', () => 'km/h'],
@@ -55,6 +70,7 @@
 		},
 		{
 			name: 'rain',
+			icon: Droplets,
 			legend: m.rain_amount,
 			options: [
 				['mm', m.millimetres],
@@ -63,6 +79,7 @@
 		},
 		{
 			name: 'clock',
+			icon: Clock,
 			legend: m.time_format,
 			options: [
 				['24', m.clock_24],
@@ -71,6 +88,7 @@
 		},
 		{
 			name: 'comfort',
+			icon: Shirt,
 			legend: m.comfort_profile,
 			note: m.comfort_note,
 			options: [
@@ -104,7 +122,9 @@
 
 	<form method="POST" class="mt-6 space-y-6 glass p-6">
 		<div>
-			<label for="language" class="mb-2 question">{m.language()}</label>
+			<label for="language" class="mb-2 question"
+				><Languages size={18} aria-hidden="true" /> {m.language()}</label
+			>
 			<div class="relative">
 				<select
 					id="language"
@@ -126,7 +146,9 @@
 
 		{#each groups as group (group.name)}
 			<fieldset>
-				<legend class="mb-2 question">{group.legend()}</legend>
+				<legend class="mb-2 question"
+					><group.icon size={18} aria-hidden="true" /> {group.legend()}</legend
+				>
 				<div class="flex flex-wrap gap-2">
 					{#each group.options as [value, label] (value)}
 						<label

@@ -55,7 +55,7 @@
 				>
 			</div>
 
-			<div class="mt-4"><PlaceSearch replace /></div>
+			<div class="mt-4"><PlaceSearch replace floating={false} /></div>
 
 			{#if savedPlaces.list.length}
 				<h3 class="mt-4 question">{m.saved_places()}</h3>

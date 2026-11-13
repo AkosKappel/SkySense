@@ -564,9 +564,14 @@ test('the map shows where the weather is better and opens a square from the keyb
 		page.getByRole('heading', { name: 'Where is the weather better around Madrid?' })
 	).toBeVisible();
 	await page.getByLabel('Activity').selectOption('run');
-	await expect(page.getByText(/Better around .+, 50 km south: 10:00 to 11:00/)).toBeVisible();
+	// The grid and the best square's name are two requests after the view loads; a busy machine
+	// (the full suite on mobile) needs longer than the default 5 seconds for them.
+	await expect(page.getByText(/Better around .+, 50 km south: 10:00 to 11:00/)).toBeVisible({
+		timeout: 15_000
+	});
 
 	const map = page.getByRole('application', { name: 'Map of scores around Madrid' });
+	await expect(map).toHaveClass(/leaflet-container/);
 	await map.focus();
 	await expect(page.getByText(/^Here: score \d+/)).toBeVisible();
 	await page.keyboard.press('ArrowDown');

@@ -52,10 +52,11 @@
 	aria-hidden="true"
 >
 	{#each hours as hour, i (hour.time)}
+		<!-- Kept inside the plot: the first and last bars are half bars. -->
 		<rect
-			x={i * STEP - 3}
+			x={Math.max(0, i * STEP - 2)}
 			y={HEIGHT - hour.rainChance * 0.3}
-			width="6"
+			width={Math.min(width, i * STEP + 2) - Math.max(0, i * STEP - 2)}
 			height={hour.rainChance * 0.3}
 			class="fill-rain/50"
 		/>
@@ -78,8 +79,16 @@
 		vector-effect="non-scaling-stroke"
 	/>
 </svg>
-<div class="mt-1 flex justify-between text-xs text-ink-muted tabular-nums" aria-hidden="true">
-	{#each ticks as tick (tick.time)}<span>{f.hour(tick.time)}</span>{/each}
+<!-- Each label under its own hour; the last one is kept from running off the edge. -->
+<div class="relative mt-1 h-4 text-xs text-ink-muted tabular-nums" aria-hidden="true">
+	{#each ticks as tick (tick.time)}
+		{@const at = hours.indexOf(tick) / Math.max(1, hours.length - 1)}
+		<span
+			class="absolute"
+			style:left="{at * 100}%"
+			style:translate={at === 0 ? '0' : at > 0.9 ? '-100%' : '-50%'}>{f.hour(tick.time)}</span
+		>
+	{/each}
 </div>
 
 <ul class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-muted" aria-hidden="true">

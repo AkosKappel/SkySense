@@ -70,7 +70,8 @@
 	);
 </script>
 
-<dl class="mt-4 grid grid-cols-2 gap-3">
+<!-- An odd last fact spans both columns rather than leaving a gap beside it. -->
+<dl class="mt-4 grid grid-cols-2 gap-3 [&>:last-child:nth-child(odd)]:col-span-2">
 	{#each facts as [label, value] (label)}
 		<div class="rounded-2xl bg-veil/5 p-4 outline-1 outline-veil/10">
 			<dt class="text-sm wrap-anywhere hyphens-auto text-ink-muted">{label}</dt>

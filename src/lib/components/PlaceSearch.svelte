@@ -16,12 +16,15 @@
 	 * `replace` swaps the current history entry, so Back skips the sheet the search was opened in.
 	 * `to` is where a chosen place opens: its forecast, or the map around it (M-11). `compact` fits
 	 * the search on one line above a map: the label only for screen readers, location as an icon.
+	 * `floating` lays the results over what follows; in a scrolling sheet they take their own
+	 * room instead, or the sheet would cut them off.
 	 */
 	let {
 		replace = false,
 		to = 'place',
-		compact = false
-	}: { replace?: boolean; to?: 'place' | 'map'; compact?: boolean } = $props();
+		compact = false,
+		floating = true
+	}: { replace?: boolean; to?: 'place' | 'map'; compact?: boolean; floating?: boolean } = $props();
 
 	let query = $state('');
 	let results = $state<Result[]>([]);
@@ -204,7 +207,9 @@
 			id="place-results"
 			role="listbox"
 			aria-label={m.search_label()}
-			class="absolute inset-x-0 top-full z-10 mt-2 overflow-hidden rounded-tile bg-surface p-1 shadow-2xl outline-1 outline-veil/15"
+			class="{floating
+				? 'absolute inset-x-0 top-full z-10 shadow-2xl'
+				: ''} mt-2 overflow-hidden rounded-tile bg-surface p-1 outline-1 outline-veil/15"
 		>
 			{#each results as result, i (result.id)}
 				<li

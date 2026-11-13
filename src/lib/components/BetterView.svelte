@@ -154,7 +154,7 @@
 			if (cancelled || !container) return;
 			leaflet = L;
 			// Arrow keys move between squares here, so Leaflet's own keyboard panning is off.
-			map = L.map(container, { keyboard: false, zoomSnap: 0.25, minZoom: 5, maxZoom: 10 });
+			map = L.map(container, { keyboard: false, zoomSnap: 0.25, minZoom: 5, maxZoom: 12 });
 			map.setView([coordinates.lat, coordinates.lon], 7);
 			addBasemap(L, map);
 			map.attributionControl.addAttribution(

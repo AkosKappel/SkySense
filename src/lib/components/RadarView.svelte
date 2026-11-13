@@ -232,15 +232,19 @@
 		}
 	}
 
+	/** A radar frame's tile layer, made (hidden, so its tiles start loading) the first time. */
+	function radarLayer(L: typeof import('leaflet'), path: string) {
+		return (radarLayers[path] ??= L.tileLayer(`${radar!.host}${path}/256/{z}/{x}/{y}/2/1_1.png`, {
+			maxNativeZoom: RADAR_MAX_ZOOM,
+			opacity: 0
+		}).addTo(map!));
+	}
+
 	/** Puts the current step on the map: its radar layer, or the model's grid for that hour. */
 	function show() {
 		const L = leaflet;
 		if (!L || !map || !radar || !step) return;
-		const layerFor = (path: string) =>
-			(radarLayers[path] ??= L.tileLayer(`${radar!.host}${path}/256/{z}/{x}/{y}/2/1_1.png`, {
-				maxNativeZoom: RADAR_MAX_ZOOM,
-				opacity: 0
-			}).addTo(map!));
+		const layerFor = (path: string) => radarLayer(L, path);
 		if (step.kind === 'radar') layerFor(step.path);
 		for (const [path, layer] of Object.entries(radarLayers)) {
 			layer.setOpacity(path === step.path ? 0.75 : 0);
@@ -347,9 +351,14 @@
 
 	// Playing is something the reader starts, so it runs under reduced motion too; it never starts
 	// on its own.
+	// Every frame's tiles load as soon as playing starts, and a frame still loading holds the next
+	// step back, so the animation never shows an empty map.
 	$effect(() => {
-		if (!playing) return;
+		if (!playing || !leaflet || !map || !radar) return;
+		for (const step of steps) if (step.kind === 'radar') radarLayer(leaflet, step.path);
 		const timer = setInterval(() => {
+			const next = steps[(index + 1) % steps.length];
+			if (next?.kind === 'radar' && radarLayers[next.path]?.isLoading()) return;
 			index = (index + 1) % steps.length;
 		}, 900);
 		return () => clearInterval(timer);

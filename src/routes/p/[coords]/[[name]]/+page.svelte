@@ -379,8 +379,11 @@
 		<h1 class="sr-only">{m.weather_in({ place: name })}</h1>
 
 		<!-- From 1280 px: the answer and now stay on the left while the evidence scrolls on the right.
-		     Pinned only when the window is tall enough to show the whole column. -->
-		<div class="xl:grid xl:grid-cols-[minmax(24rem,28rem)_minmax(0,1fr)] xl:items-start xl:gap-8">
+		     Only on windows tall enough to pin the whole column; shorter ones get the full-width grid,
+		     as a column that scrolls away would leave the left side empty. -->
+		<div
+			class="xl:[@media(min-height:56rem)]:grid xl:[@media(min-height:56rem)]:grid-cols-[minmax(24rem,28rem)_minmax(0,1fr)] xl:[@media(min-height:56rem)]:items-start xl:[@media(min-height:56rem)]:gap-8"
+		>
 			<aside
 				class="flex min-w-0 flex-col gap-4 xl:top-8 xl:[@media(min-height:56rem)]:sticky"
 				aria-label={m.summary_label()}
