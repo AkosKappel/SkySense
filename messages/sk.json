@@ -472,5 +472,8 @@
 	"year_unavailable": "Posledný rok momentálne nie je dostupný.",
 	"year_warmest": "Najteplejší deň",
 	"year_wettest": "Najdaždivejší deň",
-	"year_windiest": "Najsilnejší náraz vetra"
+	"year_windiest": "Najsilnejší náraz vetra",
+	"wall_link": "Nástenný displej",
+	"wall_offline": "Offline. Predpoveď je z {time}.",
+	"next_12_hours": "Najbližších 12 hodín"
 }

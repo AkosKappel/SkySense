@@ -464,5 +464,8 @@
 	"year_unavailable": "The past year is not available right now.",
 	"year_warmest": "Warmest day",
 	"year_wettest": "Wettest day",
-	"year_windiest": "Strongest gust"
+	"year_windiest": "Strongest gust",
+	"wall_link": "Wall display",
+	"wall_offline": "Offline. Showing the forecast from {time}.",
+	"next_12_hours": "Next 12 hours"
 }

@@ -419,5 +419,8 @@
 	"year_unavailable": "Az elmúlt év most nem érhető el.",
 	"year_warmest": "Legmelegebb nap",
 	"year_wettest": "Legcsapadékosabb nap",
-	"year_windiest": "Legerősebb széllökés"
+	"year_windiest": "Legerősebb széllökés",
+	"wall_link": "Falikijelző",
+	"wall_offline": "Offline. Az előrejelzés ideje: {time}.",
+	"next_12_hours": "A következő 12 óra"
 }

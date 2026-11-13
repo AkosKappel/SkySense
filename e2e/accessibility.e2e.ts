@@ -17,6 +17,7 @@ const pages = [
 	'/p/1.29,103.85/Singapore',
 	'/compare?a=48.15,17.11&an=Bratislava&b=40.42,-3.7&bn=Madrid',
 	'/embed/48.15,17.11/Bratislava',
+	'/wall/48.15,17.11/Bratislava',
 	'/settings',
 	'/about',
 	'/privacy',
@@ -37,7 +38,7 @@ for (const path of pages) {
 }
 
 // The light theme (U-05) has its own colours, so its main pages go through axe too.
-for (const path of pages.slice(0, 10)) {
+for (const path of pages.slice(0, 11)) {
 	test(`${path} passes axe in the light theme`, async ({ context, page }) => {
 		await context.addCookies([
 			{ name: 'skysense_theme', value: 'light', url: 'http://localhost:4173' }

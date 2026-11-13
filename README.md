@@ -71,6 +71,10 @@ Any place can go on another site as a small card (now, the summary and the umbre
 
 Only `/embed/` pages allow framing; every other page sends `frame-ancestors 'none'`.
 
+## Wall display
+
+`/wall/48.15,17.11/Bratislava` (linked from each place as "Wall display") is for a tablet or an old phone left on all day: a big clock, now, the day's sentence and the next 12 hours. It reloads every 10 minutes and keeps the last forecast while offline, keeps the screen on with the Screen Wake Lock API, turns dark and dim between sunset and sunrise, and shifts a few pixels every hour against burn-in.
+
 ## Data and attribution
 
 Weather data by [Open-Meteo.com](https://open-meteo.com/), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Historical data from ERA5 (Copernicus Climate Change Service), forecasts from the national weather services' models that Open-Meteo combines.

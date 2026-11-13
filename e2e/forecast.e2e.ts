@@ -511,3 +511,21 @@ test('opens a day from the 10-day list and goes back', async ({ page }) => {
 	await page.getByRole('link', { name: 'Back to the forecast' }).click();
 	await expect(page.getByText('10-day forecast')).toBeVisible();
 });
+
+test('the wall display keeps the last forecast when the network goes', async ({ page }) => {
+	// The recorded forecast's own morning, so its hours are still ahead (10:20 in Bratislava).
+	await page.clock.install({ time: new Date('2026-11-10T09:20:00Z') });
+	await page.goto('/wall/48.15,17.11/Bratislava');
+	await expect(page.getByText('10:20')).toBeVisible();
+	const hours = page.getByRole('region', { name: 'Next 12 hours' });
+	await expect(hours.getByRole('listitem')).toHaveCount(7);
+
+	await page.route('**/api/forecast**', (route) => route.abort());
+	await page.clock.fastForward('10:00');
+	await expect(page.getByRole('status')).toContainText('Offline');
+	await expect(hours.getByRole('listitem').first()).toContainText('Now');
+	await expect(page.getByRole('link', { name: 'Bratislava' })).toHaveAttribute(
+		'href',
+		'/p/48.15,17.11/Bratislava'
+	);
+});

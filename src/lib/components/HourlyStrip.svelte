@@ -6,14 +6,19 @@
 	import { m } from '#lib/paraglide/messages.js';
 	import type { Hour } from '#lib/weather.js';
 
-	let { hours, f, fromNow = true }: { hours: Hour[]; f: Formatter; fromNow?: boolean } = $props();
+	let {
+		hours,
+		f,
+		fromNow = true,
+		label = m.next_hours()
+	}: { hours: Hour[]; f: Formatter; fromNow?: boolean; label?: string } = $props();
 </script>
 
 <!-- Focusable so keyboard users can scroll the strip (axe: scrollable-region-focusable). -->
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <div
 	role="region"
-	aria-label={m.next_hours()}
+	aria-label={label}
 	tabindex="0"
 	class="-mx-2 mt-3 overflow-x-auto rounded-2xl px-1 pb-2"
 >

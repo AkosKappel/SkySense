@@ -464,5 +464,8 @@
 	"year_unavailable": "Das letzte Jahr ist gerade nicht verfügbar.",
 	"year_warmest": "Wärmster Tag",
 	"year_wettest": "Nassester Tag",
-	"year_windiest": "Stärkste Böe"
+	"year_windiest": "Stärkste Böe",
+	"wall_link": "Wandanzeige",
+	"wall_offline": "Offline. Die Vorhersage ist von {time}.",
+	"next_12_hours": "Nächste 12 Stunden"
 }

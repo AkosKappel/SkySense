@@ -10,6 +10,7 @@
 		Plus,
 		Settings,
 		Sunset,
+		Tablet,
 		TriangleAlert,
 		Wind
 	} from '@lucide/svelte';
@@ -369,7 +370,19 @@
 			>
 				<section class="mt-5 px-1 xl:mt-6 xl:mb-2">
 					<SummaryLine sentences={summarize(forecast.hours, now.temp)} {f} large />
-					<ShareCardButton card={shareCard} filename="skysense-{today.date}.png" />
+					<div class="flex flex-wrap gap-x-5">
+						<ShareCardButton card={shareCard} filename="skysense-{today.date}.png" />
+						<a
+							href={resolve('/wall/[coords]/[[name]]', {
+								coords: page.params.coords ?? '',
+								name: encodeURIComponent(page.params.name ?? '')
+							})}
+							class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-ink-muted underline-offset-4 hover:text-ink hover:underline"
+						>
+							<Tablet size={16} aria-hidden="true" />
+							{m.wall_link()}
+						</a>
+					</div>
 				</section>
 
 				<section class="glass p-6 md:p-8">

@@ -464,5 +464,8 @@
 	"year_unavailable": "El último año no está disponible ahora.",
 	"year_warmest": "Día más cálido",
 	"year_wettest": "Día más lluvioso",
-	"year_windiest": "Racha más fuerte"
+	"year_windiest": "Racha más fuerte",
+	"wall_link": "Pantalla de pared",
+	"wall_offline": "Sin conexión. El pronóstico es de las {time}.",
+	"next_12_hours": "Próximas 12 horas"
 }
