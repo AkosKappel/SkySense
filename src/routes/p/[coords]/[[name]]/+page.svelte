@@ -84,16 +84,21 @@
 	const pastYear = $derived(page.url.searchParams.has('year'));
 	const showRadar = $derived(page.url.searchParams.has('radar'));
 	const showBetter = $derived(page.url.searchParams.has('better'));
+	const showWeek = $derived(page.url.searchParams.has('week'));
 	const title = $derived(
 		showRadar
 			? m.radar_title({ place: name })
-			: pastYear
-				? m.year_title({ place: name })
-				: comparing
-					? m.compare_title({ place: name })
-					: day
-						? m.weather_on({ place: name, date: f.date(day.date) })
-						: m.weather_in({ place: name })
+			: showBetter
+				? m.better_title({ place: name })
+				: showWeek
+					? m.week_title({ place: name })
+					: pastYear
+						? m.year_title({ place: name })
+						: comparing
+							? m.compare_title({ place: name })
+							: day
+								? m.weather_on({ place: name, date: f.date(day.date) })
+								: m.weather_in({ place: name })
 	);
 	const dayHours = $derived(day ? forecast.hours.filter((h) => h.time.startsWith(day.date)) : []);
 
@@ -346,6 +351,11 @@
 				/>
 			{/await}
 		{/key}
+	{:else if showWeek}
+		<ViewHeader title={m.week_title({ place: name })} />
+		{#await import('#lib/components/WeekView.svelte') then { default: WeekView }}
+			<WeekView days={forecast.days} hours={forecast.hours} {f} comfort={data.comfort} />
+		{/await}
 	{:else if pastYear}
 		<ViewHeader title={m.year_title({ place: name })} />
 		{#await import('#lib/components/YearView.svelte') then { default: YearView }}
@@ -517,6 +527,14 @@
 					<section class="glass p-6">
 						<h2 class="question">{m.ten_days()}</h2>
 						<DailyList days={forecast.days} hours={forecast.hours} {f} />
+						<a
+							href="{resolve('/p/[coords]/[[name]]', {
+								coords: page.params.coords ?? '',
+								name: encodeURIComponent(page.params.name ?? '')
+							})}?week"
+							class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
+							>{m.week_link()} <ChevronRight size={16} aria-hidden="true" /></a
+						>
 						<CompareWith current={place} />
 					</section>
 

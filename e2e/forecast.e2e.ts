@@ -574,3 +574,16 @@ test('the map shows where the weather is better and opens a square from the keyb
 	await page.keyboard.press('Enter');
 	await expect(page).toHaveURL(/\/p\/40\.2,-3\.7/);
 });
+
+test('the week page says which day is best and shows every day by the hour', async ({ page }) => {
+	await page.goto('/p/48.15,17.11/Bratislava');
+	await page.getByRole('link', { name: 'The week, hour by hour' }).click();
+	await expect(page.getByRole('heading', { name: 'The week in Bratislava' })).toBeVisible();
+	await expect(
+		page.getByText(/^Run: best on \w+ \d+ November, \d\d:00 to \d\d:00\.$/)
+	).toBeVisible();
+	const days = page.getByRole('link', { name: /^(Today|\w+day \d+ November)$/ });
+	await expect(days).toHaveCount(10);
+	await days.nth(1).click();
+	await expect(page).toHaveURL(/\?day=2026-11-11$/);
+});

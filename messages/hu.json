@@ -452,5 +452,11 @@
 	"map_link": "Térkép",
 	"map_modes": "Mit mutat a térkép",
 	"map_mode_weather": "Eső, hőmérséklet és szél",
-	"map_click_hint": "Kattints vagy koppints a térképre az ottani előrejelzésért."
+	"map_click_hint": "Kattints vagy koppints a térképre az ottani előrejelzésért.",
+	"week_title": "A hét: {place}",
+	"week_link": "A hét óráról órára",
+	"week_best_question": "Melyik nap a legjobb?",
+	"week_best_day": "{activity}: a legjobb nap {day}, {from} és {until} között.",
+	"week_best_none": "{activity}: ezen a héten nincs jó időszak.",
+	"week_legend": "Az oszlopok a hőmérsékletet mutatják, nappal világosabban; a kék az eső esélyét."
 }

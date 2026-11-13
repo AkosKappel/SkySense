@@ -497,5 +497,11 @@
 	"map_link": "Mapa",
 	"map_modes": "Qué muestra el mapa",
 	"map_mode_weather": "Lluvia, temperatura y viento",
-	"map_click_hint": "Haz clic o toca el mapa para ver el pronóstico de ese lugar."
+	"map_click_hint": "Haz clic o toca el mapa para ver el pronóstico de ese lugar.",
+	"week_title": "La semana en {place}",
+	"week_link": "La semana, hora a hora",
+	"week_best_question": "¿Qué día es mejor?",
+	"week_best_day": "{activity}: el mejor día es el {day}, de {from} a {until}.",
+	"week_best_none": "{activity}: no hay buen momento esta semana.",
+	"week_legend": "Las barras muestran la temperatura, más claras de día; el azul, la probabilidad de lluvia."
 }

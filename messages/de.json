@@ -497,5 +497,11 @@
 	"map_link": "Karte",
 	"map_modes": "Was die Karte zeigt",
 	"map_mode_weather": "Regen, Temperatur und Wind",
-	"map_click_hint": "Klick oder tipp auf die Karte für die Vorhersage dort."
+	"map_click_hint": "Klick oder tipp auf die Karte für die Vorhersage dort.",
+	"week_title": "Die Woche in {place}",
+	"week_link": "Die Woche, Stunde für Stunde",
+	"week_best_question": "Welcher Tag ist am besten?",
+	"week_best_day": "{activity}: bester Tag ist {day}, {from} bis {until}.",
+	"week_best_none": "{activity}: diese Woche keine gute Zeit.",
+	"week_legend": "Balken zeigen die Temperatur, heller am Tag; Blau zeigt die Regenwahrscheinlichkeit."
 }

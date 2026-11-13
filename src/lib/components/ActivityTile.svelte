@@ -1,18 +1,5 @@
 <script lang="ts">
-	import {
-		Bike,
-		CalendarPlus,
-		Camera,
-		Check,
-		ChevronDown,
-		Dog,
-		Footprints,
-		Mountain,
-		Sandwich,
-		Shirt,
-		Sparkles,
-		Telescope
-	} from '@lucide/svelte';
+	import { CalendarPlus, Check, ChevronDown, Sparkles } from '@lucide/svelte';
 	import {
 		activities,
 		activityIds,
@@ -27,6 +14,7 @@
 		type Reason
 	} from '#lib/activities.js';
 	import { activityChoice } from '#lib/activity-choice.svelte.js';
+	import { activityIcons } from '#lib/components/activity-icons.js';
 	import { activityLabel } from '#lib/components/labels.js';
 	import { toIcs } from '#lib/calendar.js';
 	import type { Formatter } from '#lib/format.js';
@@ -57,16 +45,6 @@
 		comfort?: Comfort;
 	} = $props();
 
-	const icons = {
-		run: Footprints,
-		cycle: Bike,
-		walk: Dog,
-		hike: Mountain,
-		picnic: Sandwich,
-		laundry: Shirt,
-		stars: Telescope,
-		golden: Camera
-	};
 	// "In the next 24 hours" on the overview; "that day" in a day view.
 	const reasons = $derived<Record<Reason, () => string>>(
 		scope === 'day'
@@ -157,7 +135,7 @@
 {#if rows.length}
 	<ul class="mt-3 space-y-2">
 		{#each rows as row (row.id)}
-			{@const Icon = icons[row.id]}
+			{@const Icon = activityIcons[row.id]}
 			<li class="rounded-2xl bg-veil/5 outline-1 outline-veil/10">
 				<details class="group">
 					<summary class="flex cursor-pointer list-none items-center gap-3 px-4 py-3">

@@ -505,5 +505,11 @@
 	"map_link": "Mapa",
 	"map_modes": "Čo mapa ukazuje",
 	"map_mode_weather": "Zrážky, teplota a vietor",
-	"map_click_hint": "Klikni alebo ťukni na mapu pre predpoveď na tom mieste."
+	"map_click_hint": "Klikni alebo ťukni na mapu pre predpoveď na tom mieste.",
+	"week_title": "Týždeň: {place}",
+	"week_link": "Týždeň po hodinách",
+	"week_best_question": "Ktorý deň je najlepší?",
+	"week_best_day": "{activity}: najlepší deň je {day}, {from} až {until}.",
+	"week_best_none": "{activity}: tento týždeň žiadny dobrý čas.",
+	"week_legend": "Stĺpce ukazujú teplotu, cez deň svetlejšie; modrá ukazuje pravdepodobnosť zrážok."
 }

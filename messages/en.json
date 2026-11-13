@@ -497,5 +497,11 @@
 	"map_link": "Map",
 	"map_modes": "What the map shows",
 	"map_mode_weather": "Rain, temperature and wind",
-	"map_click_hint": "Click or tap the map for the forecast there."
+	"map_click_hint": "Click or tap the map for the forecast there.",
+	"week_title": "The week in {place}",
+	"week_link": "The week, hour by hour",
+	"week_best_question": "Which day is best?",
+	"week_best_day": "{activity}: best on {day}, {from} to {until}.",
+	"week_best_none": "{activity}: no good time this week.",
+	"week_legend": "Bars show the temperature, lighter by day; blue shows the chance of rain."
 }
