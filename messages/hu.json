@@ -447,5 +447,10 @@
 	"direction_sw": "délnyugatra",
 	"direction_w": "nyugatra",
 	"direction_nw": "északnyugatra",
-	"better_best_label": "Legjobb"
+	"better_best_label": "Legjobb",
+	"map_title": "Térkép: {place} és környéke",
+	"map_link": "Térkép",
+	"map_modes": "Mit mutat a térkép",
+	"map_mode_weather": "Eső, hőmérséklet és szél",
+	"map_click_hint": "Kattints vagy koppints a térképre az ottani előrejelzésért."
 }

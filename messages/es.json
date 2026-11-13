@@ -492,5 +492,10 @@
 	"direction_sw": "suroeste",
 	"direction_w": "oeste",
 	"direction_nw": "noroeste",
-	"better_best_label": "Mejor"
+	"better_best_label": "Mejor",
+	"map_title": "Mapa alrededor de {place}",
+	"map_link": "Mapa",
+	"map_modes": "Qué muestra el mapa",
+	"map_mode_weather": "Lluvia, temperatura y viento",
+	"map_click_hint": "Haz clic o toca el mapa para ver el pronóstico de ese lugar."
 }

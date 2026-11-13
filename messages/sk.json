@@ -500,5 +500,10 @@
 	"direction_sw": "juhozápadne",
 	"direction_w": "západne",
 	"direction_nw": "severozápadne",
-	"better_best_label": "Najlepšie"
+	"better_best_label": "Najlepšie",
+	"map_title": "Mapa: {place} a okolie",
+	"map_link": "Mapa",
+	"map_modes": "Čo mapa ukazuje",
+	"map_mode_weather": "Zrážky, teplota a vietor",
+	"map_click_hint": "Klikni alebo ťukni na mapu pre predpoveď na tom mieste."
 }

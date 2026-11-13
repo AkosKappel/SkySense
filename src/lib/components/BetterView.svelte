@@ -2,8 +2,6 @@
 	import { MapPinned } from '@lucide/svelte';
 	import type { Map as LeafletMap, Rectangle } from 'leaflet';
 	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
-	import { resolve } from '$app/paths';
 	import {
 		activities,
 		activityIds,
@@ -24,10 +22,10 @@
 		type AreaScore
 	} from '#lib/better.js';
 	import { activityLabel } from '#lib/components/labels.js';
+	import { areaName, openForecastAt } from '#lib/open-live.js';
 	import type { Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
-	import { getLocale } from '#lib/paraglide/runtime.js';
-	import { formatCoordinates, type Coordinates, type Day } from '#lib/weather.js';
+	import type { Coordinates, Day } from '#lib/weather.js';
 
 	// "Where is the weather better?" (M-10): for an activity and a day, every point of a 7 × 7 grid
 	// around the place coloured by the activity score the app already computes, the best point
@@ -38,7 +36,8 @@
 		days,
 		now,
 		f,
-		comfort
+		comfort,
+		onMap = false
 	}: {
 		coordinates: Coordinates;
 		place: string;
@@ -48,6 +47,8 @@
 		now: string;
 		f: Formatter;
 		comfort: Comfort;
+		/** On the map page (M-11): a taller map. */
+		onMap?: boolean;
 	} = $props();
 
 	const SIDE = AREA_SIDE;
@@ -116,14 +117,6 @@
 			: m.better_better_unnamed(times);
 	});
 
-	async function nameOf({ lat, lon }: Coordinates): Promise<string | null> {
-		const response = await fetch(`/api/reverse?lat=${lat}&lon=${lon}&lang=${getLocale()}`).catch(
-			() => null
-		);
-		if (!response?.ok) return null;
-		return ((await response.json()) as { name: string | null }).name;
-	}
-
 	// The day's grid; a newer choice wins over an answer still on its way.
 	$effect(() => {
 		const day = date;
@@ -144,19 +137,9 @@
 		bestName = null;
 		if (answer.kind !== 'better') return;
 		let current = true;
-		nameOf(answer.best).then((name) => current && (bestName = name));
+		areaName(answer.best).then((name) => current && (bestName = name ?? null));
 		return () => (current = false);
 	});
-
-	async function open(cell: Coordinates) {
-		const name = (await nameOf(cell)) ?? '';
-		await goto(
-			resolve('/p/[coords]/[[name]]', {
-				coords: formatCoordinates(cell),
-				name: encodeURIComponent(name)
-			})
-		);
-	}
 
 	let map: LeafletMap | undefined;
 	let leaflet: typeof import('leaflet') | undefined;
@@ -203,7 +186,7 @@
 				fillOpacity: !score.window ? 0 : score.window.great ? 0.65 : 0.3
 			})
 				.on('mouseover', () => (focus = i))
-				.on('click', () => open(score))
+				.on('click', () => openForecastAt(score))
 				.addTo(map!)
 		);
 		if (!fitted) {
@@ -231,7 +214,7 @@
 		};
 		if (event.key === 'Enter' && scores[focus]) {
 			event.preventDefault();
-			void open(scores[focus]);
+			void openForecastAt(scores[focus]);
 			return;
 		}
 		const move = moves[event.key];
@@ -297,7 +280,9 @@
 		aria-label={m.better_map_label({ place })}
 		aria-describedby="better-keys"
 		onkeydown={onKeydown}
-		class="dark-scope mt-4 h-[60vh] max-h-[34rem] min-h-72 overflow-hidden rounded-2xl bg-map forced-color-adjust-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-veil"
+		class="dark-scope mt-4 min-h-72 {onMap
+			? 'h-[calc(100dvh-20rem)] min-h-96'
+			: 'h-[60vh] max-h-[34rem]'} overflow-hidden rounded-2xl bg-map forced-color-adjust-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-veil"
 	></div>
 
 	<p class="mt-3 min-h-6 px-2 text-sm font-semibold" aria-live="polite">

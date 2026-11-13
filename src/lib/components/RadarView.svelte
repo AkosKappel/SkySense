@@ -12,6 +12,7 @@
 	import { onMount } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { addBasemap } from '#lib/basemap.js';
+	import { openForecastAt } from '#lib/open-live.js';
 	import type { Formatter } from '#lib/format.js';
 	import { pageName, savedPlaces } from '#lib/places.svelte.js';
 	import { m } from '#lib/paraglide/messages.js';
@@ -38,8 +39,16 @@
 		coordinates,
 		place,
 		utcOffsetSeconds,
-		f
-	}: { coordinates: Coordinates; place: string; utcOffsetSeconds: number; f: Formatter } = $props();
+		f,
+		onMap = false
+	}: {
+		coordinates: Coordinates;
+		place: string;
+		utcOffsetSeconds: number;
+		f: Formatter;
+		/** On the map page (M-11): taller, and saved places link to their own map, not their radar. */
+		onMap?: boolean;
+	} = $props();
 
 	let radar = $state<RadarFrames | null>(null);
 	let grid = $state<GridCell[]>([]);
@@ -175,6 +184,11 @@
 				interactive: false
 			}).addTo(map);
 			addSavedPlaces(L, map);
+			// A click or tap anywhere opens the forecast there (M-04); search is the keyboard's way.
+			map.on('click', (event) => {
+				const { lat, lng } = event.latlng.wrap();
+				void openForecastAt({ lat, lon: lng });
+			});
 			show();
 		})();
 		return () => {
@@ -193,16 +207,18 @@
 			if (formatCoordinates(saved) === formatCoordinates(coordinates)) continue;
 			const name = pageName(saved);
 			const link = document.createElement('a');
-			link.href = `${resolve('/p/[coords]/[[name]]', {
-				coords: formatCoordinates(saved),
-				name: encodeURIComponent(name)
-			})}?radar`;
+			const params = { coords: formatCoordinates(saved), name: encodeURIComponent(name) };
+			link.href = onMap
+				? resolve('/map/[coords]/[[name]]', params)
+				: `${resolve('/p/[coords]/[[name]]', params)}?radar`;
 			link.className =
 				'pointer-events-auto flex items-center gap-1.5 rounded-sm whitespace-nowrap text-sm font-semibold text-ink! [text-shadow:0_1px_3px_black] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sun';
 			link.setAttribute('aria-label', m.radar_title({ place: name }));
 			const dot = document.createElement('span');
 			dot.className = 'size-3 shrink-0 rounded-full border-2 border-ink bg-rain';
 			link.append(dot, name);
+			// The link opens its place; the map's own click (the forecast at a point) must not fire too.
+			L.DomEvent.disableClickPropagation(link);
 			// Tabbing to a place off the map would scroll the map's box; bring the place into view instead.
 			link.addEventListener('focus', () => {
 				container?.scrollTo(0, 0);
@@ -365,7 +381,9 @@
 				temperature: m.radar_map_temperature,
 				wind: m.radar_map_wind
 			}[layer]({ place })}
-			class="dark-scope mt-4 h-[60vh] max-h-[34rem] min-h-72 overflow-hidden rounded-2xl bg-map forced-color-adjust-none group-fullscreen:h-auto group-fullscreen:max-h-none group-fullscreen:flex-1"
+			class="dark-scope mt-4 min-h-72 {onMap
+				? 'h-[calc(100dvh-20rem)] min-h-96'
+				: 'h-[60vh] max-h-[34rem]'} overflow-hidden rounded-2xl bg-map forced-color-adjust-none group-fullscreen:h-auto group-fullscreen:max-h-none group-fullscreen:flex-1"
 		></div>
 
 		{#if grid.length}
@@ -478,5 +496,6 @@
 				</ul>
 			{/if}
 		{/if}
+		<p class="mt-2 px-2 text-sm text-ink-muted">{m.map_click_hint()}</p>
 	</section>
 {/if}

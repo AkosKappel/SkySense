@@ -445,13 +445,37 @@ test('the radar shows the other saved places and opens their radar', async ({ pa
 	await expect(page.getByRole('link', { name: 'Rain radar around Bratislava' })).toBeVisible();
 });
 
-test('the map shortcut opens the radar for the last place', async ({ page }) => {
+test('the map shortcut opens the map around the last place, with search and both modes', async ({
+	page
+}) => {
+	await blankMapTiles(page);
 	await page.goto('/map');
 	await expect(page).toHaveURL(/\/\?choose$/);
 	await page.goto('/p/48.15,17.11/Bratislava');
 	await placeReady(page);
 	await page.goto('/map');
-	await expect(page).toHaveURL(/\/p\/48\.15,17\.11\/Bratislava\?radar$/);
+	await expect(page).toHaveURL(/\/map\/48\.15,17\.11\/Bratislava$/);
+	await expect(page.getByRole('heading', { name: 'Map around Bratislava' })).toBeVisible();
+	await expect(page.getByRole('region', { name: 'Map of rain around Bratislava' })).toBeVisible();
+
+	await page.getByRole('link', { name: 'Where is it better?' }).click();
+	await expect(page).toHaveURL(/\/map\/48\.15,17\.11\/Bratislava\?better$/);
+	await expect(
+		page.getByRole('application', { name: 'Map of scores around Bratislava' })
+	).toBeVisible();
+
+	await page.getByRole('combobox', { name: 'Search for a place' }).fill('Bratisl');
+	await page
+		.getByRole('option', { name: /Bratislava/ })
+		.first()
+		.click();
+	await expect(page).toHaveURL(/\/map\/48\.\d+,17\.\d+\/Bratislava$/);
+
+	// A click on the radar opens the forecast at that point (M-04).
+	const radar = page.getByRole('region', { name: /^Map of rain around/ });
+	await expect(radar).toHaveClass(/leaflet-container/);
+	await radar.click({ position: { x: 60, y: 120 } });
+	await expect(page).toHaveURL(/\/p\/4\d\.\d+,1\d\.\d+/);
 });
 
 test('settings change units and language', async ({ page }) => {

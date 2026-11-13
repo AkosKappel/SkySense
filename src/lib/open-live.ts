@@ -49,3 +49,15 @@ export async function openLive(
 		{ replaceState: replace }
 	);
 }
+
+/** Opens the forecast at a point of a map, named after its town when there is one (M-04). */
+export async function openForecastAt(point: Coordinates) {
+	const position = roundCoordinates(point);
+	const name = (await areaName(position)) ?? '';
+	await goto(
+		resolve('/p/[coords]/[[name]]', {
+			coords: formatCoordinates(position),
+			name: encodeURIComponent(name)
+		})
+	);
+}

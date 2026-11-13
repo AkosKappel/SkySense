@@ -492,5 +492,10 @@
 	"direction_sw": "südwestlich",
 	"direction_w": "westlich",
 	"direction_nw": "nordwestlich",
-	"better_best_label": "Am besten"
+	"better_best_label": "Am besten",
+	"map_title": "Karte rund um {place}",
+	"map_link": "Karte",
+	"map_modes": "Was die Karte zeigt",
+	"map_mode_weather": "Regen, Temperatur und Wind",
+	"map_click_hint": "Klick oder tipp auf die Karte für die Vorhersage dort."
 }

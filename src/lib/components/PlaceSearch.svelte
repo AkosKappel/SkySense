@@ -12,8 +12,16 @@
 
 	type Result = { id: number; name: string; detail: string; lat: number; lon: number };
 
-	/** `replace` swaps the current history entry, so Back skips the sheet the search was opened in. */
-	let { replace = false }: { replace?: boolean } = $props();
+	/**
+	 * `replace` swaps the current history entry, so Back skips the sheet the search was opened in.
+	 * `to` is where a chosen place opens: its forecast, or the map around it (M-11). `compact` fits
+	 * the search on one line above a map: the label only for screen readers, location as an icon.
+	 */
+	let {
+		replace = false,
+		to = 'place',
+		compact = false
+	}: { replace?: boolean; to?: 'place' | 'map'; compact?: boolean } = $props();
 
 	let query = $state('');
 	let results = $state<Result[]>([]);
@@ -64,11 +72,14 @@
 
 	function openPlace(place: SavedPlace, save = true) {
 		if (save) savedPlaces.add(place);
+		// On the map page the search stays on screen, so it closes its list after a choice.
+		results = [];
+		query = '';
+		const params = { coords: formatCoordinates(place), name: encodeURIComponent(place.name) };
 		goto(
-			resolve('/p/[coords]/[[name]]', {
-				coords: formatCoordinates(place),
-				name: encodeURIComponent(place.name)
-			}),
+			to === 'map'
+				? resolve('/map/[coords]/[[name]]', params)
+				: resolve('/p/[coords]/[[name]]', params),
 			{ replace }
 		);
 	}
@@ -125,43 +136,66 @@
 <svelte:window onkeydown={onWindowKeydown} />
 
 <div class="relative">
-	<label for="place-search" class="mb-2 question">{m.search_label()}</label>
-	<div class="relative">
-		<Search
-			size={20}
-			class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-ink-muted"
-			aria-hidden="true"
-		/>
-		<input
-			id="place-search"
-			type="search"
-			autocomplete="off"
-			spellcheck="false"
-			placeholder={m.search_placeholder()}
-			bind:this={input}
-			bind:value={query}
-			oninput={search}
-			{onkeydown}
-			role="combobox"
-			aria-expanded={open}
-			aria-controls="place-results"
-			aria-autocomplete="list"
-			aria-activedescendant={open && active >= 0 ? `place-${results[active].id}` : undefined}
-			class="h-14 w-full rounded-2xl bg-veil/10 pr-12 pl-12 text-lg text-ink outline-1 outline-veil/20 placeholder:text-ink-muted focus:bg-veil/15 focus:outline-2 focus:outline-veil [&::-webkit-search-cancel-button]:hidden"
-		/>
-		{#if status === 'searching'}
-			<LoaderCircle
+	<label for="place-search" class={compact ? 'sr-only' : 'mb-2 question'}>{m.search_label()}</label>
+	<div class="flex gap-2">
+		<div class="relative flex-1">
+			<Search
 				size={20}
-				class="absolute top-1/2 right-4 -translate-y-1/2 animate-spin text-ink-muted motion-reduce:animate-none"
+				class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-ink-muted"
 				aria-hidden="true"
 			/>
-		{:else if query}
+			<input
+				id="place-search"
+				type="search"
+				autocomplete="off"
+				spellcheck="false"
+				placeholder={m.search_placeholder()}
+				bind:this={input}
+				bind:value={query}
+				oninput={search}
+				{onkeydown}
+				role="combobox"
+				aria-expanded={open}
+				aria-controls="place-results"
+				aria-autocomplete="list"
+				aria-activedescendant={open && active >= 0 ? `place-${results[active].id}` : undefined}
+				class="{compact
+					? 'h-12 text-base'
+					: 'h-14 text-lg'} w-full rounded-2xl bg-veil/10 pr-12 pl-12 text-ink outline-1 outline-veil/20 placeholder:text-ink-muted focus:bg-veil/15 focus:outline-2 focus:outline-veil [&::-webkit-search-cancel-button]:hidden"
+			/>
+			{#if status === 'searching'}
+				<LoaderCircle
+					size={20}
+					class="absolute top-1/2 right-4 -translate-y-1/2 animate-spin text-ink-muted motion-reduce:animate-none"
+					aria-hidden="true"
+				/>
+			{:else if query}
+				<button
+					type="button"
+					class="absolute top-1/2 right-1.5 icon-button -translate-y-1/2"
+					aria-label={m.clear_search()}
+					onclick={clear}><X size={20} aria-hidden="true" /></button
+				>
+			{/if}
+		</div>
+		{#if compact}
 			<button
 				type="button"
-				class="absolute top-1/2 right-1.5 icon-button -translate-y-1/2"
-				aria-label={m.clear_search()}
-				onclick={clear}><X size={20} aria-hidden="true" /></button
+				onclick={useMyLocation}
+				disabled={locating}
+				aria-label={locating ? m.locating() : m.use_my_location()}
+				class="grid size-12 shrink-0 pill cursor-pointer place-items-center disabled:cursor-wait"
 			>
+				{#if locating}
+					<LoaderCircle
+						size={18}
+						class="animate-spin motion-reduce:animate-none"
+						aria-hidden="true"
+					/>
+				{:else}
+					<LocateFixed size={18} aria-hidden="true" />
+				{/if}
+			</button>
 		{/if}
 	</div>
 
@@ -195,24 +229,34 @@
 		</ul>
 	{/if}
 
-	<p class="mt-2 min-h-5 text-sm text-ink-muted" role="status">
+	<!-- Compact, it floats under the field instead of keeping a line free. -->
+	<p
+		class="text-sm text-ink-muted {compact ? 'absolute top-full mt-1' : 'mt-2 min-h-5'}"
+		role="status"
+	>
 		{#if status === 'empty'}{m.search_no_results({ query: query.trim() })}{/if}
 		{#if status === 'error'}{m.search_error()}{/if}
 	</p>
 
-	<button
-		type="button"
-		onclick={useMyLocation}
-		disabled={locating}
-		class="mt-2 flex h-12 cursor-pointer items-center gap-2 rounded-full bg-veil/10 px-5 font-semibold outline-1 outline-veil/20 transition hover:bg-veil/20 disabled:cursor-wait"
-	>
-		{#if locating}
-			<LoaderCircle size={18} class="animate-spin motion-reduce:animate-none" aria-hidden="true" />
-			{m.locating()}
-		{:else}
-			<LocateFixed size={18} aria-hidden="true" />
-			{m.use_my_location()}
-		{/if}
-	</button>
+	{#if !compact}
+		<button
+			type="button"
+			onclick={useMyLocation}
+			disabled={locating}
+			class="mt-2 flex h-12 cursor-pointer items-center gap-2 rounded-full bg-veil/10 px-5 font-semibold outline-1 outline-veil/20 transition hover:bg-veil/20 disabled:cursor-wait"
+		>
+			{#if locating}
+				<LoaderCircle
+					size={18}
+					class="animate-spin motion-reduce:animate-none"
+					aria-hidden="true"
+				/>
+				{m.locating()}
+			{:else}
+				<LocateFixed size={18} aria-hidden="true" />
+				{m.use_my_location()}
+			{/if}
+		</button>
+	{/if}
 	{#if locationError}<p class="mt-2 text-sm" role="alert">{locationError}</p>{/if}
 </div>
