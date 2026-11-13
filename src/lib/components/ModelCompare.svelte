@@ -1,7 +1,5 @@
 <script lang="ts">
-	import { ArrowLeft, Scale } from '@lucide/svelte';
-	import { resolve } from '$app/paths';
-	import { page } from '$app/state';
+	import { Scale } from '@lucide/svelte';
 	import type { Formatter } from '#lib/format.js';
 	import { rainTotal, widestGap, type ModelId, type ModelRun } from '#lib/models.js';
 	import { m } from '#lib/paraglide/messages.js';
@@ -42,19 +40,6 @@
 	const rows = $derived(times.filter((_, i) => i % 3 === 0));
 </script>
 
-<div class="mt-5 flex items-center gap-3">
-	<a
-		href={resolve('/p/[coords]/[[name]]', {
-			coords: page.params.coords ?? '',
-			name: encodeURIComponent(page.params.name ?? '')
-		})}
-		aria-label={m.back_to_forecast()}
-		class="grid size-11 shrink-0 pill place-items-center"
-	>
-		<ArrowLeft size={18} aria-hidden="true" />
-	</a>
-	<h1 class="text-2xl font-extrabold">{m.compare_models()}</h1>
-</div>
 <p class="mt-3 max-w-2xl px-1 text-ink-muted">{m.compare_intro()}</p>
 
 {#if !shown.length}

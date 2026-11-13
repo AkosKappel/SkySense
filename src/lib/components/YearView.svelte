@@ -1,12 +1,10 @@
 <script lang="ts">
-	import { ArrowLeft, CalendarRange, Droplets, Snowflake, Sun, Wind } from '@lucide/svelte';
-	import { resolve } from '$app/paths';
-	import { page } from '$app/state';
+	import { CalendarRange, Droplets, Snowflake, Sun, Wind } from '@lucide/svelte';
 	import type { Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { RAIN_DAY_MM, type YearInWeather } from '#lib/year.js';
 
-	let { year, place, f }: { year: YearInWeather | null; place: string; f: Formatter } = $props();
+	let { year, f }: { year: YearInWeather | null; f: Formatter } = $props();
 
 	const wettestMonth = $derived(year ? Math.max(1, ...year.months.map((mo) => mo.rain)) : 1);
 	const records = $derived(
@@ -40,20 +38,6 @@
 			: []
 	);
 </script>
-
-<div class="mt-5 flex items-center gap-3">
-	<a
-		href={resolve('/p/[coords]/[[name]]', {
-			coords: page.params.coords ?? '',
-			name: encodeURIComponent(page.params.name ?? '')
-		})}
-		aria-label={m.back_to_forecast()}
-		class="grid size-11 shrink-0 pill place-items-center"
-	>
-		<ArrowLeft size={18} aria-hidden="true" />
-	</a>
-	<h1 class="text-2xl font-extrabold">{m.year_title({ place })}</h1>
-</div>
 
 {#if !year}
 	<p class="mt-4 glass p-6">{m.year_unavailable()}</p>

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import {
-		ArrowLeft,
 		ChevronDown,
 		ChevronLeft,
 		ChevronRight,
@@ -26,11 +25,10 @@
 	import DryTile from '#lib/components/DryTile.svelte';
 	import CompareWith from '#lib/components/CompareWith.svelte';
 	import DayFacts from '#lib/components/DayFacts.svelte';
-	import ModelCompare from '#lib/components/ModelCompare.svelte';
-	import YearView from '#lib/components/YearView.svelte';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
 	import NowTile from '#lib/components/NowTile.svelte';
 	import PlaceSheet from '#lib/components/PlaceSheet.svelte';
+	import ViewHeader from '#lib/components/ViewHeader.svelte';
 	import ShareButton from '#lib/components/ShareButton.svelte';
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
 	import TempChart from '#lib/components/TempChart.svelte';
@@ -323,19 +321,7 @@
 		     loads on demand: it needs the browser anyway, and it stays out of every forecast page. -->
 		<!-- The radar's header is here, not in the view, so the page has its heading before the view
 		     has loaded (and without JavaScript). -->
-		<div class="mt-5 flex items-center gap-3">
-			<a
-				href={resolve('/p/[coords]/[[name]]', {
-					coords: page.params.coords ?? '',
-					name: encodeURIComponent(page.params.name ?? '')
-				})}
-				aria-label={m.back_to_forecast()}
-				class="grid size-11 shrink-0 pill place-items-center"
-			>
-				<ArrowLeft size={18} aria-hidden="true" />
-			</a>
-			<h1 class="text-2xl font-extrabold">{m.radar_title({ place: name })}</h1>
-		</div>
+		<ViewHeader title={m.radar_title({ place: name })} />
 		{#key formatCoordinates(data.coordinates)}
 			{#await import('#lib/components/RadarView.svelte') then { default: RadarView }}
 				<RadarView
@@ -347,19 +333,7 @@
 			{/await}
 		{/key}
 	{:else if showBetter}
-		<div class="mt-5 flex items-center gap-3">
-			<a
-				href={resolve('/p/[coords]/[[name]]', {
-					coords: page.params.coords ?? '',
-					name: encodeURIComponent(page.params.name ?? '')
-				})}
-				aria-label={m.back_to_forecast()}
-				class="grid size-11 shrink-0 pill place-items-center"
-			>
-				<ArrowLeft size={18} aria-hidden="true" />
-			</a>
-			<h1 class="text-2xl font-extrabold">{m.better_title({ place: name })}</h1>
-		</div>
+		<ViewHeader title={m.better_title({ place: name })} />
 		{#key formatCoordinates(data.coordinates)}
 			{#await import('#lib/components/BetterView.svelte') then { default: BetterView }}
 				<BetterView
@@ -373,9 +347,15 @@
 			{/await}
 		{/key}
 	{:else if pastYear}
-		<YearView year={data.year} place={name} {f} />
+		<ViewHeader title={m.year_title({ place: name })} />
+		{#await import('#lib/components/YearView.svelte') then { default: YearView }}
+			<YearView year={data.year} {f} />
+		{/await}
 	{:else if comparing}
-		<ModelCompare runs={data.models} from={forecast.hours[0].time} {f} />
+		<ViewHeader title={m.compare_models()} />
+		{#await import('#lib/components/ModelCompare.svelte') then { default: ModelCompare }}
+			<ModelCompare runs={data.models} from={forecast.hours[0].time} {f} />
+		{/await}
 	{:else if day}
 		<DayDetail
 			{day}
