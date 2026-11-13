@@ -112,10 +112,10 @@
 </svelte:head>
 
 <main
-	class="grid min-h-dvh content-center gap-8 p-6 transition-transform duration-1000 motion-reduce:transition-none md:p-10 landscape:lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] landscape:lg:items-center landscape:lg:gap-16"
-	style:transform="translate({shift.x}px, {shift.y}px)"
+	class="grid min-h-dvh content-center gap-8 p-6 md:p-10 landscape:lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] landscape:lg:items-center landscape:lg:gap-16"
 >
-	<section>
+	<!-- The shift stays inside the page padding, so it never makes the page scroll. -->
+	<section style:translate="{shift.x}px {shift.y}px">
 		<h1 class="text-xl font-semibold text-ink-muted md:text-2xl">
 			<a href={placeUrl} class="underline-offset-4 hover:underline">{name}</a>
 		</h1>
@@ -133,7 +133,7 @@
 		</div>
 	</section>
 
-	<section class="flex min-w-0 flex-col gap-5">
+	<section class="flex min-w-0 flex-col gap-5" style:translate="{shift.x}px {shift.y}px">
 		<div
 			class="md:[&_p]:text-[2.75rem] md:[&_p]:leading-[1.08] md:[&_p]:font-extrabold md:[&_p]:tracking-[-0.025em]"
 		>
