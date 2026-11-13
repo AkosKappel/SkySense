@@ -96,7 +96,7 @@ export function temperatureBand(celsius: number): 'cold' | 'mild' | 'warm' {
 	return celsius >= WARM_C ? 'warm' : 'mild';
 }
 
-/** The grid's points are 0.3° of latitude apart, about 33 km (see `gridPoints` on the server). */
+/** The grid's points are 0.3° of latitude apart, about 33 km (see `fetchGrid` on the server). */
 const GRID_SPACING_M = 33_400;
 /** Map labels need about this much room between points to stay apart. */
 const LABEL_ROOM_PX = 38;

@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import bratislavaGrid from '#lib/server/fixtures/grid-bratislava.json';
 import frames from '#lib/server/fixtures/radar-frames.json';
-import { gridPoints, toGrid, toRadarFrames } from '#lib/server/open-meteo.js';
+import { gridPoints } from '#lib/grid.js';
+import { toGrid, toRadarFrames } from '#lib/server/open-meteo.js';
 import {
 	firstWetHour,
 	startZoom,
@@ -36,7 +37,7 @@ const temperatures = (t: number[]) => grid(t.map((temperature) => ({ temperature
 
 describe('rain grid', () => {
 	it('spaces 25 points evenly around the place, wider in longitude far from the equator', () => {
-		const points = gridPoints({ lat: 48.15, lon: 17.11 });
+		const points = gridPoints({ lat: 48.15, lon: 17.11 }, 2, 0.3);
 		expect(points).toHaveLength(25);
 		expect(points[12]).toEqual({ lat: 48.15, lon: 17.11 });
 		expect(points[0].lat).toBeCloseTo(48.75);

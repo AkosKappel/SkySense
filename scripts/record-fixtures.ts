@@ -251,7 +251,45 @@ async function recordRecent(name: string, lat: number, lon: number, firstHour: s
 // times are shifted to end at the forecast fixtures' "now" (2026-11-10 09:00 UTC) so the radar
 // view's timeline joins up, and their tiles are never fetched in tests (Playwright answers them).
 
+// The area grid (M-10): 7 × 7 points about 25 km apart, the forecast fixtures' day, the hourly
+// variables the activity scores read. The same points as `areaPoints` in src/lib/better.ts.
+async function recordArea(name: string, { lat, lon }: Fixture) {
+	const steps = 3;
+	const degrees = 0.225;
+	const lonStep = degrees / Math.max(0.2, Math.cos((lat * Math.PI) / 180));
+	const points: { lat: number; lon: number }[] = [];
+	for (let i = steps; i >= -steps; i--) {
+		for (let j = -steps; j <= steps; j++) {
+			points.push({
+				lat: Math.round((lat + i * degrees) * 100) / 100,
+				lon: Math.round((lon + j * lonStep) * 100) / 100
+			});
+		}
+	}
+	const params = new URLSearchParams({
+		latitude: points.map((p) => p.lat).join(','),
+		longitude: points.map((p) => p.lon).join(','),
+		hourly: hourly.slice(0, hourly.indexOf('pressure_msl')).join(','),
+		daily: daily.join(','),
+		timezone: 'auto',
+		start_date: '2026-11-10',
+		end_date: '2026-11-10'
+	});
+	const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
+	if (!response.ok) throw new Error(`${name}: ${response.status} ${await response.text()}`);
+	writeFileSync(
+		new URL(`../src/lib/server/fixtures/${name}.json`, import.meta.url),
+		JSON.stringify(await response.json()) + '\n'
+	);
+}
+
 const wanted = process.argv.slice(2);
 for (const [name, fixture] of Object.entries(fixtures)) {
 	if (wanted.length === 0 || wanted.includes(name)) await record(name, fixture);
+}
+for (const [name, fixture] of Object.entries(fixtures)) {
+	const area = name.replace('forecast-', 'area-');
+	if (name.startsWith('forecast-') && (wanted.length === 0 || wanted.includes(area))) {
+		await recordArea(area, fixture);
+	}
 }

@@ -10,8 +10,8 @@
 	} from '@lucide/svelte';
 	import type { Layer, Map as LeafletMap, TileLayer } from 'leaflet';
 	import { onMount } from 'svelte';
-	import { CARTO_BASEMAP_KEY } from '$app/env/public';
 	import { resolve } from '$app/paths';
+	import { addBasemap } from '#lib/basemap.js';
 	import type { Formatter } from '#lib/format.js';
 	import { pageName, savedPlaces } from '#lib/places.svelte.js';
 	import { m } from '#lib/paraglide/messages.js';
@@ -161,17 +161,7 @@
 				maxZoom: 9,
 				attributionControl: true
 			});
-			map.attributionControl.setPrefix(false);
-			if (CARTO_BASEMAP_KEY) {
-				L.tileLayer(
-					`https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=${CARTO_BASEMAP_KEY}`,
-					{
-						attribution:
-							'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>',
-						subdomains: 'abcd'
-					}
-				).addTo(map);
-			}
+			addBasemap(L, map);
 			map.attributionControl.addAttribution(
 				'Radar <a href="https://www.rainviewer.com/">RainViewer</a> · Forecast <a href="https://open-meteo.com/">Open-Meteo</a>'
 			);

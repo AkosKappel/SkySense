@@ -13,6 +13,8 @@ import {
 import type { Climate, Normal } from '#lib/climate.js';
 import { modelIds, type ModelRun } from '#lib/models.js';
 import { summarizeYear, type YearInWeather } from '#lib/year.js';
+import { areaPoints, type AreaCell } from '#lib/better.js';
+import { gridPoints } from '#lib/grid.js';
 import type { GridCell, RadarFrames } from '#lib/radar.js';
 import { pressureAt } from '#lib/pressure.js';
 import type { RainDay } from '#lib/recent.js';
@@ -137,6 +139,40 @@ export function sunTimes(date: string, sunrise: string | null, sunset: string | 
 	return { sunrise, sunset };
 }
 
+type HourlyColumns = Omit<ForecastResponse['hourly'], 'pressure_msl'>;
+type DailyColumns = ForecastResponse['daily'];
+
+function toHour(h: HourlyColumns, i: number, temp: number): Hour {
+	return {
+		time: h.time[i],
+		temp,
+		feels: h.apparent_temperature[i] ?? temp,
+		condition: conditionOf(h.weather_code[i] ?? 3),
+		isDay: h.is_day[i] === 1,
+		rainChance: h.precipitation_probability[i] ?? 0,
+		rain: h.precipitation[i] ?? 0,
+		wind: h.wind_speed_10m[i] ?? 0,
+		gust: h.wind_gusts_10m[i] ?? 0,
+		uv: h.uv_index[i] ?? 0,
+		visibility: h.visibility?.[i] ?? undefined,
+		dewPoint: h.dew_point_2m?.[i] ?? undefined,
+		clouds: h.cloud_cover?.[i] ?? undefined
+	};
+}
+
+function toDay(d: DailyColumns, i: number, max: number, min: number): Day {
+	return {
+		date: d.time[i],
+		condition: conditionOf(d.weather_code[i] ?? 3),
+		max,
+		min,
+		rainChance: d.precipitation_probability_max[i] ?? 0,
+		rain: d.precipitation_sum[i] ?? 0,
+		...sunTimes(d.time[i], d.sunrise[i], d.sunset[i]),
+		uvMax: d.uv_index_max[i] ?? 0
+	};
+}
+
 /** Turns Open-Meteo's column arrays into hour and day records, from the current hour to the end of the tenth day. */
 export function toForecast(raw: unknown): Forecast {
 	const parsed = forecastSchema.safeParse(raw);
@@ -151,21 +187,7 @@ export function toForecast(raw: unknown): Forecast {
 	for (let i = first; i < h.time.length; i++) {
 		const temp = h.temperature_2m[i];
 		if (temp === null) break;
-		hours.push({
-			time: h.time[i],
-			temp,
-			feels: h.apparent_temperature[i] ?? temp,
-			condition: conditionOf(h.weather_code[i] ?? 3),
-			isDay: h.is_day[i] === 1,
-			rainChance: h.precipitation_probability[i] ?? 0,
-			rain: h.precipitation[i] ?? 0,
-			wind: h.wind_speed_10m[i] ?? 0,
-			gust: h.wind_gusts_10m[i] ?? 0,
-			uv: h.uv_index[i] ?? 0,
-			visibility: h.visibility?.[i] ?? undefined,
-			dewPoint: h.dew_point_2m?.[i] ?? undefined,
-			clouds: h.cloud_cover?.[i] ?? undefined
-		});
+		hours.push(toHour(h, i, temp));
 	}
 
 	const days: Day[] = [];
@@ -173,16 +195,7 @@ export function toForecast(raw: unknown): Forecast {
 		const max = d.temperature_2m_max[i];
 		const min = d.temperature_2m_min[i];
 		if (max === null || min === null) break;
-		days.push({
-			date: d.time[i],
-			condition: conditionOf(d.weather_code[i] ?? 3),
-			max,
-			min,
-			rainChance: d.precipitation_probability_max[i] ?? 0,
-			rain: d.precipitation_sum[i] ?? 0,
-			...sunTimes(d.time[i], d.sunrise[i], d.sunset[i]),
-			uvMax: d.uv_index_max[i] ?? 0
-		});
+		days.push(toDay(d, i, max, min));
 	}
 
 	const c = data.current;
@@ -553,21 +566,6 @@ const GRID_STEPS = 2;
 const GRID_DEGREES = 0.3;
 const GRID_HOURS = 3;
 
-/** The grid around a place: rows north to south, columns west to east, spaced evenly in km. */
-export function gridPoints({ lat, lon }: Coordinates): Coordinates[] {
-	const lonStep = GRID_DEGREES / Math.max(0.2, Math.cos((lat * Math.PI) / 180));
-	const points: Coordinates[] = [];
-	for (let i = GRID_STEPS; i >= -GRID_STEPS; i--) {
-		for (let j = -GRID_STEPS; j <= GRID_STEPS; j++) {
-			points.push({
-				lat: Math.round((lat + i * GRID_DEGREES) * 100) / 100,
-				lon: Math.round((lon + j * lonStep) * 100) / 100
-			});
-		}
-	}
-	return points;
-}
-
 export function toGrid(raw: unknown): GridCell[] {
 	const parsed = gridSchema.safeParse(raw);
 	if (!parsed.success) throw new WeatherServiceError('Unexpected grid response');
@@ -594,7 +592,7 @@ export async function fetchGrid(
 	if (useFixtures()) {
 		return toGrid(fixtures[`./fixtures/grid-${nearestFixture({ lat, lon })}.json`].default);
 	}
-	const points = gridPoints({ lat, lon });
+	const points = gridPoints({ lat, lon }, GRID_STEPS, GRID_DEGREES);
 	const url = new URL(FORECAST_URL);
 	url.search = new URLSearchParams({
 		latitude: points.map((p) => p.lat).join(','),
@@ -605,6 +603,79 @@ export async function fetchGrid(
 		forecast_hours: String(GRID_HOURS + 1)
 	}).toString();
 	return toGrid(await getJson(url, fetchFn));
+}
+
+const areaSchema = z.array(
+	z.object({
+		latitude: z.number(),
+		longitude: z.number(),
+		hourly: forecastSchema.shape.hourly,
+		daily: forecastSchema.shape.daily
+	})
+);
+
+// Only what the activity scores read: Open-Meteo counts more than ten variables as extra calls.
+const areaHourly = hourly.slice(0, hourly.indexOf('pressure_msl'));
+
+export function toArea(raw: unknown): AreaCell[] {
+	const parsed = areaSchema.safeParse(raw);
+	if (!parsed.success) throw new WeatherServiceError('Unexpected area response');
+	return parsed.data.map((point) => {
+		const h = point.hourly;
+		const d = point.daily;
+		const hours = h.time.flatMap((_, i) => {
+			const temp = h.temperature_2m[i];
+			return temp === null ? [] : [toHour(h, i, temp)];
+		});
+		const max = d.temperature_2m_max[0];
+		const min = d.temperature_2m_min[0];
+		return {
+			lat: point.latitude,
+			lon: point.longitude,
+			hours,
+			day: max === null || min === null ? null : toDay(d, 0, max, min)
+		};
+	});
+}
+
+/** The recorded day stands in for any day asked for, so the view works offline with fixtures. */
+function onDate(cells: AreaCell[], date: string): AreaCell[] {
+	const move = (time: string) => date + time.slice(10);
+	return cells.map((cell) => ({
+		...cell,
+		hours: cell.hours.map((hour) => ({ ...hour, time: move(hour.time) })),
+		day: cell.day && {
+			...cell.day,
+			date,
+			sunrise: cell.day.sunrise && move(cell.day.sunrise),
+			sunset: cell.day.sunset && move(cell.day.sunset)
+		}
+	}));
+}
+
+/** One day of hourly weather on a grid around a place, for "where is the weather better?". */
+export async function fetchArea(
+	coordinates: Coordinates,
+	date: string,
+	fetchFn: typeof fetch = fetch
+): Promise<AreaCell[]> {
+	const { lat, lon } = roundCoordinates(coordinates);
+	if (useFixtures()) {
+		const name = nearestFixture({ lat, lon });
+		return onDate(toArea(fixtures[`./fixtures/area-${name}.json`].default), date);
+	}
+	const points = areaPoints({ lat, lon });
+	const url = new URL(FORECAST_URL);
+	url.search = new URLSearchParams({
+		latitude: points.map((p) => p.lat).join(','),
+		longitude: points.map((p) => p.lon).join(','),
+		hourly: areaHourly.join(','),
+		daily: daily.join(','),
+		timezone: 'auto',
+		start_date: date,
+		end_date: date
+	}).toString();
+	return toArea(await getJson(url, fetchFn));
 }
 
 const RADAR_URL = 'https://api.rainviewer.com/public/weather-maps.json';

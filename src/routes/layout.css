@@ -53,6 +53,7 @@
 	--color-veil: #ffffff;
 	--color-sun: #fcd34d;
 	--color-rain: #7dd3fc;
+	--color-good: #6ee7b7;
 }
 
 /* The default sky, for pages without a place. Matches `dusk` in src/lib/sky.ts, whose contrast

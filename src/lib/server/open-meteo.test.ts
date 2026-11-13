@@ -4,6 +4,7 @@ import bratislavaEnsemble from './fixtures/ensemble-bratislava.json';
 import bratislavaAir from './fixtures/air-bratislava.json';
 import places from './fixtures/places-bratisl.json';
 import tromso from './fixtures/forecast-tromso.json';
+import areaBratislava from './fixtures/area-bratislava.json';
 import heat from './fixtures/scenario-heat.json';
 import reverseBratislava from './fixtures/reverse-bratislava.json';
 import reverseTromso from './fixtures/reverse-tromso.json';
@@ -17,6 +18,7 @@ import {
 	toForecast,
 	toPlaces,
 	toAir,
+	toArea,
 	toAreaName,
 	toSpread,
 	WeatherServiceError,
@@ -277,5 +279,16 @@ describe('reverse geocoding', () => {
 			WeatherServiceError
 		);
 		expect(fetchFn).toHaveBeenCalledTimes(1);
+	});
+});
+
+describe('toArea', () => {
+	it('turns a day on 49 points into hour and day records, and rejects anything else', () => {
+		const cells = toArea(areaBratislava);
+		expect(cells).toHaveLength(49);
+		expect(cells[24].hours).toHaveLength(24);
+		expect(cells[24].hours[0].time).toBe('2026-11-10T00:00');
+		expect(cells[24].day?.sunrise).toMatch(/^2026-11-10T06:\d\d$/);
+		expect(() => toArea({ hourly: {} })).toThrow(WeatherServiceError);
 	});
 });

@@ -85,6 +85,7 @@
 	const comparing = $derived(page.url.searchParams.has('models'));
 	const pastYear = $derived(page.url.searchParams.has('year'));
 	const showRadar = $derived(page.url.searchParams.has('radar'));
+	const showBetter = $derived(page.url.searchParams.has('better'));
 	const title = $derived(
 		showRadar
 			? m.radar_title({ place: name })
@@ -345,6 +346,32 @@
 				/>
 			{/await}
 		{/key}
+	{:else if showBetter}
+		<div class="mt-5 flex items-center gap-3">
+			<a
+				href={resolve('/p/[coords]/[[name]]', {
+					coords: page.params.coords ?? '',
+					name: encodeURIComponent(page.params.name ?? '')
+				})}
+				aria-label={m.back_to_forecast()}
+				class="grid size-11 shrink-0 pill place-items-center"
+			>
+				<ArrowLeft size={18} aria-hidden="true" />
+			</a>
+			<h1 class="text-2xl font-extrabold">{m.better_title({ place: name })}</h1>
+		</div>
+		{#key formatCoordinates(data.coordinates)}
+			{#await import('#lib/components/BetterView.svelte') then { default: BetterView }}
+				<BetterView
+					coordinates={data.coordinates}
+					place={name}
+					days={forecast.days.slice(0, 7)}
+					now={now.time}
+					{f}
+					comfort={data.comfort}
+				/>
+			{/await}
+		{/key}
 	{:else if pastYear}
 		<YearView year={data.year} place={name} {f} />
 	{:else if comparing}
@@ -431,6 +458,14 @@
 						{f}
 						comfort={data.comfort}
 					/>
+					<a
+						href="{resolve('/p/[coords]/[[name]]', {
+							coords: page.params.coords ?? '',
+							name: encodeURIComponent(page.params.name ?? '')
+						})}?better"
+						class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
+						>{m.better_link()} <ChevronRight size={16} aria-hidden="true" /></a
+					>
 				</section>
 
 				<section class="glass p-5 md:col-span-2">

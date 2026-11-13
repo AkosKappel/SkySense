@@ -529,3 +529,24 @@ test('the wall display keeps the last forecast when the network goes', async ({ 
 		'/p/48.15,17.11/Bratislava'
 	);
 });
+
+test('the map shows where the weather is better and opens a square from the keyboard', async ({
+	page
+}) => {
+	await blankMapTiles(page);
+	await page.goto('/p/40.42,-3.7/Madrid');
+	await page.getByRole('link', { name: 'Where is it better?' }).click();
+	await expect(
+		page.getByRole('heading', { name: 'Where is the weather better around Madrid?' })
+	).toBeVisible();
+	await page.getByLabel('Activity').selectOption('run');
+	await expect(page.getByText(/Better around .+, 50 km south: 10:00 to 11:00/)).toBeVisible();
+
+	const map = page.getByRole('application', { name: 'Map of scores around Madrid' });
+	await map.focus();
+	await expect(page.getByText(/^Here: score \d+/)).toBeVisible();
+	await page.keyboard.press('ArrowDown');
+	await expect(page.getByText(/^\d+ km south: score \d+/)).toBeVisible();
+	await page.keyboard.press('Enter');
+	await expect(page).toHaveURL(/\/p\/40\.2,-3\.7/);
+});
