@@ -6,6 +6,22 @@ import adapter from '@sveltejs/adapter-vercel';
 import { sveltekit } from '@sveltejs/kit/vite';
 
 export default defineConfig({
+	build: {
+		rolldownOptions: {
+			output: {
+				codeSplitting: {
+					// Views loaded on demand share icons and messages with the page, and each shared one
+					// became its own chunk of a few hundred bytes plus a request's headers (the place page
+					// grew from 30 to 44 scripts and over its budget). The shared ones go into one chunk
+					// of each kind instead; those used in one place only stay there.
+					groups: [
+						{ name: 'icons', test: /@lucide[\\/]svelte/, minShareCount: 2 },
+						{ name: 'messages', test: /paraglide/, minShareCount: 2 }
+					]
+				}
+			}
+		}
+	},
 	plugins: [
 		tailwindcss(),
 		sveltekit({
