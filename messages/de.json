@@ -77,6 +77,27 @@
 	"dark_now": "Es ist schon dunkel.",
 	"dark_question": "Wann wird es dunkel?",
 	"data_attribution": "Wetterdaten von Open-Meteo.com",
+	"daylight_longer": [
+		{
+			"declarations": ["input minutes", "local minutesPlural = minutes: plural"],
+			"selectors": ["minutesPlural"],
+			"match": {
+				"minutesPlural=one": "Heute {length} Tageslicht, morgen eine Minute mehr.",
+				"minutesPlural=*": "Heute {length} Tageslicht, morgen {minutes} Minuten mehr."
+			}
+		}
+	],
+	"daylight_shorter": [
+		{
+			"declarations": ["input minutes", "local minutesPlural = minutes: plural"],
+			"selectors": ["minutesPlural"],
+			"match": {
+				"minutesPlural=one": "Heute {length} Tageslicht, morgen eine Minute weniger.",
+				"minutesPlural=*": "Heute {length} Tageslicht, morgen {minutes} Minuten weniger."
+			}
+		}
+	],
+	"daylight_steady": "Heute {length} Tageslicht, morgen etwa gleich viel.",
 	"details": "Details",
 	"dew_muggy": "Schwül",
 	"dew_oppressive": "Drückend",

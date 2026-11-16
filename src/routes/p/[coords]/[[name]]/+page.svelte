@@ -42,7 +42,7 @@
 	import { activityLabel, conditionLabel } from '#lib/components/labels.js';
 	import type { ShareCard } from '#lib/share-card.js';
 	import { airSummary } from '#lib/air.js';
-	import { darkness } from '#lib/daylight.js';
+	import { darkness, daylightTrend } from '#lib/daylight.js';
 	import { compass, formatter, STRONG_GUST_KMH, windLevel } from '#lib/format.js';
 	import { age, STALE_AFTER_MS } from '#lib/freshness.js';
 	import { isSearchShortcut } from '#lib/keys.js';
@@ -66,6 +66,16 @@
 	const name = $derived(data.name ?? m.unnamed_place());
 	const place = $derived({ name, ...data.coordinates });
 	const dark = $derived(darkness(now.time, today, forecast.days[1], forecast.hours));
+	const daylight = $derived.by(() => {
+		const trend = daylightTrend(today, forecast.days[1]);
+		if (!trend) return null;
+		const length = f.duration(trend.minutes);
+		const minutes = Math.round(Math.abs(trend.change));
+		if (minutes === 0) return m.daylight_steady({ length });
+		return trend.change > 0
+			? m.daylight_longer({ length, minutes })
+			: m.daylight_shorter({ length, minutes });
+	});
 	const wind = $derived(windLevel(beaufort(now.wind)));
 
 	const windAnswer = $derived(
@@ -502,6 +512,7 @@
 						{:else}
 							<p class="mt-2 answer">{m.midnight_sun()}</p>
 						{/if}
+						{#if daylight}<p class="mt-2 text-sm text-ink-muted">{daylight}</p>{/if}
 						<p class="mt-2 flex items-center gap-1.5 text-sm text-ink-muted">
 							<Moon size={14} aria-hidden="true" />
 							{m.moon_line({ phase: moonPhase, percent: f.percent(tonight.illumination * 100) })}

@@ -37,6 +37,12 @@ export function formatter(locale: string, units: Units) {
 		rain: (mm: number) => formatRain(mm, units, intl),
 		pressure: (hpa: number) => formatPressure(hpa, units, intl),
 		distance: (metres: number) => formatDistance(metres, units, intl),
+		/** A length of time: "9 hrs, 32 mins". */
+		duration: (minutes: number) =>
+			new Intl.DurationFormat(intl, { style: 'short' }).format({
+				hours: Math.floor(minutes / 60),
+				minutes: Math.round(minutes % 60)
+			}),
 		percent: (value: number) =>
 			new Intl.NumberFormat(intl, { style: 'percent' }).format(value / 100)
 	};

@@ -43,6 +43,7 @@ test('finds a place and shows its forecast', async ({ page }) => {
 	await expect(
 		page.locator('section', { hasText: 'When does it get dark?' }).getByText('16:19')
 	).toBeVisible();
+	await expect(page.getByText(/of daylight today, 3 minutes less tomorrow\.$/)).toBeVisible();
 	await expectAccessible(page);
 });
 

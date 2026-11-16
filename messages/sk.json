@@ -77,6 +77,29 @@
 	"dark_now": "Už je tma.",
 	"dark_question": "Kedy sa zotmie?",
 	"data_attribution": "Údaje o počasí: Open-Meteo.com",
+	"daylight_longer": [
+		{
+			"declarations": ["input minutes", "local minutesPlural = minutes: plural"],
+			"selectors": ["minutesPlural"],
+			"match": {
+				"minutesPlural=one": "Dnes {length} denného svetla, zajtra o minútu viac.",
+				"minutesPlural=few": "Dnes {length} denného svetla, zajtra o {minutes} minúty viac.",
+				"minutesPlural=*": "Dnes {length} denného svetla, zajtra o {minutes} minút viac."
+			}
+		}
+	],
+	"daylight_shorter": [
+		{
+			"declarations": ["input minutes", "local minutesPlural = minutes: plural"],
+			"selectors": ["minutesPlural"],
+			"match": {
+				"minutesPlural=one": "Dnes {length} denného svetla, zajtra o minútu menej.",
+				"minutesPlural=few": "Dnes {length} denného svetla, zajtra o {minutes} minúty menej.",
+				"minutesPlural=*": "Dnes {length} denného svetla, zajtra o {minutes} minút menej."
+			}
+		}
+	],
+	"daylight_steady": "Dnes {length} denného svetla, zajtra približne rovnako.",
 	"details": "Podrobnosti",
 	"dew_muggy": "Dusno",
 	"dew_oppressive": "Úmorne",

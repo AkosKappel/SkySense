@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { darkness } from './daylight.js';
+import { darkness, daylightTrend } from './daylight.js';
 import {
 	formatHour,
 	formatMonth,
@@ -89,6 +89,20 @@ describe('darkness', () => {
 		expect(darkness('2026-11-10T12:00', noSun, tomorrow, hours(true))).toEqual({
 			kind: 'midnight-sun'
 		});
+	});
+});
+
+describe('daylightTrend', () => {
+	const today = { sunrise: '2026-11-10T06:50', sunset: '2026-11-10T16:22' } as Day;
+
+	it('gives today’s length and tomorrow’s change in minutes', () => {
+		const tomorrow = { sunrise: '2026-11-11T06:52', sunset: '2026-11-11T16:21' } as Day;
+		expect(daylightTrend(today, tomorrow)).toEqual({ minutes: 572, change: -3 });
+	});
+
+	it('has nothing to say without a sunrise or sunset', () => {
+		expect(daylightTrend(today, undefined)).toBeNull();
+		expect(daylightTrend({ ...today, sunset: null }, today)).toBeNull();
 	});
 });
 

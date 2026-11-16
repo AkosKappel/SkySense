@@ -77,6 +77,27 @@
 	"dark_now": "It's dark now.",
 	"dark_question": "When does it get dark?",
 	"data_attribution": "Weather data by Open-Meteo.com",
+	"daylight_longer": [
+		{
+			"declarations": ["input minutes", "local minutesPlural = minutes: plural"],
+			"selectors": ["minutesPlural"],
+			"match": {
+				"minutesPlural=one": "{length} of daylight today, a minute more tomorrow.",
+				"minutesPlural=*": "{length} of daylight today, {minutes} minutes more tomorrow."
+			}
+		}
+	],
+	"daylight_shorter": [
+		{
+			"declarations": ["input minutes", "local minutesPlural = minutes: plural"],
+			"selectors": ["minutesPlural"],
+			"match": {
+				"minutesPlural=one": "{length} of daylight today, a minute less tomorrow.",
+				"minutesPlural=*": "{length} of daylight today, {minutes} minutes less tomorrow."
+			}
+		}
+	],
+	"daylight_steady": "{length} of daylight today, about the same tomorrow.",
 	"details": "Details",
 	"dew_muggy": "Muggy",
 	"dew_oppressive": "Oppressive",

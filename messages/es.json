@@ -77,6 +77,27 @@
 	"dark_now": "Ya es de noche.",
 	"dark_question": "¿Cuándo anochece?",
 	"data_attribution": "Datos meteorológicos de Open-Meteo.com",
+	"daylight_longer": [
+		{
+			"declarations": ["input minutes", "local minutesPlural = minutes: plural"],
+			"selectors": ["minutesPlural"],
+			"match": {
+				"minutesPlural=one": "Hoy hay {length} de luz, mañana un minuto más.",
+				"minutesPlural=*": "Hoy hay {length} de luz, mañana {minutes} minutos más."
+			}
+		}
+	],
+	"daylight_shorter": [
+		{
+			"declarations": ["input minutes", "local minutesPlural = minutes: plural"],
+			"selectors": ["minutesPlural"],
+			"match": {
+				"minutesPlural=one": "Hoy hay {length} de luz, mañana un minuto menos.",
+				"minutesPlural=*": "Hoy hay {length} de luz, mañana {minutes} minutos menos."
+			}
+		}
+	],
+	"daylight_steady": "Hoy hay {length} de luz, mañana más o menos lo mismo.",
 	"details": "Detalles",
 	"dew_muggy": "Bochornoso",
 	"dew_oppressive": "Sofocante",
