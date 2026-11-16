@@ -49,4 +49,13 @@ describe('whatToWear', () => {
 		expect(whatToWear(day)?.extras).toEqual(['rain', 'wind', 'sun']);
 		expect(whatToWear(from(8))?.extras).toEqual([]);
 	});
+
+	it('says when a cold morning turns mild enough to take a layer off', () => {
+		const morning = from(7, (h) => ({ feels: h < 11 ? 4 : h < 13 ? 12 : 19 }));
+		// Warm jacket at 4°; 19° is two layers lighter (T-shirt and a layer), 12° only one.
+		expect(whatToWear(morning)).toMatchObject({ layer: 'warm', shedFrom: '2026-11-10T13:00' });
+		// Cold in the evening, not the morning: nothing to take off later.
+		expect(whatToWear(from(8, (h) => ({ feels: h < 16 ? 19 : 4 })))?.shedFrom).toBeUndefined();
+		expect(whatToWear(from(8))?.shedFrom).toBeUndefined();
+	});
 });

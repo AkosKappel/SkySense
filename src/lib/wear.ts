@@ -19,8 +19,22 @@ const layers: [number, Layer][] = [
 	[-5, 'winter']
 ];
 
-/** `hours` start now; `shift` is the comfort profile's (3 for someone who gets cold easily). */
-export function whatToWear(hours: Hour[], shift = 0): { layer: Layer; extras: Extra[] } | null {
+const layerOf = (feels: number): Layer => layers.find(([from]) => feels >= from)?.[1] ?? 'arctic';
+/** 0 for a T-shirt up to 5 for arctic, which is not in the list. */
+const rank = (layer: Layer) => {
+	const i = layers.findIndex(([, l]) => l === layer);
+	return i === -1 ? layers.length : i;
+};
+
+/**
+ * `hours` start now; `shift` is the comfort profile's (3 for someone who gets cold easily).
+ * `shedFrom` (X-22) is the first hour after the coldest one that is two layers warmer: a cold
+ * morning before a mild afternoon, so the advice is a layer to take off then.
+ */
+export function whatToWear(
+	hours: Hour[],
+	shift = 0
+): { layer: Layer; extras: Extra[]; shedFrom?: string } | null {
 	const next = hours.slice(0, HOURS);
 	// Nobody dresses for 03:00; at night the coming hours are all there is.
 	const awake = next.filter((h) => {
@@ -30,11 +44,14 @@ export function whatToWear(hours: Hour[], shift = 0): { layer: Layer; extras: Ex
 	const window = awake.length ? awake : next;
 	if (!window.length) return null;
 
-	const coldest = Math.min(...window.map((h) => h.feels)) - shift;
-	const layer = layers.find(([from]) => coldest >= from)?.[1] ?? 'arctic';
+	const feels = window.map((h) => h.feels - shift);
+	const coldest = Math.min(...feels);
+	const layer = layerOf(coldest);
+	const after = feels.indexOf(coldest);
+	const shed = window.findIndex((_, i) => i > after && rank(layerOf(feels[i])) <= rank(layer) - 2);
 	const extras: Extra[] = [];
 	if (window.some((h) => h.rainChance >= RAIN_LIKELY)) extras.push('rain');
 	if (window.some((h) => h.gust >= STRONG_GUST_KMH)) extras.push('wind');
 	if (window.some((h) => h.uv >= STRONG_SUN)) extras.push('sun');
-	return { layer, extras };
+	return shed === -1 ? { layer, extras } : { layer, extras, shedFrom: window[shed].time };
 }

@@ -31,7 +31,7 @@
 		place: string;
 		utcOffsetSeconds: number;
 		/** What to wear for the next waking hours (X-02), from `whatToWear`. */
-		wear?: { layer: Layer; extras: Extra[] } | null;
+		wear?: { layer: Layer; extras: Extra[]; shedFrom?: string } | null;
 		selected?: number;
 	} = $props();
 
@@ -101,7 +101,11 @@
 					<Shirt size={18} class="mt-0.5 shrink-0 text-ink-muted" aria-hidden="true" />
 					<span>
 						<span class="sr-only">{m.wear_label()}</span>
-						{[layers[wear.layer](), ...wear.extras.map((extra) => extras[extra]())].join(' ')}
+						{[
+							layers[wear.layer](),
+							...(wear.shedFrom ? [m.wear_shed({ time: f.time(wear.shedFrom) })] : []),
+							...wear.extras.map((extra) => extras[extra]())
+						].join(' ')}
 					</span>
 				</p>
 			{/if}
