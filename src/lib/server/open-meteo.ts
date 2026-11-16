@@ -18,6 +18,7 @@ import { gridPoints } from '#lib/grid.js';
 import type { GridCell, RadarFrames } from '#lib/radar.js';
 import { pressureAt } from '#lib/pressure.js';
 import type { RainDay } from '#lib/recent.js';
+import { SITE_URL } from '#lib/site.js';
 
 export class WeatherServiceError extends Error {}
 
@@ -31,7 +32,7 @@ const GEOCODING_URL = 'https://geocoding-api.open-meteo.com/v1/search';
 /** Open-Meteo has no reverse geocoding; OpenStreetMap's Nominatim names a position (F-12, 0006). */
 const REVERSE_URL = 'https://nominatim.openstreetmap.org/reverse';
 /** Nominatim's usage policy asks every app to identify itself. */
-const REVERSE_AGENT = 'SkySense (https://skysense.akoskappel.dev)';
+const REVERSE_AGENT = `SkySense (${SITE_URL})`;
 const DAYS = 10;
 
 const hourly = [

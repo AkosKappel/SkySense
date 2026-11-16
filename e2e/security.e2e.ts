@@ -47,6 +47,18 @@ test('pages describe themselves for link previews', async ({ page }) => {
 		'content',
 		'The weather, made sense of.'
 	);
+	// Public pages name the production address (P-11); place pages are personal and do not.
+	await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+		'href',
+		'https://skysense.akoskappel.dev/about'
+	);
+	await page.goto('/');
+	const app = JSON.parse(
+		(await page.locator('script[type="application/ld+json"]').textContent()) ?? ''
+	);
+	expect(app).toMatchObject({ '@type': 'WebApplication', name: 'SkySense' });
+	await page.goto('/p/48.15,17.11/Bratislava');
+	await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
 });
 
 test('only the embeddable card may be framed by other sites', async ({ page }) => {

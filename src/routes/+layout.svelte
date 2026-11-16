@@ -5,10 +5,30 @@
 	import favicon from '#lib/assets/favicon.svg';
 	import type { Component } from 'svelte';
 	import { m } from '#lib/paraglide/messages.js';
-	import { getLocale } from '#lib/paraglide/runtime.js';
+	import { getLocale, locales } from '#lib/paraglide/runtime.js';
+	import { PUBLIC_PATHS, SITE_URL } from '#lib/site.js';
 	import type { LayoutProps } from './$types';
 
 	let { children, data }: LayoutProps = $props();
+
+	// P-11: the public pages name their production address, and the home page describes the app
+	// for search engines. `<` is escaped so the JSON cannot close its script tag.
+	const canonical = $derived(
+		PUBLIC_PATHS.includes(page.url.pathname) ? SITE_URL + page.url.pathname : null
+	);
+	const structuredData = $derived(
+		`<script type="application/ld+json">${JSON.stringify({
+			'@context': 'https://schema.org',
+			'@type': 'WebApplication',
+			name: 'SkySense',
+			url: SITE_URL,
+			description: m.tagline(),
+			applicationCategory: 'UtilitiesApplication',
+			operatingSystem: 'Any',
+			inLanguage: locales,
+			offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' }
+		}).replaceAll('<', '\\u003c')}<${'/'}script>`
+	);
 
 	// `?` outside a text field lists the shortcuts (U-18). The list loads on the first press, and
 	// the check stays inline rather than importing `keys.ts`, which kept every page's scripts in
@@ -55,6 +75,11 @@
 	<link rel="icon" href={favicon} />
 	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 	<link rel="manifest" href="/manifest.webmanifest" />
+	{#if canonical}<link rel="canonical" href={canonical} />{/if}
+	{#if page.url.pathname === '/'}
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -- our own JSON, with `<` escaped -->
+		{@html structuredData}
+	{/if}
 	<!-- The browser's bar matches the default sky; SkyLayer sets a place's own. -->
 	{#if data.theme === 'system' || data.theme === 'weather'}
 		<meta name="theme-color" content="#c7d2fe" media="(prefers-color-scheme: light)" />
