@@ -91,6 +91,19 @@ test('saves places to a file and loads them back', async ({ page }) => {
 	expect(JSON.parse(text)).toEqual([{ name: 'Madrid', lat: 40.42, lon: -3.7 }]);
 });
 
+test('lists the keyboard shortcuts on ?', async ({ page }) => {
+	await page.goto('/p/48.15,17.11/Bratislava');
+	await placeReady(page);
+	await page.keyboard.press('?');
+	const dialog = page.getByRole('dialog', { name: 'Keyboard shortcuts' });
+	await expect(dialog).toBeVisible();
+	await expect(dialog.getByText('Find a place')).toBeVisible();
+	await page.keyboard.press('Escape');
+	await expect(dialog).toBeHidden();
+	await page.keyboard.press('?');
+	await expect(dialog).toBeVisible();
+});
+
 test('switches places in a sheet that Back and Escape close', async ({ page }) => {
 	await page.goto('/p/40.42,-3.7/Madrid');
 	await savePlace(page);

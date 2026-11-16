@@ -3,11 +3,27 @@
 	import { onNavigate } from '$app/navigation';
 	import { navigating, page } from '$app/state';
 	import favicon from '#lib/assets/favicon.svg';
+	import type { Component } from 'svelte';
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import type { LayoutProps } from './$types';
 
 	let { children, data }: LayoutProps = $props();
+
+	// `?` outside a text field lists the shortcuts (U-18). The list loads on the first press, and
+	// the check stays inline rather than importing `keys.ts`, which kept every page's scripts in
+	// budget (a shared module becomes a chunk of its own).
+	let ShortcutsHelp = $state<Component<{ open: boolean }>>();
+	let shortcutsOpen = $state(false);
+	async function onkeydown(event: KeyboardEvent) {
+		const typing = (event.target as HTMLElement).closest?.(
+			'input, textarea, select, [contenteditable]'
+		);
+		if (event.key !== '?' || event.ctrlKey || event.metaKey || event.altKey || typing) return;
+		event.preventDefault();
+		ShortcutsHelp ??= (await import('#lib/components/ShortcutsHelp.svelte')).default;
+		shortcutsOpen = true;
+	}
 
 	// Place switches and day views cross-fade (U-08), where the browser supports it and the reader
 	// has not asked for less motion.
@@ -59,3 +75,6 @@
 <div class="contents" aria-busy={navigating.to ? 'true' : undefined}>
 	{@render children()}
 </div>
+
+<svelte:window {onkeydown} />
+{#if ShortcutsHelp}<ShortcutsHelp bind:open={shortcutsOpen} />{/if}
