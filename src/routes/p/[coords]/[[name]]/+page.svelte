@@ -27,7 +27,6 @@
 	import DayFacts from '#lib/components/DayFacts.svelte';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
 	import NowTile from '#lib/components/NowTile.svelte';
-	import PlaceSheet from '#lib/components/PlaceSheet.svelte';
 	import ViewHeader from '#lib/components/ViewHeader.svelte';
 	import ShareButton from '#lib/components/ShareButton.svelte';
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
@@ -65,6 +64,12 @@
 	const today = $derived(forecast.days[0]);
 	const name = $derived(data.name ?? m.unnamed_place());
 	const place = $derived({ name, ...data.coordinates });
+	// The place sheet and its search load when first opened, outside the page's script budget, and
+	// stay mounted after, so closing it returns focus to where it was.
+	let sheetUsed = $state(false);
+	$effect(() => {
+		if (page.state.placeSheet) sheetUsed = true;
+	});
 	const dark = $derived(darkness(now.time, today, forecast.days[1], forecast.hours));
 	const daylight = $derived.by(() => {
 		const trend = daylightTrend(today, forecast.days[1]);
@@ -581,4 +586,8 @@
 </main>
 
 <SkyLayer kind={sky} falling={precipitation(skyAt.condition)} />
-<PlaceSheet current={data.coordinates} />
+{#if sheetUsed}
+	{#await import('#lib/components/PlaceSheet.svelte') then { default: PlaceSheet }}
+		<PlaceSheet current={data.coordinates} />
+	{/await}
+{/if}
