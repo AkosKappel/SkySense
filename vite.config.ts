@@ -13,10 +13,18 @@ export default defineConfig({
 					// Views loaded on demand share icons and messages with the page, and each shared one
 					// became its own chunk of a few hundred bytes plus a request's headers (the place page
 					// grew from 30 to 44 scripts and over its budget). The shared ones go into one chunk
-					// of each kind instead; those used in one place only stay there.
+					// of each kind instead; those used in one place only stay there. The app's own shared
+					// modules (format, weather, time and the like) too: one chunk saved the place page
+					// 13 requests and 9 kB. Not `basemap.ts`: it reads `$app/env/public`, which only the map
+					// views may load, after the app has started.
 					groups: [
 						{ name: 'icons', test: /@lucide[\\/]svelte/, minShareCount: 2 },
-						{ name: 'messages', test: /paraglide/, minShareCount: 2 }
+						{ name: 'messages', test: /paraglide/, minShareCount: 2 },
+						{
+							name: 'lib',
+							test: /[\\/]src[\\/]lib[\\/](?!basemap\.)[^/\\]+\.ts$/,
+							minShareCount: 2
+						}
 					]
 				}
 			}
