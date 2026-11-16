@@ -33,14 +33,16 @@
 }
 
 /* The theme (U-05): dark unless the reader chose light, or chose to follow the system. The
-   `data-theme` attribute comes from the `skysense_theme` cookie, set on the server. */
+   `data-theme` attribute comes from the `skysense_theme` cookie, set on the server. "Like the
+   weather" (U-13) follows the system until a page with a sky picks a scheme (SkyLayer). */
 :root {
 	color-scheme: dark;
 }
 :root[data-theme='light'] {
 	color-scheme: light;
 }
-:root[data-theme='system'] {
+:root[data-theme='system'],
+:root[data-theme='weather'] {
 	color-scheme: light dark;
 }
 /* For parts that stay dark in any theme: the radar map and its labels. The build turns

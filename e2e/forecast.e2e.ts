@@ -279,6 +279,23 @@ test('the status bar colour follows the sky in each theme', async ({ context, pa
 	await expect(meta).toHaveCount(2);
 });
 
+test('the weather theme is light under a clear day and dark under rain', async ({
+	context,
+	page
+}) => {
+	await context.addCookies([
+		{ name: 'skysense_theme', value: 'weather', url: 'http://localhost:4173' }
+	]);
+	const scheme = () => page.evaluate(() => getComputedStyle(document.documentElement).colorScheme);
+	await page.goto('/p/48.15,17.11/Bratislava');
+	expect(await scheme()).toBe('dark');
+	await page.goto('/p/40.42,-3.7/Madrid?demo=heat');
+	expect(await scheme()).toBe('light');
+	// Without a sky, it follows the system like "Like the system".
+	await page.goto('/settings');
+	expect(await scheme()).toBe('light dark');
+});
+
 test('downloads the good times for an activity as a calendar file', async ({ page }) => {
 	await page.goto('/p/48.15,17.11/Bratislava');
 	await placeReady(page);

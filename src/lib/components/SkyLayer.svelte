@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import { skies, skyBackground, type SkyKind } from '#lib/sky.js';
-	import { isLight } from '#lib/theme.js';
+	import { isLight, weatherScheme } from '#lib/theme.js';
 
 	// The place's sky behind the tiles, plus falling rain or snow. Particles stay off under
 	// reduced motion and pause while the tab is hidden.
@@ -8,11 +9,16 @@
 
 	let canvas = $state<HTMLCanvasElement>();
 
+	// "Like the weather" (U-13) picks the scheme from this sky. A style in the server-rendered head,
+	// not an attribute set after hydration, so the first paint is already right.
+	const scheme = $derived(page.data.theme === 'weather' ? weatherScheme(kind) : null);
+	const light = () => (scheme ? scheme === 'light' : isLight());
+
 	// The phone's status bar takes the top of the sky (U-05), and the default again on leaving.
 	$effect(() => {
 		const metas = [...document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')];
 		const before = metas.map((meta) => meta.content);
-		const top = isLight() ? skies[kind].light[0] : skies[kind].stops[0];
+		const top = light() ? skies[kind].light[0] : skies[kind].stops[0];
 		for (const meta of metas) meta.content = top;
 		return () => metas.forEach((meta, i) => (meta.content = before[i]));
 	});
@@ -22,7 +28,7 @@
 		const context = canvas.getContext('2d');
 		if (!context) return;
 		const snow = falling === 'snow';
-		const light = isLight();
+		const onLight = light();
 		let width = 0;
 		let height = 0;
 		const resize = () => {
@@ -39,7 +45,7 @@
 		let frame = 0;
 		const draw = () => {
 			context.clearRect(0, 0, width, height);
-			context.fillStyle = context.strokeStyle = light
+			context.fillStyle = context.strokeStyle = onLight
 				? 'rgb(15 23 42 / 0.22)'
 				: 'rgb(255 255 255 / 0.35)';
 			context.lineWidth = 1;
@@ -67,6 +73,13 @@
 		};
 	});
 </script>
+
+<svelte:head>
+	{#if scheme}
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -- a constant, one of two schemes -->
+		{@html `<style>html:root[data-theme='weather']{color-scheme:${scheme}}</style>`}
+	{/if}
+</svelte:head>
 
 <div
 	class="pointer-events-none fixed inset-0 -z-1 print:hidden forced-colors:hidden"

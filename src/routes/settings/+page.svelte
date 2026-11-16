@@ -41,10 +41,12 @@
 			name: 'theme',
 			icon: Palette,
 			legend: m.theme,
+			note: m.theme_weather_note,
 			options: [
 				['system', m.theme_system],
 				['dark', m.theme_dark],
-				['light', m.theme_light]
+				['light', m.theme_light],
+				['weather', m.theme_weather]
 			]
 		},
 		{

@@ -56,7 +56,7 @@
 	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 	<link rel="manifest" href="/manifest.webmanifest" />
 	<!-- The browser's bar matches the default sky; SkyLayer sets a place's own. -->
-	{#if data.theme === 'system'}
+	{#if data.theme === 'system' || data.theme === 'weather'}
 		<meta name="theme-color" content="#c7d2fe" media="(prefers-color-scheme: light)" />
 		<meta name="theme-color" content="#1e1b4b" media="(prefers-color-scheme: dark)" />
 	{:else}
