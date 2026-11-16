@@ -296,6 +296,19 @@ test('the weather theme is light under a clear day and dark under rain', async (
 	expect(await scheme()).toBe('light dark');
 });
 
+test('switches the language from the footer and comes back to the page', async ({ page }) => {
+	await page.goto('/about');
+	await page
+		.getByRole('navigation', { name: 'Language' })
+		.getByRole('link', { name: 'Deutsch' })
+		.click();
+	await expect(page).toHaveURL(/\/about$/);
+	await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+	await expect(
+		page.getByRole('navigation', { name: 'Sprache' }).getByText('Deutsch')
+	).toHaveAttribute('aria-current', 'true');
+});
+
 test('downloads the good times for an activity as a calendar file', async ({ page }) => {
 	await page.goto('/p/48.15,17.11/Bratislava');
 	await placeReady(page);
@@ -537,7 +550,7 @@ test('settings change units and language', async ({ page }) => {
 	await expect(page.locator('html')).toHaveAttribute('data-theme', 'system');
 	await page.getByText('Fahrenheit (°F)').click();
 	await page.getByText('Light', { exact: true }).click();
-	await page.getByLabel('Language').selectOption('de');
+	await page.getByRole('combobox', { name: 'Language' }).selectOption('de');
 	await page.getByRole('button', { name: 'Save' }).click();
 
 	await expect(page.getByRole('status')).toHaveText('Einstellungen gespeichert.');

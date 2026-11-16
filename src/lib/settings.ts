@@ -39,3 +39,10 @@ export const COMFORT_COOKIE = 'skysense_comfort';
 export function readComfort(cookie: string | undefined): Comfort {
 	return cookie && Object.hasOwn(comfortShift, cookie) ? (cookie as Comfort) : 'neutral';
 }
+
+/** Where a settings link sends the reader back to: a path on this site, never another site. */
+export function localPath(value: string | null): string {
+	return value?.startsWith('/') && !value.startsWith('//') && !value.startsWith('/\\')
+		? value
+		: '/';
+}

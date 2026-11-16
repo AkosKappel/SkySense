@@ -13,22 +13,13 @@
 	} from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import SiteFooter from '#lib/components/SiteFooter.svelte';
+	import SiteFooter, { languageNames } from '#lib/components/SiteFooter.svelte';
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale, locales } from '#lib/paraglide/runtime.js';
 	import type { Units } from '#lib/units.js';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
-
-	// Language names are written in their own language, so everyone finds theirs.
-	const languageNames: Record<(typeof locales)[number], string> = {
-		en: 'English',
-		de: 'Deutsch',
-		sk: 'Slovenčina',
-		hu: 'Magyar',
-		es: 'Español'
-	};
 
 	const groups: {
 		name: keyof Units | 'comfort' | 'theme';
