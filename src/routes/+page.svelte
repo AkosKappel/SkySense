@@ -15,6 +15,7 @@
 	} from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import PlaceSearch from '#lib/components/PlaceSearch.svelte';
+	import PlacesBackup from '#lib/components/PlacesBackup.svelte';
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
 	import SkyLayer from '#lib/components/SkyLayer.svelte';
 	import SummaryLine from '#lib/components/SummaryLine.svelte';
@@ -187,6 +188,8 @@
 					</p>
 				{/if}
 			</div>
+
+			<PlacesBackup />
 		</div>
 
 		<section class="lg:col-start-1 lg:row-start-1" aria-label={m.home_samples()}>

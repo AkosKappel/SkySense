@@ -73,6 +73,24 @@ test('reopens the last place and keeps saved places', async ({ page }) => {
 	await expect(page.getByRole('link', { name: 'Home' })).toBeVisible();
 });
 
+test('saves places to a file and loads them back', async ({ page }) => {
+	await page.goto('/?choose');
+	await page.getByText('Load from a file').setInputFiles({
+		name: 'skysense-places.json',
+		mimeType: 'application/json',
+		buffer: Buffer.from(JSON.stringify([{ name: 'Madrid', lat: 40.42, lon: -3.7 }]))
+	});
+	await expect(page.getByText('Added one place.')).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Madrid' })).toBeVisible();
+
+	const download = page.waitForEvent('download');
+	await page.getByRole('button', { name: 'Save to a file' }).click();
+	const file = await download;
+	expect(file.suggestedFilename()).toBe('skysense-places.json');
+	const text = Buffer.concat(await (await file.createReadStream()).toArray()).toString();
+	expect(JSON.parse(text)).toEqual([{ name: 'Madrid', lat: 40.42, lon: -3.7 }]);
+});
+
 test('switches places in a sheet that Back and Escape close', async ({ page }) => {
 	await page.goto('/p/40.42,-3.7/Madrid');
 	await savePlace(page);

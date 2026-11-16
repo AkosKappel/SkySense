@@ -146,7 +146,7 @@
 	"feature_confidence": "Cuánta seguridad hay: el rango probable de 51 ejecuciones del modelo ECMWF, avisos en los días inciertos y cinco modelos meteorológicos lado a lado.",
 	"feature_normal": "Cómo es hoy comparado con los años 1991 a 2020, cómo fue esta fecha en cada uno de los últimos diez años, cuánto lleva sin llover, y los récords del último año mes a mes.",
 	"feature_offline": "Se instala como una app y muestra sin conexión los lugares que ya abriste.",
-	"feature_places": "Lugares que puedes guardar, renombrar y ordenar, una entrada «Mi ubicación» que te vuelve a encontrar al abrirla, dos lugares comparados día a día, una búsqueda en tu idioma y un enlace para compartir cualquier lugar.",
+	"feature_places": "Lugares que puedes guardar, renombrar, ordenar y copiar en un archivo, una entrada «Mi ubicación» que te vuelve a encontrar al abrirla, dos lugares comparados día a día, una búsqueda en tu idioma y un enlace para compartir cualquier lugar.",
 	"feature_radar": "Un radar de lluvia de las últimas 2 horas y la lluvia del modelo para las próximas 3, en un mapa, también con temperatura y viento.",
 	"feature_settings": "Tus unidades, formato de 12 o 24 horas, tema claro u oscuro y cinco idiomas.",
 	"feature_sky": "La luna de esta noche, la salida y la puesta del sol, la presión y si sube o baja, y un cielo de fondo que sigue la hora del día y el tiempo.",
@@ -215,7 +215,21 @@
 	"past_answer": "El más cálido fue {warmYear} con {warm}, el más frío {coldYear} con {cold}.",
 	"past_question": "¿Cómo fue este día en años anteriores?",
 	"place_removed": "Se eliminó {name}.",
+	"places_backup_note": "Los lugares guardados solo están en este navegador. Guárdalos en un archivo para tener una copia o llevarlos a otro dispositivo.",
+	"places_export": "Guardar en un archivo",
 	"places_full": "Puedes guardar hasta {max} lugares. Quita uno primero.",
+	"places_import": "Cargar desde un archivo",
+	"places_import_none": "No hay lugares nuevos en ese archivo.",
+	"places_imported": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Se añadió un lugar.",
+				"countPlural=*": "Se añadieron {count} lugares."
+			}
+		}
+	],
 	"polar_night": "Hoy no sale el sol.",
 	"pollen_alder": "aliso",
 	"pollen_birch": "abedul",

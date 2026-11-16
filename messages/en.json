@@ -146,7 +146,7 @@
 	"feature_confidence": "How sure the forecast is: the likely range from 51 runs of the ECMWF model, marks on uncertain days, and five weather models side by side.",
 	"feature_normal": "How today compares with the years 1991 to 2020, what this date was like in each of the last ten years, how long it has been dry, and the past year's records month by month.",
 	"feature_offline": "Installs as an app, and shows places you opened before when you are offline.",
-	"feature_places": "Places you can save, rename and reorder, a \"My location\" entry that finds you again when opened, two places compared day by day, a search in your language, and a link to share any place.",
+	"feature_places": "Places you can save, rename, reorder and back up to a file, a \"My location\" entry that finds you again when opened, two places compared day by day, a search in your language, and a link to share any place.",
 	"feature_radar": "A rain radar for the last 2 hours and the model's rain for the next 3, on a map, with its temperature and wind too.",
 	"feature_settings": "Your units, 12 or 24-hour time, a light or dark theme and five languages.",
 	"feature_sky": "Tonight's moon, sunrise and sunset, the barometer and whether it is rising or falling, and a background sky that follows the time of day and the weather.",
@@ -215,7 +215,21 @@
 	"past_answer": "Warmest in {warmYear} at {warm}, coldest in {coldYear} at {cold}.",
 	"past_question": "What was this day like in past years?",
 	"place_removed": "{name} removed.",
+	"places_backup_note": "Saved places are kept only in this browser. Save them to a file to keep a copy or move them to another device.",
+	"places_export": "Save to a file",
 	"places_full": "You can save up to {max} places. Remove one first.",
+	"places_import": "Load from a file",
+	"places_import_none": "No new places in that file.",
+	"places_imported": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Added one place.",
+				"countPlural=*": "Added {count} places."
+			}
+		}
+	],
 	"polar_night": "The sun doesn't rise today.",
 	"pollen_alder": "alder",
 	"pollen_birch": "birch",

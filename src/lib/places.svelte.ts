@@ -17,16 +17,24 @@ export const MAX_PLACES = 10;
 /** The last place opened, read on the server to open it again from `/`. */
 export const LAST_PLACE_COOKIE = 'skysense_last';
 
+/** Keeps the well-formed places from storage or an imported file, each key once (the first). */
+export function parsePlaces(value: unknown): SavedPlace[] {
+	if (!Array.isArray(value)) return [];
+	const valid = value.filter(
+		(p): p is SavedPlace =>
+			typeof p?.name === 'string' &&
+			Number.isFinite(p?.lat) &&
+			Number.isFinite(p?.lon) &&
+			Math.abs(p.lat) <= 90 &&
+			Math.abs(p.lon) <= 180
+	);
+	// Two entries with one key would break the lists keyed by it.
+	return valid.filter((p, i) => valid.findIndex((q) => placeKey(q) === placeKey(p)) === i);
+}
+
 function read(): SavedPlace[] {
 	try {
-		const parsed: unknown = JSON.parse(localStorage.getItem(KEY) ?? '[]');
-		if (!Array.isArray(parsed)) return [];
-		const valid = parsed.filter(
-			(p): p is SavedPlace =>
-				typeof p?.name === 'string' && typeof p?.lat === 'number' && typeof p?.lon === 'number'
-		);
-		// Two entries with one key would break the lists keyed by it; the first one stays.
-		return valid.filter((p, i) => valid.findIndex((q) => placeKey(q) === placeKey(p)) === i);
+		return parsePlaces(JSON.parse(localStorage.getItem(KEY) ?? '[]'));
 	} catch {
 		return [];
 	}
@@ -74,7 +82,11 @@ class SavedPlaces {
 	 */
 	add(place: SavedPlace): boolean {
 		if (this.has(place)) return true;
-		if (this.list.filter((p) => !p.live).length >= MAX_PLACES) return false;
+		const saved = this.list.filter((p) => !p.live).length;
+		if (saved >= MAX_PLACES) return false;
+		// The browser may clear storage under pressure; asking once, on the first place, keeps the
+		// list safe where it agrees (F-22). Firefox asks the reader, so never more often.
+		if (saved === 0) navigator.storage?.persist?.().catch(() => {});
 		this.list = [place, ...this.list];
 		this.save();
 		return true;

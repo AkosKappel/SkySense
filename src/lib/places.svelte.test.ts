@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+import { exportPlaces, importPlaces } from './places-file.js';
 import { MAX_PLACES, placeKey, savedPlaces } from './places.svelte.js';
 
 const place = (i: number) => ({ name: `Place ${i}`, lat: 40 + i, lon: 10 + i });
@@ -72,5 +73,26 @@ describe('savedPlaces', () => {
 		]);
 		expect(savedPlaces.list[0].live).toBe(true);
 		expect(savedPlaces.list).toHaveLength(2);
+	});
+
+	it('exports saved places and imports them in another browser, skipping what is there', () => {
+		savedPlaces.add(place(1));
+		savedPlaces.add(place(2));
+		savedPlaces.setLive({ name: 'My location', lat: 1, lon: 1 });
+		const file = JSON.parse(exportPlaces());
+		expect(file.map((p: { name: string }) => p.name)).toEqual(['Place 2', 'Place 1']);
+
+		savedPlaces.list = [place(1)];
+		expect(importPlaces(file)).toBe(1);
+		expect(savedPlaces.list.map((p) => p.name)).toEqual(['Place 2', 'Place 1']);
+		expect(stored()).toHaveLength(2);
+	});
+
+	it('imports only well-formed places, up to the limit', () => {
+		expect(importPlaces({ places: [] })).toBe(0);
+		expect(importPlaces([{ name: 'Nowhere', lat: 200, lon: 0 }, { lat: 1 }, 'x'])).toBe(0);
+		const many = Array.from({ length: MAX_PLACES + 3 }, (_, i) => place(i));
+		expect(importPlaces(many)).toBe(MAX_PLACES);
+		expect(savedPlaces.list).toHaveLength(MAX_PLACES);
 	});
 });
