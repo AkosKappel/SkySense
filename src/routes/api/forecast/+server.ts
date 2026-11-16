@@ -6,6 +6,7 @@ import {
 	type DemoScenario
 } from '#lib/server/open-meteo.js';
 import { memo } from '#lib/server/memo.js';
+import { skyEvents } from '#lib/server/sky.js';
 import { parseCoordinates, roundCoordinates } from '#lib/weather.js';
 import type { RequestHandler } from './$types';
 
@@ -26,7 +27,11 @@ export const GET: RequestHandler = async ({ url, fetch, setHeaders }) => {
 		const forecast = await memo(
 			`forecast:${coordinates.lat},${coordinates.lon}:${demo ?? ''}`,
 			10 * MINUTE,
-			() => fetchForecast(coordinates, fetch, demo)
+			async () => {
+				const forecast = await fetchForecast(coordinates, fetch, demo);
+				const sky = skyEvents(coordinates, forecast.current.time, forecast.utcOffsetSeconds);
+				return { ...forecast, sky };
+			}
 		);
 		// Open-Meteo updates hourly; 15 minutes keeps "now" fresh while the CDN absorbs repeats.
 		setHeaders({

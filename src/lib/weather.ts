@@ -69,6 +69,15 @@ export type Day = {
 	uvMax: number;
 };
 
+/** The moon's next events (H-07), as the place's wall-clock times. */
+export type Sky = {
+	/** Null when the moon does not rise or set within a day (near the poles). */
+	moonrise: string | null;
+	moonset: string | null;
+	fullMoon: string;
+	newMoon: string;
+};
+
 export type Forecast = {
 	timezone: string;
 	/** The place's offset from UTC now, for "8 hours ahead of you" (F-13). */
@@ -80,6 +89,8 @@ export type Forecast = {
 	hours: Hour[];
 	/** Ten days, starting today. */
 	days: Day[];
+	/** Added by `/api/forecast`; the other pages that load a forecast do without it. */
+	sky?: Sky;
 };
 
 /** WMO weather interpretation codes, as Open-Meteo documents them. */

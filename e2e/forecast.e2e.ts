@@ -44,6 +44,12 @@ test('finds a place and shows its forecast', async ({ page }) => {
 		page.locator('section', { hasText: 'When does it get dark?' }).getByText('16:19')
 	).toBeVisible();
 	await expect(page.getByText(/of daylight today, 3 minutes less tomorrow\.$/)).toBeVisible();
+	// Computed on the server for the recorded morning (H-07); the US Naval Observatory agrees.
+	await expect(
+		page.getByText(
+			'Moonset at 16:23. Moonrise tomorrow at 09:28. Next full moon: Tuesday 24 November.'
+		)
+	).toBeVisible();
 	await expectAccessible(page);
 });
 

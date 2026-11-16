@@ -8,6 +8,7 @@
 		Navigation,
 		Plus,
 		Settings,
+		Sparkles,
 		Sunset,
 		Tablet,
 		TriangleAlert,
@@ -47,7 +48,8 @@
 	import { isSearchShortcut } from '#lib/keys.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
-	import { moon } from '#lib/moon.js';
+	import { meteorPeak } from '#lib/meteors.js';
+	import { moon, nextPhase } from '#lib/moon.js';
 	import { MAX_PLACES, pageName, rememberLastPlace, savedPlaces } from '#lib/places.svelte.js';
 	import { precipitation, skies, skyKind } from '#lib/sky.js';
 	import { summarize } from '#lib/summary.js';
@@ -187,6 +189,55 @@
 			waningCrescent: m.moon_waningCrescent
 		}[tonight.phase]()
 	);
+
+	// The moon's next rise and set in the order they come, then the sooner of the next full and
+	// new moon (H-07); from `/api/forecast`, which computes them on the server.
+	const moonEvents = $derived.by(() => {
+		const sky = forecast.sky;
+		if (!sky) return [];
+		const later = (at: string) => !at.startsWith(today.date);
+		const times = [
+			sky.moonrise && {
+				at: sky.moonrise,
+				text: (later(sky.moonrise) ? m.moon_rise_tomorrow : m.moon_rise)({
+					time: f.time(sky.moonrise)
+				})
+			},
+			sky.moonset && {
+				at: sky.moonset,
+				text: (later(sky.moonset) ? m.moon_set_tomorrow : m.moon_set)({ time: f.time(sky.moonset) })
+			}
+		]
+			.filter((event) => !!event)
+			.sort((a, b) => a.at.localeCompare(b.at))
+			.map((event) => event.text);
+		const next = nextPhase(sky, today.date);
+		const phase = next.today
+			? (next.phase === 'full' ? m.moon_full_today : m.moon_new_today)({ time: f.time(next.at) })
+			: (next.phase === 'full' ? m.moon_next_full : m.moon_next_new)({
+					day: f.date(next.at.slice(0, 10))
+				});
+		return [...times, phase];
+	});
+
+	const meteors = $derived.by(() => {
+		const peak = meteorPeak(today.date);
+		if (!peak) return null;
+		const shower = {
+			quadrantids: m.shower_quadrantids,
+			lyrids: m.shower_lyrids,
+			etaAquariids: m.shower_etaAquariids,
+			deltaAquariids: m.shower_deltaAquariids,
+			perseids: m.shower_perseids,
+			orionids: m.shower_orionids,
+			leonids: m.shower_leonids,
+			geminids: m.shower_geminids
+		}[peak.shower.id]();
+		const rate = peak.shower.rate;
+		return peak.days === 0
+			? m.meteor_tonight({ shower, rate })
+			: m.meteor_tomorrow({ shower, rate });
+	});
 
 	const direction = $derived(
 		{
@@ -522,6 +573,13 @@
 							<Moon size={14} aria-hidden="true" />
 							{m.moon_line({ phase: moonPhase, percent: f.percent(tonight.illumination * 100) })}
 						</p>
+						{#if moonEvents.length}<p class="mt-1 pl-5 text-sm text-ink-muted">
+								{moonEvents.join(' ')}
+							</p>{/if}
+						{#if meteors}<p class="mt-2 flex items-start gap-1.5 text-sm text-ink-muted">
+								<Sparkles size={14} class="mt-0.5 shrink-0" aria-hidden="true" />
+								{meteors}
+							</p>{/if}
 					</section>
 
 					<section class="glass p-6">
