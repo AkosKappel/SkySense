@@ -274,3 +274,12 @@ div.leaflet-container .leaflet-control-attribution {
 div.leaflet-container .leaflet-control-attribution a {
 	color: var(--color-ink);
 }
+/* Radar frames cross-fade while playing (U-19), unless the reader asked for less motion. */
+div.leaflet-container .radar-frame {
+	transition: opacity 0.45s ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+	div.leaflet-container .radar-frame {
+		transition: none;
+	}
+}

@@ -236,7 +236,8 @@
 	function radarLayer(L: typeof import('leaflet'), path: string) {
 		return (radarLayers[path] ??= L.tileLayer(`${radar!.host}${path}/256/{z}/{x}/{y}/2/1_1.png`, {
 			maxNativeZoom: RADAR_MAX_ZOOM,
-			opacity: 0
+			opacity: 0,
+			className: 'radar-frame'
 		}).addTo(map!));
 	}
 
@@ -352,11 +353,15 @@
 	// Playing is something the reader starts, so it runs under reduced motion too; it never starts
 	// on its own.
 	// Every frame's tiles load as soon as playing starts, and a frame still loading holds the next
-	// step back, so the animation never shows an empty map.
+	// step back, so the animation never shows an empty map. The last step stays up a little longer
+	// (U-19), so the loop reads as an end and a restart rather than one more frame.
 	$effect(() => {
 		if (!playing || !leaflet || !map || !radar) return;
 		for (const step of steps) if (step.kind === 'radar') radarLayer(leaflet, step.path);
+		let held = 0;
 		const timer = setInterval(() => {
+			if (index === steps.length - 1 && held++ < 2) return;
+			held = 0;
 			const next = steps[(index + 1) % steps.length];
 			if (next?.kind === 'radar' && radarLayers[next.path]?.isLoading()) return;
 			index = (index + 1) % steps.length;
