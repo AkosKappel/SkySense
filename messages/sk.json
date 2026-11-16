@@ -1,6 +1,9 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 	"about": "O aplikácii",
+	"about_accessibility": "SkySense sa snaží spĺňať WCAG 2.2 na úrovni AA. Každá zmena sa kontroluje nástrojmi axe a Lighthouse a stránky sa ručne testujú klávesnicou.",
+	"about_accessibility_report": "Ak ti niečo prekáža, napíš mi na GitHub.",
+	"about_accessibility_title": "Prístupnosť",
 	"about_data": "Predpovede pochádzajú z Open-Meteo, ktoré spája modely národných meteorologických služieb. Aktualizujú sa každú hodinu.",
 	"about_features": "Čo dokáže",
 	"about_languages": "SkySense je k dispozícii po anglicky, nemecky, slovensky, maďarsky a španielsky. Preklady vznikli strojovo a ešte prechádzajú kontrolou.",

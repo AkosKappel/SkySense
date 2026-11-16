@@ -74,6 +74,15 @@
 			· ODbL
 		</p>
 		<p>{m.about_languages()}</p>
+		<h2 class="question pt-2">{m.about_accessibility_title()}</h2>
+		<p>
+			{m.about_accessibility()}
+			<a
+				href="https://github.com/AkosKappel/SkySense/issues"
+				class="font-semibold underline underline-offset-4"
+				rel="noopener">{m.about_accessibility_report()}</a
+			>
+		</p>
 		<p>
 			<a
 				href="https://open-meteo.com/"

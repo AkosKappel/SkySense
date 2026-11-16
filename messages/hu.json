@@ -1,6 +1,9 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 	"about": "Névjegy",
+	"about_accessibility": "A SkySense célja a WCAG 2.2 AA szintjének teljesítése. Minden változtatást axe és Lighthouse ellenőriz, az oldalakat pedig kézzel, billentyűzettel is tesztelem.",
+	"about_accessibility_report": "Ha valami akadályoz, írd meg nekem a GitHubon.",
+	"about_accessibility_title": "Akadálymentesség",
 	"about_data": "Az előrejelzések az Open-Meteótól származnak, amely nemzeti meteorológiai szolgálatok modelljeit egyesíti. Óránként frissülnek.",
 	"about_features": "Mit tud",
 	"about_languages": "A SkySense angolul, németül, szlovákul, magyarul és spanyolul érhető el. A fordítások gépi segítséggel készültek, és még ellenőrzés alatt állnak.",

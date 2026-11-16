@@ -1,6 +1,9 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 	"about": "About",
+	"about_accessibility": "SkySense aims to meet WCAG 2.2 at level AA. Every change is checked with axe and Lighthouse, and the pages are tested by hand with the keyboard.",
+	"about_accessibility_report": "If something gets in your way, tell me on GitHub.",
+	"about_accessibility_title": "Accessibility",
 	"about_data": "Forecasts come from Open-Meteo, which combines the models of national weather services. They update every hour.",
 	"about_features": "What it does",
 	"about_languages": "SkySense is available in English, German, Slovak, Hungarian and Spanish. The translations are machine-assisted and still being reviewed.",

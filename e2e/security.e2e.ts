@@ -37,6 +37,16 @@ test('robots.txt and the sitemap point crawlers at the public pages only', async
 	expect(sitemap).not.toContain('/p/');
 });
 
+test('security.txt says where to report a vulnerability, until when', async ({ request }) => {
+	const response = await request.get('/.well-known/security.txt');
+	expect(response.ok()).toBe(true);
+	const text = await response.text();
+	expect(text).toContain('Contact: https://github.com/AkosKappel/SkySense/security/advisories/new');
+	const expires = new Date(/^Expires: (.+)$/m.exec(text)![1]);
+	// The standard asks for less than a year ahead; renew it before it runs out.
+	expect(expires.getTime()).toBeGreaterThan(Date.now());
+});
+
 test('pages describe themselves for link previews', async ({ page }) => {
 	await page.goto('/about');
 	await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
