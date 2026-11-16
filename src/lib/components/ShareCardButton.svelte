@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { ImageDown } from '@lucide/svelte';
 	import { m } from '#lib/paraglide/messages.js';
-	import { drawShareCard, type ShareCard } from '#lib/share-card.js';
+	import type { ShareCard } from '#lib/share-card.js';
 
-	// Builds the picture only when asked; `card` is cheap, the canvas is not.
+	// Builds the picture only when asked; `card` is cheap, the canvas is not. The drawing code
+	// loads on the first click too, keeping it out of the place page's script budget.
 	let { card, filename }: { card: () => ShareCard; filename: string } = $props();
 
 	let busy = $state(false);
@@ -11,7 +12,10 @@
 	async function share() {
 		busy = true;
 		try {
-			await document.fonts.ready;
+			const [{ drawShareCard }] = await Promise.all([
+				import('#lib/share-card.js'),
+				document.fonts.ready
+			]);
 			const canvas = document.createElement('canvas');
 			drawShareCard(canvas, card());
 			const blob = await new Promise<Blob | null>((done) => canvas.toBlob(done, 'image/png'));

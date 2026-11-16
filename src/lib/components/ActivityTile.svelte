@@ -16,7 +16,6 @@
 	import { activityChoice } from '#lib/activity-choice.svelte.js';
 	import { activityIcons } from '#lib/components/activity-icons.js';
 	import { activityLabel } from '#lib/components/labels.js';
-	import { toIcs } from '#lib/calendar.js';
 	import type { Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import type { Day, Hour } from '#lib/weather.js';
@@ -106,7 +105,9 @@
 			: m.window_range_on({ day: f.weekday(from.slice(0, 10)), ...times });
 	}
 
-	function downloadCalendar(id: ActivityId) {
+	// The calendar code loads on the first download, keeping it out of the place page's budget.
+	async function downloadCalendar(id: ActivityId) {
+		const { toIcs } = await import('#lib/calendar.js');
 		const windows = dailyWindows(activities[id], week, days, comfortShift[comfort]);
 		const events = windows.map((w) => ({
 			start: w.from,
