@@ -1,0 +1,32 @@
+name: Smoke test
+
+# After Vercel finishes a production deploy, a few requests to the live site: the health check,
+# a place page and the place search. Live upstream APIs, so a handful of requests per deploy only.
+on:
+  repository_dispatch:
+    types:
+      - vercel.deployment.success
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  smoke:
+    if: github.event_name == 'workflow_dispatch' || github.event.client_payload.environment == 'production'
+    runs-on: ubuntu-latest
+    env:
+      # The production domain, not the deployment's own URL, which Vercel's protection may hide.
+      SITE: https://skysense.akoskappel.dev
+    steps:
+      - name: Health check answers
+        run: curl --fail --silent --show-error --retry 3 --retry-delay 10 --retry-all-errors "$SITE/api/health"
+      - name: A place page renders its forecast
+        run: |
+          curl --fail --silent --show-error --retry 3 --retry-delay 10 --retry-all-errors \
+            "$SITE/p/48.15,17.11/Bratislava" > place.html
+          grep -q '<h1' place.html
+      - name: Place search finds a town
+        run: |
+          curl --fail --silent --show-error --retry 3 --retry-delay 10 --retry-all-errors \
+            "$SITE/api/places?q=Bratislava" > places.json
+          jq -e 'length > 0' places.json
