@@ -3,11 +3,13 @@
 	import { m } from '#lib/paraglide/messages.js';
 
 	// U-18: the shortcuts that exist, opened by `?` from the layout. The native dialog traps
-	// focus, closes on Escape and returns focus where it was.
+	// focus, closes on Escape and returns focus where it was. Closing sets `open` at once, and the
+	// close event, which can arrive after a quick `?` has opened the dialog again, is ignored then.
 	let { open = $bindable() }: { open: boolean } = $props();
 	let dialog: HTMLDialogElement;
 	$effect(() => {
 		if (open && !dialog.open) dialog.showModal();
+		if (!open && dialog.open) dialog.close();
 	});
 
 	const shortcuts = $derived([
@@ -20,8 +22,11 @@
 
 <dialog
 	bind:this={dialog}
-	onclose={() => (open = false)}
-	onclick={(event) => event.target === dialog && dialog.close()}
+	oncancel={() => (open = false)}
+	onclose={() => {
+		if (!dialog.open) open = false;
+	}}
+	onclick={(event) => event.target === dialog && (open = false)}
 	aria-labelledby="shortcuts-title"
 	class="m-auto w-[calc(100%-2rem)] max-w-sm rounded-tile bg-surface p-6 text-ink shadow-2xl outline-1 outline-veil/15 backdrop:bg-black/50"
 >
@@ -30,7 +35,7 @@
 			<Keyboard size={18} aria-hidden="true" />
 			{m.shortcuts_title()}
 		</h2>
-		<button type="button" class="icon-button" aria-label={m.close()} onclick={() => dialog.close()}
+		<button type="button" class="icon-button" aria-label={m.close()} onclick={() => (open = false)}
 			><X size={20} aria-hidden="true" /></button
 		>
 	</div>
