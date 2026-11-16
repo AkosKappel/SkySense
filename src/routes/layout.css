@@ -192,6 +192,31 @@ select option {
 	}
 }
 
+/* U-12. On paper: the light palette on white, no sky, no glass, and no controls (marked
+   `print:hidden` where they sit). Tiles stay whole across page breaks. */
+@media print {
+	:root,
+	:root[data-theme] {
+		color-scheme: light;
+	}
+	body {
+		background: white;
+	}
+	body::before {
+		display: none;
+	}
+	.glass,
+	.pill {
+		background: none;
+		backdrop-filter: none;
+		box-shadow: none;
+	}
+	.glass {
+		outline: 1px solid rgb(15 23 42 / 0.25);
+		break-inside: avoid;
+	}
+}
+
 /* Disclosures open smoothly (U-07) where the browser can animate to `auto` height; elsewhere
    they open at once, as before. Nothing moves for readers who ask for less motion. */
 @media (prefers-reduced-motion: no-preference) {

@@ -289,7 +289,7 @@
 			<span class="sr-only">, {m.change_place()}</span>
 			<ChevronDown size={16} class="shrink-0" aria-hidden="true" />
 		</a>
-		<div class="flex gap-2">
+		<div class="flex gap-2 print:hidden">
 			{#if neighbours}
 				<a
 					href={neighbours.previous.href}
@@ -400,7 +400,7 @@
 			>
 				<section class="mt-5 px-1 xl:mt-6 xl:mb-2">
 					<SummaryLine sentences={summarize(forecast.hours, now.temp)} {f} large />
-					<div class="flex flex-wrap gap-x-5">
+					<div class="flex flex-wrap gap-x-5 print:hidden">
 						<ShareCardButton card={shareCard} filename="skysense-{today.date}.png" />
 						<a
 							href={resolve('/wall/[coords]/[[name]]', {

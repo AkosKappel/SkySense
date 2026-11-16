@@ -69,7 +69,7 @@
 </script>
 
 <div
-	class="pointer-events-none fixed inset-0 -z-1 forced-colors:hidden"
+	class="pointer-events-none fixed inset-0 -z-1 print:hidden forced-colors:hidden"
 	style:background={skyBackground(kind)}
 	data-sky={kind}
 >

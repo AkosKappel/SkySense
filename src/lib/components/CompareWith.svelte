@@ -20,7 +20,7 @@
 	<form
 		action={resolve('/compare')}
 		method="get"
-		class="mt-4 flex flex-wrap items-end gap-2 border-t border-veil/10 pt-4"
+		class="mt-4 flex flex-wrap items-end gap-2 border-t border-veil/10 pt-4 print:hidden"
 	>
 		<input type="hidden" name="a" value={formatCoordinates(current)} />
 		<input type="hidden" name="an" value={current.name} />
