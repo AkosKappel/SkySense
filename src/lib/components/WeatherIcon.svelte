@@ -19,12 +19,15 @@
 		isDay = true,
 		size = 24,
 		strokeWidth = 2,
+		animated = false,
 		class: className = ''
 	}: {
 		condition: Condition;
 		isDay?: boolean;
 		size?: number;
 		strokeWidth?: number;
+		/** Small motion that matches the weather (U-14, keyframes in `layout.css`). */
+		animated?: boolean;
 		class?: string;
 	} = $props();
 
@@ -52,6 +55,17 @@
 					? 'text-sun'
 					: 'text-sun-soft'
 	);
+	const motion = $derived(
+		!animated
+			? ''
+			: condition === 'thunder'
+				? 'icon-flash'
+				: wet.includes(condition)
+					? 'icon-fall'
+					: condition === 'clear' && isDay
+						? 'icon-spin'
+						: 'icon-drift'
+	);
 </script>
 
-<Icon {size} {strokeWidth} class="{tone} {className}" aria-hidden="true" />
+<Icon {size} {strokeWidth} class="{tone} {motion} {className}" aria-hidden="true" />

@@ -89,6 +89,7 @@
 				isDay={shown.isDay}
 				size={88}
 				strokeWidth={1.25}
+				animated
 				class="shrink-0 drop-shadow-[0_0_24px_rgba(251,191,36,.35)]"
 			/>
 		</div>
