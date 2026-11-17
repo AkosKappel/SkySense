@@ -6,6 +6,12 @@ import adapter from '@sveltejs/adapter-vercel';
 import { sveltekit } from '@sveltejs/kit/vite';
 
 export default defineConfig({
+	ssr: {
+		// astronomy-engine's ESM entry is a `.js` file in a package without `"type": "module"`.
+		// Node detects the syntax locally, but Vercel's runtime loads it as CommonJS and the named
+		// imports fail, so it is bundled into the server build instead of resolved at runtime.
+		noExternal: ['astronomy-engine']
+	},
 	build: {
 		rolldownOptions: {
 			output: {
