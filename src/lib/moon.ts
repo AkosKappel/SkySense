@@ -37,6 +37,8 @@ export function moon(time: string): { phase: Phase; illumination: number; age: n
  */
 export function nextPhase(sky: { fullMoon: string; newMoon: string }, today: string) {
 	const [phase, at] =
-		sky.fullMoon < sky.newMoon ? (['full', sky.fullMoon] as const) : (['new', sky.newMoon] as const);
+		sky.fullMoon < sky.newMoon
+			? (['full', sky.fullMoon] as const)
+			: (['new', sky.newMoon] as const);
 	return { phase, at, today: at.startsWith(today) };
 }
