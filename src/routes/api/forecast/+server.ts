@@ -24,21 +24,19 @@ export const GET: RequestHandler = async ({ url, fetch, setHeaders }) => {
 	const demo = demoScenarios.find((d) => d === demoParam) as DemoScenario | undefined;
 
 	try {
+		// The health check shares this cache entry, so the moon is added after it, not inside it.
 		const forecast = await memo(
 			`forecast:${coordinates.lat},${coordinates.lon}:${demo ?? ''}`,
 			10 * MINUTE,
-			async () => {
-				const forecast = await fetchForecast(coordinates, fetch, demo);
-				const sky = skyEvents(coordinates, forecast.current.time, forecast.utcOffsetSeconds);
-				return { ...forecast, sky };
-			}
+			() => fetchForecast(coordinates, fetch, demo)
 		);
+		const sky = skyEvents(coordinates, forecast.current.time, forecast.utcOffsetSeconds);
 		// Open-Meteo updates hourly; 15 minutes keeps "now" fresh while the CDN absorbs repeats.
 		setHeaders({
 			'cache-control':
 				'public, max-age=300, s-maxage=900, stale-while-revalidate=600, stale-if-error=86400'
 		});
-		return json(forecast);
+		return json({ ...forecast, sky });
 	} catch (cause) {
 		if (cause instanceof WeatherServiceError) error(502, 'Weather service unavailable');
 		throw cause;

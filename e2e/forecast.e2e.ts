@@ -372,6 +372,9 @@ test('the health check answers for the uptime monitor, uncached', async ({ reque
 	expect(await health.json()).toMatchObject({ status: 'ok' });
 	expect(health.headers()['cache-control']).toBe('no-store');
 	expect((await request.head('/api/health')).status()).toBe(200);
+	// The check shares the forecast's cache entry; the forecast still adds the moon after it.
+	const forecast = await (await request.get('/api/forecast?lat=48.15&lon=17.11')).json();
+	expect(forecast.sky).toMatchObject({ fullMoon: expect.any(String) });
 });
 
 test('the reverse geocoder answers with a town name and checks its input', async ({ request }) => {

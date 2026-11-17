@@ -20,11 +20,18 @@ jobs:
     steps:
       - name: Health check answers
         run: curl --fail --silent --show-error --retry 3 --retry-delay 10 --retry-all-errors "$SITE/api/health"
+      - name: The forecast API answers with a forecast
+        run: |
+          curl --fail --silent --show-error --retry 3 --retry-delay 10 --retry-all-errors \
+            "$SITE/api/forecast?lat=48.15&lon=17.11" > forecast.json
+          jq -e '.current.time and .sky.fullMoon' forecast.json
       - name: A place page renders its forecast
         run: |
           curl --fail --silent --show-error --retry 3 --retry-delay 10 --retry-all-errors \
             "$SITE/p/48.15,17.11/Bratislava" > place.html
+          # The error page has a heading and footer too, so check it is not the error page.
           grep -q '<h1' place.html
+          ! grep -q "isn't answering" place.html
       - name: Place search finds a town
         run: |
           curl --fail --silent --show-error --retry 3 --retry-delay 10 --retry-all-errors \
