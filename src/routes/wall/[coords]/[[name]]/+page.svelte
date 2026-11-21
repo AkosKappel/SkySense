@@ -1,12 +1,21 @@
 <script lang="ts">
-	import { Umbrella, WifiOff } from '@lucide/svelte';
+	import {
+		Droplets,
+		Sun,
+		Sunrise,
+		Sunset,
+		Thermometer,
+		Umbrella,
+		WifiOff,
+		Wind
+	} from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
 	import SkyLayer from '#lib/components/SkyLayer.svelte';
 	import SummaryLine from '#lib/components/SummaryLine.svelte';
 	import WeatherIcon from '#lib/components/WeatherIcon.svelte';
 	import { conditionLabel } from '#lib/components/labels.js';
-	import { formatter } from '#lib/format.js';
+	import { formatter, uvLevel } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { precipitation, skyKind } from '#lib/sky.js';
@@ -48,6 +57,22 @@
 		today.sunrise && today.sunset ? local < today.sunrise || local >= today.sunset : !now.isDay
 	);
 	const shift = $derived(burnInShift(Number(local.slice(11, 13))));
+	// The readings people glance at from across the room; the sun times only where the sun rises.
+	const readings = $derived([
+		{ Icon: Thermometer, label: m.feels_like_line(), value: f.temp(now.feels) },
+		// An hour from the forecast standing in for now has no humidity.
+		...('humidity' in now
+			? [{ Icon: Droplets, label: m.humidity(), value: f.percent(now.humidity) }]
+			: []),
+		{ Icon: Wind, label: m.wind_speed(), value: f.wind(now.wind) },
+		{
+			Icon: Sun,
+			label: m.uv_index(),
+			value: `${Math.round(today.uvMax)} · ${{ low: m.uv_low, moderate: m.uv_moderate, high: m.uv_high, veryHigh: m.uv_very_high, extreme: m.uv_extreme }[uvLevel(today.uvMax)]()}`
+		},
+		...(today.sunrise ? [{ Icon: Sunrise, label: m.sunrise(), value: f.time(today.sunrise) }] : []),
+		...(today.sunset ? [{ Icon: Sunset, label: m.sunset(), value: f.time(today.sunset) }] : [])
+	]);
 	const placeUrl = $derived(
 		resolve('/p/[coords]/[[name]]', {
 			coords: formatCoordinates(data.coordinates),
@@ -112,14 +137,18 @@
 </svelte:head>
 
 <main
-	class="grid min-h-dvh content-center gap-8 p-6 md:p-10 landscape:lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] landscape:lg:items-center landscape:lg:gap-16"
+	class="mx-auto grid min-h-dvh w-full max-w-3xl content-center gap-8 p-6 md:p-10 landscape:lg:max-w-7xl landscape:lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] landscape:lg:items-center landscape:lg:gap-16"
 >
 	<!-- The shift stays inside the page padding, so it never makes the page scroll. -->
 	<section style:translate="{shift.x}px {shift.y}px">
 		<h1 class="text-xl font-semibold text-ink-muted md:text-2xl">
 			<a href={placeUrl} class="underline-offset-4 hover:underline">{name}</a>
 		</h1>
-		<p class="mt-2 text-7xl font-bold tracking-tight tabular-nums md:text-9xl" aria-live="off">
+		<!-- Sized to the screen so "12:24 PM" stays on one line beside the other column. -->
+		<p
+			class="mt-2 text-[clamp(3.5rem,15vw,8rem)] leading-none font-bold tracking-tight whitespace-nowrap tabular-nums landscape:lg:text-[clamp(4rem,8vw,8rem)]"
+			aria-live="off"
+		>
 			<time datetime={local}>{f.time(local)}</time>
 		</p>
 		<p class="mt-1 text-lg text-ink-muted md:text-xl">{f.date(local.slice(0, 10))}</p>
@@ -143,7 +172,18 @@
 			<Umbrella size={20} aria-hidden="true" />
 			{rain ? m.embed_umbrella_yes() : m.embed_umbrella_no()}
 		</p>
-		<div class="w-fit max-w-full glass px-4 pt-1 pb-2">
+		<dl class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+			{#each readings as { Icon, label, value } (label)}
+				<div class="glass px-4 py-3">
+					<dt class="flex items-center gap-1.5 text-sm text-ink-muted">
+						<Icon size={16} aria-hidden="true" />
+						{label}
+					</dt>
+					<dd class="mt-1 text-2xl font-bold tabular-nums">{value}</dd>
+				</div>
+			{/each}
+		</dl>
+		<div class="glass px-4 pt-1 pb-2">
 			<!-- Every second hour, so the twelve fit across a tablet without scrolling. -->
 			<HourlyStrip hours={everySecond} {f} label={m.next_12_hours()} />
 		</div>
