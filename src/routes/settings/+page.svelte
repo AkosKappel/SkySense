@@ -6,6 +6,7 @@
 		Clock,
 		Droplets,
 		Languages,
+		LayoutGrid,
 		Palette,
 		Shirt,
 		Thermometer,
@@ -14,6 +15,7 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import SiteFooter, { languageNames } from '#lib/components/SiteFooter.svelte';
+	import { tileName } from '#lib/components/tile-names.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale, locales } from '#lib/paraglide/runtime.js';
 	import type { Units } from '#lib/units.js';
@@ -164,6 +166,37 @@
 				{#if group.note}<p class="mt-2 text-sm text-ink-muted">{group.note()}</p>{/if}
 			</fieldset>
 		{/each}
+
+		<!-- U-26: tiles come back here as well as in the edit mode on a place page. -->
+		<fieldset>
+			<legend class="mb-2 question">
+				<LayoutGrid size={18} aria-hidden="true" />
+				{m.tiles_settings()}
+			</legend>
+			<div class="grid gap-1">
+				{#each data.tiles as tile (tile.id)}
+					<label class="flex min-h-11 cursor-pointer items-center gap-3">
+						<input
+							type="checkbox"
+							name="tile"
+							value={tile.id}
+							checked={!tile.hidden}
+							class="size-5 accent-current"
+						/>
+						{tileName(tile.id)}
+					</label>
+				{/each}
+			</div>
+			<p class="mt-2 text-sm text-ink-muted">{m.tiles_settings_note()}</p>
+			<button
+				type="submit"
+				name="tiles"
+				value="reset"
+				class="mt-2 min-h-11 cursor-pointer text-sm font-semibold underline-offset-4 hover:underline"
+			>
+				{m.tiles_reset()}
+			</button>
+		</fieldset>
 
 		<button
 			type="submit"

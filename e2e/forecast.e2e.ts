@@ -718,3 +718,62 @@ test('the week page says which day is best and shows every day by the hour', asy
 	await days.nth(1).click();
 	await expect(page).toHaveURL(/\?day=2026-11-11$/);
 });
+
+test('arranges the tiles and keeps the layout', async ({ page }) => {
+	await page.goto('/p/48.15,17.11/Bratislava');
+	const order = () =>
+		page
+			.locator('[data-tile]')
+			.evaluateAll((tiles) => tiles.map((t) => t.getAttribute('data-tile')));
+	await page.getByRole('button', { name: 'Arrange tiles' }).click();
+
+	await page.getByRole('button', { name: 'Hide: How windy is it?' }).click();
+	await expect(page.getByRole('button', { name: 'Show: How windy is it?' })).toBeVisible();
+	await page.getByRole('button', { name: 'Move up: 10-day forecast' }).click();
+	expect((await order()).slice(3, 6)).toEqual(['chart', 'days', 'tomorrow']);
+
+	// Dragging by the handle onto another tile takes that tile's place.
+	const handle = page.getByRole('button', { name: 'Drag to move: Today in detail' });
+	await handle.scrollIntoViewIfNeeded();
+	const from = (await handle.boundingBox())!;
+	await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+	await page.mouse.down();
+	// Held at the top edge, the page scrolls and the tile passes the 10 days above it.
+	await page.mouse.move(from.x + from.width / 2, 8, { steps: 8 });
+	await expect
+		.poll(async () => (await order()).indexOf('details') < (await order()).indexOf('days'))
+		.toBe(true);
+	await page.mouse.up();
+	expect((await order()).indexOf('details')).toBeLessThan((await order()).indexOf('days'));
+
+	await page.getByRole('button', { name: 'Done' }).click();
+	await page.reload();
+	await expect(page.getByText('How windy is it?')).toHaveCount(0);
+	expect((await order()).indexOf('details')).toBeLessThan((await order()).indexOf('tomorrow'));
+
+	// Settings brings a hidden tile back without touching the order.
+	await page.goto('/settings');
+	const wind = page.getByRole('checkbox', { name: 'How windy is it?' });
+	await expect(wind).not.toBeChecked();
+	await wind.check();
+	await page.getByRole('button', { name: 'Save' }).click();
+	await page.goto('/p/48.15,17.11/Bratislava');
+	await expect(page.getByText('How windy is it?')).toBeVisible();
+	expect((await order()).indexOf('details')).toBeLessThan((await order()).indexOf('tomorrow'));
+
+	await page.goto('/settings');
+	await page.getByRole('button', { name: 'Reset the layout' }).click();
+	await page.goto('/p/48.15,17.11/Bratislava');
+	expect(await order()).toEqual([
+		'umbrella',
+		'activities',
+		'hours',
+		'chart',
+		'tomorrow',
+		'days',
+		'details',
+		'wind',
+		'dark',
+		'past'
+	]);
+});

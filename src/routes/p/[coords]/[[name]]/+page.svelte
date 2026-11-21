@@ -3,6 +3,7 @@
 		ChevronDown,
 		ChevronLeft,
 		ChevronRight,
+		LayoutGrid,
 		Map as MapIcon,
 		MapPin,
 		Moon,
@@ -16,6 +17,8 @@
 		Wind
 	} from '@lucide/svelte';
 	import { onMount } from 'svelte';
+	import { flip } from 'svelte/animate';
+	import { prefersReducedMotion } from 'svelte/motion';
 	import { invalidateAll, pushState } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
@@ -30,7 +33,19 @@
 	import DayFacts from '#lib/components/DayFacts.svelte';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
 	import NowTile from '#lib/components/NowTile.svelte';
+	import type TileControls from '#lib/components/TileControls.svelte';
+	import type TileEditBar from '#lib/components/TileEditBar.svelte';
 	import ViewHeader from '#lib/components/ViewHeader.svelte';
+	import {
+		defaultTiles,
+		moveTile,
+		stepTile,
+		TILES_COOKIE,
+		updateTile,
+		writeTiles,
+		type Tile,
+		type TileId
+	} from '#lib/tiles.js';
 	import ShareButton from '#lib/components/ShareButton.svelte';
 	import SiteFooter from '#lib/components/SiteFooter.svelte';
 	import TempChart from '#lib/components/TempChart.svelte';
@@ -96,6 +111,25 @@
 			stormy: m.wind_stormy
 		}[wind]()
 	);
+
+	// The reader's tile layout (U-26, U-27): from the cookie on the server, changed here in the edit
+	// mode. The edit controls load on first use, so a visit that never arranges pays nothing.
+	let tiles = $derived(data.tiles);
+	const shownTiles = $derived(tiles.filter((t) => !t.hidden));
+	let editing = $state(false);
+	let editor = $state<{ Controls: typeof TileControls; EditBar: typeof TileEditBar }>();
+	async function startEditing() {
+		const [controls, bar] = await Promise.all([
+			import('#lib/components/TileControls.svelte'),
+			import('#lib/components/TileEditBar.svelte')
+		]);
+		editor = { Controls: controls.default, EditBar: bar.default };
+		editing = true;
+	}
+	function saveTiles(next: Tile[]) {
+		tiles = next;
+		document.cookie = `${TILES_COOKIE}=${encodeURIComponent(writeTiles(next))}; path=/; max-age=34560000; samesite=lax`;
+	}
 
 	// `?day=2026-11-12` shows one day; anything not in the forecast shows the overview.
 	const day = $derived(forecast.days.find((d) => d.date === page.url.searchParams.get('day')));
@@ -554,164 +588,61 @@
 				{/if}
 			</aside>
 
-			<div
-				class="mt-4 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-flow-dense md:grid-cols-2 xl:mt-6 [&>*]:min-w-0"
-			>
-				<section class="flex flex-col glass p-6">
-					<UmbrellaTile hours={forecast.hours} {f} />
-					<a
-						href="{resolve('/p/[coords]/[[name]]', {
-							coords: page.params.coords ?? '',
-							name: encodeURIComponent(page.params.name ?? '')
-						})}?radar"
-						class="mt-auto inline-flex min-h-11 items-center gap-1.5 pt-2 text-sm font-semibold underline-offset-4 hover:underline"
-					>
-						{m.radar_link()}
-						<ChevronRight size={16} aria-hidden="true" />
-					</a>
-				</section>
-
-				<section class="glass p-6">
-					<ActivityTile
-						hours={forecast.hours.slice(0, 24)}
-						week={forecast.hours}
-						place={name}
-						timeZone={forecast.timezone}
-						days={forecast.days}
-						{f}
-						comfort={data.comfort}
-					/>
-					<a
-						href="{resolve('/p/[coords]/[[name]]', {
-							coords: page.params.coords ?? '',
-							name: encodeURIComponent(page.params.name ?? '')
-						})}?better"
-						class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
-					>
-						{m.better_link()}
-						<ChevronRight size={16} aria-hidden="true" />
-					</a>
-				</section>
-
-				<section class="glass p-5 md:col-span-2">
-					<h2 class="question">{m.next_hours()}</h2>
-					<HourlyStrip hours={forecast.hours.slice(0, 24)} {f} />
-				</section>
-
-				<section class="glass p-6 md:col-span-2">
-					<TempChart hours={forecast.hours.slice(0, 25)} {f} />
-					<a
-						href="{resolve('/p/[coords]/[[name]]', {
-							coords: page.params.coords ?? '',
-							name: encodeURIComponent(page.params.name ?? '')
-						})}?models"
-						class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
-					>
-						{m.compare_models()}
-						<ChevronRight size={16} aria-hidden="true" />
-					</a>
-				</section>
-
-				<TomorrowTile days={forecast.days} hours={forecast.hours} {f} class="md:col-span-2" />
-
-				<!-- Wide screens: the tiles below differ a lot in height, so they flow in two balanced columns
-				     instead of grid rows that stretch the short ones. Narrower screens keep the grid order. -->
+			<div class="min-w-0">
+				{#if editing}<p class="mt-4 px-1 text-sm text-ink-muted xl:mt-6">{m.tiles_help()}</p>{/if}
+				<!-- The reader's order and widths (U-26, U-27). Rows stretch their shorter tile, so any
+				     arrangement keeps straight edges; the dense flow fills a gap a full-width tile leaves. -->
 				<div
-					class="contents lg:col-span-2 lg:block lg:columns-2 lg:gap-4 lg:[&>*]:mb-4 lg:[&>*]:break-inside-avoid"
+					class="mt-4 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-flow-dense md:grid-cols-2 xl:mt-6"
 				>
-					<section class="glass p-6">
-						<h2 class="question">{m.ten_days()}</h2>
-						<DailyList days={forecast.days} hours={forecast.hours} {f} />
-						<a
-							href="{resolve('/p/[coords]/[[name]]', {
-								coords: page.params.coords ?? '',
-								name: encodeURIComponent(page.params.name ?? '')
-							})}?week"
-							class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
+					{#each shownTiles as tile, i (tile.id)}
+						<div
+							data-tile={tile.id}
+							animate:flip={{ duration: prefersReducedMotion.current ? 0 : 200 }}
+							class={[
+								'relative min-w-0',
+								tile.wide && 'md:col-span-2',
+								tile.id === 'past'
+									? ['grid content-start gap-4', tile.wide && 'md:grid-cols-2']
+									: '[&>section]:h-full',
+								editing &&
+									'rounded-3xl pt-14 outline-2 outline-offset-4 outline-veil/25 outline-dashed'
+							]}
 						>
-							{m.week_link()}
-							<ChevronRight size={16} aria-hidden="true" />
-						</a>
-						<CompareWith current={place} />
-					</section>
-
-					<section class="glass p-6">
-						<h2 class="question">{m.today_details()}</h2>
-						<DayFacts
-							day={today}
-							{f}
-							humidity={now.humidity}
-							pressure={now.pressure}
-							ahead={forecast.hours}
-						/>
-					</section>
-
-					<section class="glass p-6">
-						<div class="flex items-start justify-between gap-4">
-							<div class="min-w-0">
-								<p class="question"><Wind size={18} aria-hidden="true" /> {m.wind_question()}</p>
-								<p class="mt-2 answer">{windAnswer}</p>
-								<p class="mt-2 text-sm text-ink-muted">
-									{direction} · {m.wind_detail({ speed: f.wind(now.wind), gust: f.wind(now.gust) })}
-								</p>
-							</div>
-							<WindDial from={now.windDirection} />
+							{#if editing && editor}
+								<editor.Controls
+									{tile}
+									first={i === 0}
+									last={i === shownTiles.length - 1}
+									onstep={(step) => saveTiles(stepTile(tiles, tile.id, step))}
+									onmove={(to) => saveTiles(moveTile(tiles, tile.id, to))}
+									onchange={(change) => saveTiles(updateTile(tiles, tile.id, change))}
+								/>
+							{/if}
+							{@render tilesById(tile.id)}
 						</div>
-						{#if strongestGust >= STRONG_GUST_KMH}
-							<p class="mt-3 flex items-start gap-1.5 text-sm font-semibold text-sun">
-								<TriangleAlert size={16} class="mt-0.5 shrink-0" aria-hidden="true" />
-								{m.wind_gust_warning({ gust: f.wind(strongestGust) })}
-							</p>
-						{/if}
-					</section>
-
-					<section class="glass p-6">
-						<p class="question"><Sunset size={18} aria-hidden="true" /> {m.dark_question()}</p>
-						{#if dark.kind === 'sets'}
-							<p class="mt-2 answer">{f.time(dark.at)}</p>
-							{#if today.sunrise}<p class="mt-2 text-sm text-ink-muted">
-									{m.sunrise_was({ time: f.time(today.sunrise) })}
-								</p>{/if}
-						{:else if dark.kind === 'dark'}
-							<p class="mt-2 answer">{m.dark_now()}</p>
-							{#if dark.sunrise}<p class="mt-2 text-sm text-ink-muted">
-									{m.sunrise_at({ time: f.time(dark.sunrise) })}
-								</p>{/if}
-						{:else if dark.kind === 'polar-night'}
-							<p class="mt-2 answer">{m.polar_night()}</p>
-						{:else}
-							<p class="mt-2 answer">{m.midnight_sun()}</p>
-						{/if}
-						{#if daylight}<p class="mt-2 text-sm text-ink-muted">{daylight}</p>{/if}
-						<p class="mt-2 flex items-center gap-1.5 text-sm text-ink-muted">
-							<Moon size={14} aria-hidden="true" />
-							{m.moon_line({ phase: moonPhase, percent: f.percent(tonight.illumination * 100) })}
-						</p>
-						{#if moonEvents.length}<p class="mt-1 pl-5 text-sm text-ink-muted">
-								{moonEvents.join(' ')}
-							</p>{/if}
-						{#if meteors}<p class="mt-2 flex items-start gap-1.5 text-sm text-ink-muted">
-								<Sparkles size={14} class="mt-0.5 shrink-0" aria-hidden="true" />
-								{meteors}
-							</p>{/if}
-						{#if skyLines.length}<p class="mt-2 flex items-start gap-1.5 text-sm text-ink-muted">
-								<Telescope size={14} class="mt-0.5 shrink-0" aria-hidden="true" />
-								{skyLines.join(' ')}
-							</p>{/if}
-					</section>
-
-					<WhenNear>
-						{#await import('#lib/components/PastTiles.svelte') then { default: PastTiles }}
-							<PastTiles
-								coordinates={data.coordinates}
-								date={today.date}
-								max={today.max}
-								place={name}
-								{f}
-							/>
-						{/await}
-					</WhenNear>
+					{/each}
 				</div>
+
+				{#if editing && editor}
+					<editor.EditBar
+						{tiles}
+						onshow={(id) => saveTiles(updateTile(tiles, id, { hidden: false }))}
+						onreset={() => saveTiles(defaultTiles())}
+						ondone={() => (editing = false)}
+					/>
+				{:else}
+					<p class="mt-6 flex justify-center print:hidden">
+						<button
+							type="button"
+							class="flex min-h-11 pill cursor-pointer items-center gap-2 px-5 text-sm font-semibold"
+							onclick={startEditing}
+						>
+							<LayoutGrid size={16} aria-hidden="true" />
+							{m.tiles_arrange()}
+						</button>
+					</p>
+				{/if}
 			</div>
 		</div>
 	{/if}
@@ -725,3 +656,187 @@
 		<PlaceSheet current={data.coordinates} />
 	{/await}
 {/if}
+
+{#snippet umbrellaTile()}
+	<section class="flex flex-col glass p-6">
+		<UmbrellaTile hours={forecast.hours} {f} />
+		<a
+			href="{resolve('/p/[coords]/[[name]]', {
+				coords: page.params.coords ?? '',
+				name: encodeURIComponent(page.params.name ?? '')
+			})}?radar"
+			class="mt-auto inline-flex min-h-11 items-center gap-1.5 pt-2 text-sm font-semibold underline-offset-4 hover:underline"
+		>
+			{m.radar_link()}
+			<ChevronRight size={16} aria-hidden="true" />
+		</a>
+	</section>
+{/snippet}
+
+{#snippet activitiesTile()}
+	<section class="glass p-6">
+		<ActivityTile
+			hours={forecast.hours.slice(0, 24)}
+			week={forecast.hours}
+			place={name}
+			timeZone={forecast.timezone}
+			days={forecast.days}
+			{f}
+			comfort={data.comfort}
+		/>
+		<a
+			href="{resolve('/p/[coords]/[[name]]', {
+				coords: page.params.coords ?? '',
+				name: encodeURIComponent(page.params.name ?? '')
+			})}?better"
+			class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
+		>
+			{m.better_link()}
+			<ChevronRight size={16} aria-hidden="true" />
+		</a>
+	</section>
+{/snippet}
+
+{#snippet hoursTile()}
+	<section class="glass p-5">
+		<h2 class="question">{m.next_hours()}</h2>
+		<HourlyStrip hours={forecast.hours.slice(0, 24)} {f} />
+	</section>
+{/snippet}
+
+{#snippet chartTile()}
+	<section class="glass p-6">
+		<TempChart hours={forecast.hours.slice(0, 25)} {f} />
+		<a
+			href="{resolve('/p/[coords]/[[name]]', {
+				coords: page.params.coords ?? '',
+				name: encodeURIComponent(page.params.name ?? '')
+			})}?models"
+			class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
+		>
+			{m.compare_models()}
+			<ChevronRight size={16} aria-hidden="true" />
+		</a>
+	</section>
+{/snippet}
+
+{#snippet tomorrowTile()}
+	<TomorrowTile days={forecast.days} hours={forecast.hours} {f} />
+{/snippet}
+
+{#snippet daysTile()}
+	<section class="glass p-6">
+		<h2 class="question">{m.ten_days()}</h2>
+		<DailyList days={forecast.days} hours={forecast.hours} {f} />
+		<a
+			href="{resolve('/p/[coords]/[[name]]', {
+				coords: page.params.coords ?? '',
+				name: encodeURIComponent(page.params.name ?? '')
+			})}?week"
+			class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
+		>
+			{m.week_link()}
+			<ChevronRight size={16} aria-hidden="true" />
+		</a>
+		<CompareWith current={place} />
+	</section>
+{/snippet}
+
+{#snippet detailsTile()}
+	<section class="glass p-6">
+		<h2 class="question">{m.today_details()}</h2>
+		<DayFacts
+			day={today}
+			{f}
+			humidity={now.humidity}
+			pressure={now.pressure}
+			ahead={forecast.hours}
+		/>
+	</section>
+{/snippet}
+
+{#snippet windTile()}
+	<section class="glass p-6">
+		<div class="flex items-start justify-between gap-4">
+			<div class="min-w-0">
+				<p class="question"><Wind size={18} aria-hidden="true" /> {m.wind_question()}</p>
+				<p class="mt-2 answer">{windAnswer}</p>
+				<p class="mt-2 text-sm text-ink-muted">
+					{direction} · {m.wind_detail({ speed: f.wind(now.wind), gust: f.wind(now.gust) })}
+				</p>
+			</div>
+			<WindDial from={now.windDirection} />
+		</div>
+		{#if strongestGust >= STRONG_GUST_KMH}
+			<p class="mt-3 flex items-start gap-1.5 text-sm font-semibold text-sun">
+				<TriangleAlert size={16} class="mt-0.5 shrink-0" aria-hidden="true" />
+				{m.wind_gust_warning({ gust: f.wind(strongestGust) })}
+			</p>
+		{/if}
+	</section>
+{/snippet}
+
+{#snippet darkTile()}
+	<section class="glass p-6">
+		<p class="question"><Sunset size={18} aria-hidden="true" /> {m.dark_question()}</p>
+		{#if dark.kind === 'sets'}
+			<p class="mt-2 answer">{f.time(dark.at)}</p>
+			{#if today.sunrise}<p class="mt-2 text-sm text-ink-muted">
+					{m.sunrise_was({ time: f.time(today.sunrise) })}
+				</p>{/if}
+		{:else if dark.kind === 'dark'}
+			<p class="mt-2 answer">{m.dark_now()}</p>
+			{#if dark.sunrise}<p class="mt-2 text-sm text-ink-muted">
+					{m.sunrise_at({ time: f.time(dark.sunrise) })}
+				</p>{/if}
+		{:else if dark.kind === 'polar-night'}
+			<p class="mt-2 answer">{m.polar_night()}</p>
+		{:else}
+			<p class="mt-2 answer">{m.midnight_sun()}</p>
+		{/if}
+		{#if daylight}<p class="mt-2 text-sm text-ink-muted">{daylight}</p>{/if}
+		<p class="mt-2 flex items-center gap-1.5 text-sm text-ink-muted">
+			<Moon size={14} aria-hidden="true" />
+			{m.moon_line({ phase: moonPhase, percent: f.percent(tonight.illumination * 100) })}
+		</p>
+		{#if moonEvents.length}<p class="mt-1 pl-5 text-sm text-ink-muted">
+				{moonEvents.join(' ')}
+			</p>{/if}
+		{#if meteors}<p class="mt-2 flex items-start gap-1.5 text-sm text-ink-muted">
+				<Sparkles size={14} class="mt-0.5 shrink-0" aria-hidden="true" />
+				{meteors}
+			</p>{/if}
+		{#if skyLines.length}<p class="mt-2 flex items-start gap-1.5 text-sm text-ink-muted">
+				<Telescope size={14} class="mt-0.5 shrink-0" aria-hidden="true" />
+				{skyLines.join(' ')}
+			</p>{/if}
+	</section>
+{/snippet}
+
+{#snippet pastTile()}
+	<WhenNear>
+		{#await import('#lib/components/PastTiles.svelte') then { default: PastTiles }}
+			<PastTiles
+				coordinates={data.coordinates}
+				date={today.date}
+				max={today.max}
+				place={name}
+				{f}
+			/>
+		{/await}
+	</WhenNear>
+{/snippet}
+
+{#snippet tilesById(id: TileId)}
+	{#if id === 'umbrella'}{@render umbrellaTile()}
+	{:else if id === 'activities'}{@render activitiesTile()}
+	{:else if id === 'hours'}{@render hoursTile()}
+	{:else if id === 'chart'}{@render chartTile()}
+	{:else if id === 'tomorrow'}{@render tomorrowTile()}
+	{:else if id === 'days'}{@render daysTile()}
+	{:else if id === 'details'}{@render detailsTile()}
+	{:else if id === 'wind'}{@render windTile()}
+	{:else if id === 'dark'}{@render darkTile()}
+	{:else}{@render pastTile()}
+	{/if}
+{/snippet}
