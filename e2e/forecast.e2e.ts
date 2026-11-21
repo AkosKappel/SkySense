@@ -646,8 +646,17 @@ test('opens a day from the 10-day list and goes back', async ({ page }) => {
 	await expect(page.getByText('Do I need an umbrella?')).toBeVisible();
 	await expect(page.getByText('Now', { exact: true })).toHaveCount(0);
 
+	await page.getByRole('link', { name: 'Next day: Friday 13 November' }).click();
+	await expect(page).toHaveURL(/\?day=2026-11-13$/);
+	await page.getByRole('link', { name: 'Previous day: Thursday 12 November' }).click();
+	await expect(page.getByRole('heading', { level: 1, name: 'Thursday 12 November' })).toBeVisible();
+
 	await page.getByRole('link', { name: 'Back to the forecast' }).click();
 	await expect(page.getByText('10-day forecast')).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Map', exact: true }).first()).toHaveAttribute(
+		'href',
+		'/map/48.15,17.11/Bratislava'
+	);
 });
 
 test('the wall display keeps the last forecast when the network goes', async ({ page }) => {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ArrowLeft } from '@lucide/svelte';
+	import { ArrowLeft, ChevronLeft, ChevronRight } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import ActivityTile from '#lib/components/ActivityTile.svelte';
@@ -29,20 +29,47 @@
 		f: Formatter;
 		comfort?: Comfort;
 	} = $props();
+
+	const forecastHref = $derived(
+		resolve('/p/[coords]/[[name]]', {
+			coords: page.params.coords ?? '',
+			name: encodeURIComponent(page.params.name ?? '')
+		})
+	);
+	const index = $derived(days.findIndex((d) => d.date === day.date));
+	const previous = $derived(days[index - 1]);
+	const next = $derived(days[index + 1]);
 </script>
 
 <div class="mt-5 flex items-center gap-3">
 	<a
-		href={resolve('/p/[coords]/[[name]]', {
-			coords: page.params.coords ?? '',
-			name: encodeURIComponent(page.params.name ?? '')
-		})}
+		href={forecastHref}
 		aria-label={m.back_to_forecast()}
 		class="grid size-11 shrink-0 pill place-items-center"
 	>
 		<ArrowLeft size={18} aria-hidden="true" />
 	</a>
-	<h1 class="text-2xl font-extrabold">{isToday ? m.today() : f.date(day.date)}</h1>
+	<h1 class="min-w-0 flex-1 text-2xl font-extrabold">{isToday ? m.today() : f.date(day.date)}</h1>
+	<!-- Step through the days without going back to the list; the ends of the forecast show a
+	     disabled button so the pair does not jump around. -->
+	<nav aria-label={m.days_nav()} class="flex shrink-0 gap-2 print:hidden">
+		{#each [{ to: previous, Icon: ChevronLeft, label: m.previous_day }, { to: next, Icon: ChevronRight, label: m.next_day }] as { to, Icon, label } (label)}
+			{#if to}
+				<a
+					href="{forecastHref}?day={to.date}"
+					aria-label={label({ day: f.date(to.date) })}
+					data-sveltekit-noscroll
+					class="grid size-11 pill place-items-center"
+				>
+					<Icon size={18} aria-hidden="true" />
+				</a>
+			{:else}
+				<span class="grid size-11 pill place-items-center opacity-40" aria-hidden="true">
+					<Icon size={18} />
+				</span>
+			{/if}
+		{/each}
+	</nav>
 </div>
 
 <div class="mt-4 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-2 [&>*]:min-w-0">
