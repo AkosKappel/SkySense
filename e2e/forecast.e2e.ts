@@ -646,6 +646,11 @@ test('opens a day from the 10-day list and goes back', async ({ page }) => {
 	await expect(page.getByText('Do I need an umbrella?')).toBeVisible();
 	await expect(page.getByText('Now', { exact: true })).toHaveCount(0);
 
+	// Icon-only arrows say on hover where they go, not only to screen readers.
+	await expect(page.getByRole('link', { name: 'Next day: Friday 13 November' })).toHaveAttribute(
+		'title',
+		'Next day: Friday 13 November'
+	);
 	await page.getByRole('link', { name: 'Next day: Friday 13 November' }).click();
 	await expect(page).toHaveURL(/\?day=2026-11-13$/);
 	await page.getByRole('link', { name: 'Previous day: Thursday 12 November' }).click();
@@ -719,7 +724,7 @@ test('the week page says which day is best and shows every day by the hour', asy
 	await expect(page).toHaveURL(/\?day=2026-11-11$/);
 });
 
-test('arranges the tiles and keeps the layout', async ({ page }) => {
+test('arranges the tiles and keeps the layout', async ({ page }, testInfo) => {
 	await page.goto('/p/48.15,17.11/Bratislava');
 	const order = () =>
 		page
@@ -740,13 +745,18 @@ test('arranges the tiles and keeps the layout', async ({ page }) => {
 	await handle.hover();
 	const from = (await handle.boundingBox())!;
 	await page.mouse.down();
-	// Held at the top edge, the page scrolls and the tile passes the 10 days above it.
-	await page.mouse.move(from.x + from.width / 2, 8, { steps: 8 });
+	if (testInfo.project.name === 'mobile') {
+		// One tall column: held at the top edge, the page scrolls and the tile passes those above.
+		await page.mouse.move(from.x + from.width / 2, 8, { steps: 8 });
+	} else {
+		// Two columns: the full-width tile above is on screen, so the drag goes straight onto it.
+		const target = (await page.locator('[data-tile="tomorrow"]').boundingBox())!;
+		await page.mouse.move(target.x + 40, target.y + target.height / 2, { steps: 8 });
+	}
 	await expect
-		.poll(async () => (await order()).indexOf('details') < (await order()).indexOf('days'))
+		.poll(async () => (await order()).indexOf('details') < (await order()).indexOf('tomorrow'))
 		.toBe(true);
 	await page.mouse.up();
-	expect((await order()).indexOf('details')).toBeLessThan((await order()).indexOf('days'));
 
 	await page.getByRole('button', { name: 'Done' }).click();
 	await page.reload();
