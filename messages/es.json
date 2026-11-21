@@ -254,6 +254,7 @@
 	"next_hours": "Próximas 24 horas",
 	"next_place": "Siguiente lugar: {name}",
 	"next_day": "Día siguiente: {day}",
+	"next_days": "Los próximos tres días",
 	"no_activities": "Elige una actividad para ver su mejor momento.",
 	"normal_about": "Más o menos lo normal para la época.",
 	"normal_colder": "{diff} más frío de lo habitual.",

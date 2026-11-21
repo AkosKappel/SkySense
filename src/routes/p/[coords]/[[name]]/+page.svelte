@@ -612,13 +612,59 @@
 					</a>
 				</section>
 
+				<TomorrowTile days={forecast.days} hours={forecast.hours} {f} class="md:col-span-2" />
+
 				<!-- Wide screens: the tiles below differ a lot in height, so they flow in two balanced columns
 				     instead of grid rows that stretch the short ones. Narrower screens keep the grid order. -->
 				<div
 					class="contents lg:col-span-2 lg:block lg:columns-2 lg:gap-4 lg:[&>*]:mb-4 lg:[&>*]:break-inside-avoid"
 				>
-					<!-- After the activities on a phone (docs/design.md); the dense grid still puts them beside
-				the umbrella on wider screens. -->
+					<section class="glass p-6">
+						<h2 class="question">{m.ten_days()}</h2>
+						<DailyList days={forecast.days} hours={forecast.hours} {f} />
+						<a
+							href="{resolve('/p/[coords]/[[name]]', {
+								coords: page.params.coords ?? '',
+								name: encodeURIComponent(page.params.name ?? '')
+							})}?week"
+							class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
+						>
+							{m.week_link()}
+							<ChevronRight size={16} aria-hidden="true" />
+						</a>
+						<CompareWith current={place} />
+					</section>
+
+					<section class="glass p-6">
+						<h2 class="question">{m.today_details()}</h2>
+						<DayFacts
+							day={today}
+							{f}
+							humidity={now.humidity}
+							pressure={now.pressure}
+							ahead={forecast.hours}
+						/>
+					</section>
+
+					<section class="glass p-6">
+						<div class="flex items-start justify-between gap-4">
+							<div class="min-w-0">
+								<p class="question"><Wind size={18} aria-hidden="true" /> {m.wind_question()}</p>
+								<p class="mt-2 answer">{windAnswer}</p>
+								<p class="mt-2 text-sm text-ink-muted">
+									{direction} · {m.wind_detail({ speed: f.wind(now.wind), gust: f.wind(now.gust) })}
+								</p>
+							</div>
+							<WindDial from={now.windDirection} />
+						</div>
+						{#if strongestGust >= STRONG_GUST_KMH}
+							<p class="mt-3 flex items-start gap-1.5 text-sm font-semibold text-sun">
+								<TriangleAlert size={16} class="mt-0.5 shrink-0" aria-hidden="true" />
+								{m.wind_gust_warning({ gust: f.wind(strongestGust) })}
+							</p>
+						{/if}
+					</section>
+
 					<section class="glass p-6">
 						<p class="question"><Sunset size={18} aria-hidden="true" /> {m.dark_question()}</p>
 						{#if dark.kind === 'sets'}
@@ -652,54 +698,6 @@
 								<Telescope size={14} class="mt-0.5 shrink-0" aria-hidden="true" />
 								{skyLines.join(' ')}
 							</p>{/if}
-					</section>
-
-					<section class="glass p-6">
-						<div class="flex items-start justify-between gap-4">
-							<div class="min-w-0">
-								<p class="question"><Wind size={18} aria-hidden="true" /> {m.wind_question()}</p>
-								<p class="mt-2 answer">{windAnswer}</p>
-								<p class="mt-2 text-sm text-ink-muted">
-									{direction} · {m.wind_detail({ speed: f.wind(now.wind), gust: f.wind(now.gust) })}
-								</p>
-							</div>
-							<WindDial from={now.windDirection} />
-						</div>
-						{#if strongestGust >= STRONG_GUST_KMH}
-							<p class="mt-3 flex items-start gap-1.5 text-sm font-semibold text-sun">
-								<TriangleAlert size={16} class="mt-0.5 shrink-0" aria-hidden="true" />
-								{m.wind_gust_warning({ gust: f.wind(strongestGust) })}
-							</p>
-						{/if}
-					</section>
-
-					<TomorrowTile days={forecast.days} hours={forecast.hours} {f} />
-
-					<section class="glass p-6">
-						<h2 class="question">{m.ten_days()}</h2>
-						<DailyList days={forecast.days} hours={forecast.hours} {f} />
-						<a
-							href="{resolve('/p/[coords]/[[name]]', {
-								coords: page.params.coords ?? '',
-								name: encodeURIComponent(page.params.name ?? '')
-							})}?week"
-							class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
-						>
-							{m.week_link()}
-							<ChevronRight size={16} aria-hidden="true" />
-						</a>
-						<CompareWith current={place} />
-					</section>
-
-					<section class="glass p-6">
-						<h2 class="question">{m.today_details()}</h2>
-						<DayFacts
-							day={today}
-							{f}
-							humidity={now.humidity}
-							pressure={now.pressure}
-							ahead={forecast.hours}
-						/>
 					</section>
 
 					<WhenNear>

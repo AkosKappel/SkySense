@@ -236,6 +236,7 @@
 	"next_hours": "A következő 24 óra",
 	"next_place": "Következő hely: {name}",
 	"next_day": "Következő nap: {day}",
+	"next_days": "A következő három nap",
 	"no_activities": "Válassz egy tevékenységet, és megmutatjuk a legjobb időpontot.",
 	"normal_about": "Nagyjából szokásos az évszakhoz képest.",
 	"normal_colder": "{diff}-kal hidegebb a szokásosnál.",

@@ -257,6 +257,7 @@
 	"next_hours": "Najbližších 24 hodín",
 	"next_place": "Ďalšie miesto: {name}",
 	"next_day": "Nasledujúci deň: {day}",
+	"next_days": "Najbližšie tri dni",
 	"no_activities": "Vyber si aktivitu a uvidíš jej najlepší čas.",
 	"normal_about": "Približne normálne pre toto obdobie.",
 	"normal_colder": "O {diff} chladnejšie ako zvyčajne.",
