@@ -828,7 +828,8 @@
 {/snippet}
 
 {#snippet mapTile()}
-	<WhenNear>
+	<!-- Leaflet is 43 kB: only once the tile is on screen, never on the first load. -->
+	<WhenNear margin="0px">
 		{#await import('#lib/components/MapTile.svelte') then { default: MapTile }}
 			<MapTile
 				coordinates={data.coordinates}

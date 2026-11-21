@@ -23,6 +23,9 @@ for (const url of config.ci.collect.url) {
 
 	test(`${path} stays inside its script budget`, async ({ page }, testInfo) => {
 		test.skip(testInfo.project.name !== 'desktop', 'Lighthouse measures the desktop build once');
+		// Lighthouse's desktop screen: tall enough for the two-column place page, which brings the
+		// tiles that load when near closer to the first screen.
+		await page.setViewportSize({ width: 1350, height: 940 });
 		await page.goto(path, { waitUntil: 'networkidle' });
 		const scripts = await page.evaluate(() =>
 			performance
