@@ -423,6 +423,18 @@ test('steps through saved places with previous and next', async ({ page }) => {
 	expect((await name.boundingBox())?.width).toBeGreaterThan(40);
 });
 
+test('warns the garden of frost after mild days, and says nothing otherwise', async ({ page }) => {
+	await page.goto('/p/69.65,18.96/Troms%C3%B8');
+	await placeReady(page);
+	const garden = page.locator('section', { hasText: 'Does the garden need anything?' });
+	await expect(
+		garden.getByText('Ground frost on 7 of the next 7 days, first on Tuesday 10 November.')
+	).toBeVisible();
+	await page.goto('/p/48.15,17.11/Bratislava');
+	await placeReady(page);
+	await expect(page.getByText('Does the garden need anything?')).toHaveCount(0);
+});
+
 test('says when most of the last ten days were wet', async ({ page }) => {
 	await page.goto('/p/1.29,103.85/Singapore');
 	await placeReady(page);

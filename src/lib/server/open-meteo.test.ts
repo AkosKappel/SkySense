@@ -7,6 +7,7 @@ import tromso from './fixtures/forecast-tromso.json';
 import areaBratislava from './fixtures/area-bratislava.json';
 import heat from './fixtures/scenario-heat.json';
 import hindcastBratislava from './fixtures/hindcast-bratislava.json';
+import gardenTromso from './fixtures/garden-tromso.json';
 import reverseBratislava from './fixtures/reverse-bratislava.json';
 import reverseTromso from './fixtures/reverse-tromso.json';
 import midnightSun from './fixtures/scenario-midnight-sun.json';
@@ -17,6 +18,7 @@ import {
 	reverseGeocode,
 	searchPlaces,
 	toForecast,
+	toGarden,
 	toHindcast,
 	toPlaces,
 	toAir,
@@ -305,5 +307,15 @@ describe('toHindcast', () => {
 		raw.hourly.temperature_2m_previous_day1[5] = null as unknown as number;
 		expect(toHindcast(raw)).toHaveLength(29);
 		expect(() => toHindcast({ hourly: {} })).toThrow(WeatherServiceError);
+	});
+});
+
+describe('toGarden', () => {
+	it('gives each day its rain, evaporation and coldest soil surface hour', () => {
+		const days = toGarden(gardenTromso);
+		expect(days).toHaveLength(14);
+		expect(days[0].date).toBe('2026-11-03');
+		expect(days.at(-1)?.groundMin).toBeLessThan(0);
+		expect(() => toGarden({ daily: {} })).toThrow(WeatherServiceError);
 	});
 });

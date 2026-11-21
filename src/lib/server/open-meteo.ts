@@ -19,6 +19,7 @@ import type { GridCell, RadarFrames } from '#lib/radar.js';
 import { pressureAt } from '#lib/pressure.js';
 import type { RainDay } from '#lib/recent.js';
 import type { HindcastDay } from '#lib/hindcast.js';
+import type { GardenDay } from '#lib/garden.js';
 import { SITE_URL } from '#lib/site.js';
 
 export class WeatherServiceError extends Error {}
@@ -614,6 +615,55 @@ export async function fetchHindcast(
 		end_date: addDays(today, -1)
 	}).toString();
 	return toHindcast(await getJson(url, fetchFn));
+}
+
+const gardenSchema = z.object({
+	daily: z.object({
+		time: z.array(z.string()),
+		precipitation_sum: numbers,
+		et0_fao_evapotranspiration: numbers
+	}),
+	hourly: z.object({ time: z.array(z.string()), soil_temperature_0cm: numbers })
+});
+
+/** Days with rain, evaporation and the coldest soil surface hour; days with a gap are dropped (X-16). */
+export function toGarden(raw: unknown): GardenDay[] {
+	const parsed = gardenSchema.safeParse(raw);
+	if (!parsed.success) throw new WeatherServiceError('Unexpected garden response');
+	const { daily, hourly } = parsed.data;
+	return daily.time.flatMap((date, i) => {
+		const rain = daily.precipitation_sum[i];
+		const et0 = daily.et0_fao_evapotranspiration[i];
+		const ground = hourly.time.flatMap((time, h) => {
+			const value = hourly.soil_temperature_0cm[h];
+			return time.startsWith(date) && value !== null ? [value] : [];
+		});
+		if (rain === null || et0 === null || ground.length < 24) return [];
+		return [{ date, rain, et0, groundMin: Math.min(...ground) }];
+	});
+}
+
+/** The week before `today` and the week from it, for watering and ground frost (X-16). */
+export async function fetchGarden(
+	coordinates: Coordinates,
+	today: string,
+	fetchFn: typeof fetch = fetch
+): Promise<GardenDay[]> {
+	const { lat, lon } = roundCoordinates(coordinates);
+	if (useFixtures()) {
+		return toGarden(fixtures[`./fixtures/garden-${nearestFixture({ lat, lon })}.json`].default);
+	}
+	const url = new URL(FORECAST_URL);
+	url.search = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		daily: 'precipitation_sum,et0_fao_evapotranspiration',
+		hourly: 'soil_temperature_0cm',
+		timezone: 'auto',
+		start_date: addDays(today, -7),
+		end_date: addDays(today, 6)
+	}).toString();
+	return toGarden(await getJson(url, fetchFn));
 }
 
 const gridSchema = z.array(

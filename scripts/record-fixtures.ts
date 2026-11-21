@@ -1,7 +1,8 @@
 // Records Open-Meteo responses into src/lib/server/fixtures for tests, e2e and demos (T-08, T-10).
 // Each live forecast gets its ensemble (`ensemble-*`), model comparison (`models-*`), climate
-// history (`climate-*`), air quality (`air-*`), the past year (`year-*`) and the rain of the 60 days
-// before (`recent-*`) for the same days.
+// history (`climate-*`), air quality (`air-*`), the past year (`year-*`), the rain of the 60 days
+// before (`recent-*`), the 30 days before as forecast a day ahead (`hindcast-*`) and a week either
+// side for the garden (`garden-*`).
 // Run: node scripts/record-fixtures.ts [name ...]   (no names records all of them)
 //
 // Live forecasts are recorded as they are today. Past scenarios (polar night, midnight sun, a heat
@@ -110,6 +111,7 @@ async function record(name: string, { lat, lon, past }: Fixture) {
 		await recordYear(name.replace('forecast-', 'year-'), lat, lon, first);
 		await recordRecent(name.replace('forecast-', 'recent-'), lat, lon, first);
 		await recordHindcast(name.replace('forecast-', 'hindcast-'), lat, lon, first);
+		await recordGarden(name.replace('forecast-', 'garden-'), lat, lon, first);
 	}
 	const codes = [...new Set(data.hourly.weather_code.slice(0, 48))].sort((a, b) => a - b);
 	console.log(
@@ -260,6 +262,26 @@ async function recordHindcast(name: string, lat: number, lon: number, firstHour:
 		end_date: addDays(today, -1)
 	});
 	const response = await fetch(`https://previous-runs-api.open-meteo.com/v1/forecast?${params}`);
+	if (!response.ok) throw new Error(`${name}: ${response.status} ${await response.text()}`);
+	writeFileSync(
+		new URL(`../src/lib/server/fixtures/${name}.json`, import.meta.url),
+		JSON.stringify(await response.json()) + '\n'
+	);
+}
+
+// Rain, evaporation and the soil surface a week either side of the first day (`garden-*`, X-16).
+async function recordGarden(name: string, lat: number, lon: number, firstHour: string) {
+	const today = firstHour.slice(0, 10);
+	const params = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		daily: 'precipitation_sum,et0_fao_evapotranspiration',
+		hourly: 'soil_temperature_0cm',
+		timezone: 'auto',
+		start_date: addDays(today, -7),
+		end_date: addDays(today, 6)
+	});
+	const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
 	if (!response.ok) throw new Error(`${name}: ${response.status} ${await response.text()}`);
 	writeFileSync(
 		new URL(`../src/lib/server/fixtures/${name}.json`, import.meta.url),
