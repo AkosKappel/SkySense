@@ -102,7 +102,12 @@
 
 <main class="mx-auto flex min-h-dvh max-w-xl flex-col px-4 pt-4">
 	<header class="flex items-center gap-3">
-		<a href={resolve('/')} aria-label={m.back()} class="grid size-11 pill place-items-center">
+		<a
+			href={resolve('/')}
+			aria-label={m.back()}
+			title={m.back()}
+			class="grid size-11 pill place-items-center"
+		>
 			<ArrowLeft size={18} aria-hidden="true" />
 		</a>
 		<h1 class="text-2xl font-extrabold">{m.settings()}</h1>

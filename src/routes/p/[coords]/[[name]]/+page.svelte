@@ -430,6 +430,7 @@
 				<a
 					href={neighbours.previous.href}
 					aria-label={m.previous_place({ name: neighbours.previous.label })}
+					title={m.previous_place({ name: neighbours.previous.label })}
 					class="hidden size-11 pill place-items-center min-[380px]:grid"
 				>
 					<ChevronLeft size={18} aria-hidden="true" />
@@ -437,6 +438,7 @@
 				<a
 					href={neighbours.next.href}
 					aria-label={m.next_place({ name: neighbours.next.label })}
+					title={m.next_place({ name: neighbours.next.label })}
 					class="hidden size-11 pill place-items-center min-[380px]:grid"
 				>
 					<ChevronRight size={18} aria-hidden="true" />
@@ -461,6 +463,7 @@
 				})}
 				data-sveltekit-reload
 				aria-label={m.map_link()}
+				title={m.map_link()}
 				class="grid size-11 pill place-items-center"
 			>
 				<MapIcon size={18} aria-hidden="true" />
@@ -468,6 +471,7 @@
 			<a
 				href={resolve('/settings')}
 				aria-label={m.settings()}
+				title={m.settings()}
 				class="grid size-11 pill place-items-center"
 			>
 				<Settings size={18} aria-hidden="true" />

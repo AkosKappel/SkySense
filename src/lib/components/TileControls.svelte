@@ -82,6 +82,7 @@
 		type="button"
 		class="{button} cursor-grab touch-none active:cursor-grabbing"
 		aria-label={m.tile_drag({ tile: name })}
+		title={m.tile_drag({ tile: name })}
 		onpointerdown={start}
 	>
 		<GripVertical size={18} aria-hidden="true" />
@@ -91,6 +92,7 @@
 		type="button"
 		class={button}
 		aria-label={m.tile_up({ tile: name })}
+		title={m.tile_up({ tile: name })}
 		disabled={first}
 		onclick={() => onstep(-1)}
 	>
@@ -100,6 +102,7 @@
 		type="button"
 		class={button}
 		aria-label={m.tile_down({ tile: name })}
+		title={m.tile_down({ tile: name })}
 		disabled={last}
 		onclick={() => onstep(1)}
 	>
@@ -110,6 +113,7 @@
 		type="button"
 		class="{button} hidden md:grid"
 		aria-label={tile.wide ? m.tile_narrow({ tile: name }) : m.tile_wide({ tile: name })}
+		title={tile.wide ? m.tile_narrow({ tile: name }) : m.tile_wide({ tile: name })}
 		onclick={() => onchange({ wide: !tile.wide })}
 	>
 		{#if tile.wide}<Minimize2 size={18} aria-hidden="true" />{:else}<Maximize2
@@ -121,6 +125,7 @@
 		type="button"
 		class={button}
 		aria-label={m.tile_hide({ tile: name })}
+		title={m.tile_hide({ tile: name })}
 		onclick={() => onchange({ hidden: true })}
 	>
 		<EyeOff size={18} aria-hidden="true" />

@@ -65,6 +65,7 @@
 				name: encodeURIComponent(nameA)
 			})}
 			aria-label={m.back_to_forecast()}
+			title={m.back_to_forecast()}
 			class="grid size-11 shrink-0 pill place-items-center"
 		>
 			<ArrowLeft size={18} aria-hidden="true" />

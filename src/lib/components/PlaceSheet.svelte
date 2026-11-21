@@ -50,7 +50,13 @@
 		<div class="p-6">
 			<div class="flex items-center justify-between gap-4">
 				<h2 id="place-sheet-title" class="answer">{m.change_place()}</h2>
-				<button type="button" class="icon-button" aria-label={m.close()} onclick={dismiss}>
+				<button
+					type="button"
+					class="icon-button"
+					aria-label={m.close()}
+					title={m.close()}
+					onclick={dismiss}
+				>
 					<X size={20} aria-hidden="true" />
 				</button>
 			</div>

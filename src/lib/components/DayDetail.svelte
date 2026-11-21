@@ -45,6 +45,7 @@
 	<a
 		href={forecastHref}
 		aria-label={m.back_to_forecast()}
+		title={m.back_to_forecast()}
 		class="grid size-11 shrink-0 pill place-items-center"
 	>
 		<ArrowLeft size={18} aria-hidden="true" />
@@ -58,6 +59,7 @@
 				<a
 					href="{forecastHref}?day={to.date}"
 					aria-label={label({ day: f.date(to.date) })}
+					title={label({ day: f.date(to.date) })}
 					data-sveltekit-noscroll
 					class="grid size-11 pill place-items-center"
 				>

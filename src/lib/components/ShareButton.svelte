@@ -36,6 +36,7 @@
 	type="button"
 	class="grid size-11 pill place-items-center"
 	aria-label={m.share()}
+	title={m.share()}
 	onclick={share}
 >
 	<Share2 size={18} aria-hidden="true" />

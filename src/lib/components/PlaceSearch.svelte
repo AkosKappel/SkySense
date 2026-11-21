@@ -177,6 +177,7 @@
 					type="button"
 					class="absolute top-1/2 right-1.5 icon-button -translate-y-1/2"
 					aria-label={m.clear_search()}
+					title={m.clear_search()}
 					onclick={clear}
 				>
 					<X size={20} aria-hidden="true" />
@@ -189,6 +190,7 @@
 				onclick={useMyLocation}
 				disabled={locating}
 				aria-label={locating ? m.locating() : m.use_my_location()}
+				title={locating ? m.locating() : m.use_my_location()}
 				class="grid size-12 shrink-0 pill cursor-pointer place-items-center disabled:cursor-wait"
 			>
 				{#if locating}

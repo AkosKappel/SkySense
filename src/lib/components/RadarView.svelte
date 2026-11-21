@@ -430,6 +430,7 @@
 						type="button"
 						class="grid size-11 shrink-0 pill cursor-pointer place-items-center disabled:opacity-50"
 						aria-label={m.radar_previous()}
+						title={m.radar_previous()}
 						disabled={index === 0}
 						onclick={() => stepBy(-1)}
 					>
@@ -439,6 +440,7 @@
 						type="button"
 						class="grid size-11 shrink-0 pill cursor-pointer place-items-center"
 						aria-label={playing ? m.radar_pause() : m.radar_play()}
+						title={playing ? m.radar_pause() : m.radar_play()}
 						aria-pressed={playing}
 						onclick={() => (playing = !playing)}
 					>
@@ -451,6 +453,7 @@
 						type="button"
 						class="grid size-11 shrink-0 pill cursor-pointer place-items-center disabled:opacity-50"
 						aria-label={m.radar_next()}
+						title={m.radar_next()}
 						disabled={index === steps.length - 1}
 						onclick={() => stepBy(1)}
 					>
@@ -461,6 +464,7 @@
 							type="button"
 							class="grid size-11 shrink-0 pill cursor-pointer place-items-center"
 							aria-label={fullscreen ? m.radar_fullscreen_leave() : m.radar_fullscreen()}
+							title={fullscreen ? m.radar_fullscreen_leave() : m.radar_fullscreen()}
 							onclick={toggleFullscreen}
 						>
 							{#if fullscreen}<Minimize size={18} aria-hidden="true" />{:else}<Maximize

@@ -35,7 +35,13 @@
 			<Keyboard size={18} aria-hidden="true" />
 			{m.shortcuts_title()}
 		</h2>
-		<button type="button" class="icon-button" aria-label={m.close()} onclick={() => (open = false)}>
+		<button
+			type="button"
+			class="icon-button"
+			aria-label={m.close()}
+			title={m.close()}
+			onclick={() => (open = false)}
+		>
 			<X size={20} aria-hidden="true" />
 		</button>
 	</div>

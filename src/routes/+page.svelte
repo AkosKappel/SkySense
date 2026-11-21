@@ -70,6 +70,7 @@
 		<a
 			href={resolve('/settings')}
 			aria-label={m.settings()}
+			title={m.settings()}
 			class="grid size-11 pill place-items-center"
 		>
 			<Settings size={18} aria-hidden="true" />
@@ -156,6 +157,7 @@
 										type="button"
 										class="icon-button"
 										aria-label={m.move_up({ name: place.name })}
+										title={m.move_up({ name: place.name })}
 										disabled={i === 0}
 										onclick={() => savedPlaces.move(i, -1)}
 									>
@@ -165,6 +167,7 @@
 										type="button"
 										class="icon-button"
 										aria-label={m.move_down({ name: place.name })}
+										title={m.move_down({ name: place.name })}
 										disabled={i === savedPlaces.list.length - 1}
 										onclick={() => savedPlaces.move(i, 1)}
 									>
@@ -174,6 +177,7 @@
 										type="button"
 										class="mr-1 icon-button"
 										aria-label={m.remove_place({ name: place.name })}
+										title={m.remove_place({ name: place.name })}
 										onclick={() => remove(i)}
 									>
 										<X size={18} aria-hidden="true" />
