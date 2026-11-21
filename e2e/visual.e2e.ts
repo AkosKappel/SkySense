@@ -8,6 +8,8 @@ import { blankMapTiles, placeReady } from './helpers.js';
 // `pnpm test:e2e visual --update-snapshots` and look at every changed image before committing.
 test.skip(process.platform !== 'linux', 'Snapshots are rendered on Linux');
 
+// The place page says how far its clock is from the reader's, and CI runs in UTC.
+test.use({ timezoneId: 'Europe/Bratislava' });
 test.beforeEach(({ page }) => blankMapTiles(page));
 
 const pages = [
@@ -32,6 +34,8 @@ for (const colorScheme of ['dark', 'light'] as const) {
 			await expect(page).toHaveScreenshot(`${name}-${colorScheme}.png`, {
 				fullPage: true,
 				animations: 'disabled',
+				// "Updated 2 minutes ago" depends on when the server cached the forecast.
+				mask: [page.getByText(/^Updated /)],
 				maxDiffPixelRatio: 0.01
 			});
 		});
