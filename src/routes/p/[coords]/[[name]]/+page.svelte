@@ -22,9 +22,7 @@
 	import AirTile from '#lib/components/AirTile.svelte';
 	import DailyList from '#lib/components/DailyList.svelte';
 	import DayDetail from '#lib/components/DayDetail.svelte';
-	import ClimateTiles from '#lib/components/ClimateTiles.svelte';
-	import DryTile from '#lib/components/DryTile.svelte';
-	import HindcastTile from '#lib/components/HindcastTile.svelte';
+	import WhenNear from '#lib/components/WhenNear.svelte';
 	import WindDial from '#lib/components/WindDial.svelte';
 	import TomorrowTile from '#lib/components/TomorrowTile.svelte';
 	import CompareWith from '#lib/components/CompareWith.svelte';
@@ -691,16 +689,17 @@
 						/>
 					</section>
 
-					<ClimateTiles
-						coordinates={data.coordinates}
-						date={today.date}
-						max={today.max}
-						place={name}
-						{f}
-					>
-						<DryTile coordinates={data.coordinates} today={today.date} {f} />
-						<HindcastTile coordinates={data.coordinates} today={today.date} {f} />
-					</ClimateTiles>
+					<WhenNear>
+						{#await import('#lib/components/PastTiles.svelte') then { default: PastTiles }}
+							<PastTiles
+								coordinates={data.coordinates}
+								date={today.date}
+								max={today.max}
+								place={name}
+								{f}
+							/>
+						{/await}
+					</WhenNear>
 				</div>
 			</div>
 		</div>

@@ -14,11 +14,17 @@ export async function savePlace(page: Page) {
 }
 
 /**
- * Waits until a place page runs in the browser: the climate tile is fetched by the browser after
- * hydration, so once it shows, clicks reach their handlers instead of the links' fallbacks.
+ * Waits until a place page runs in the browser: the climate tile loads only in the browser, once
+ * it is scrolled near, so once it shows, clicks reach their handlers instead of the links'
+ * fallbacks. Scrolls down to load it, then back to the top.
  */
 export async function placeReady(page: Page) {
-	await expect(page.getByText('Is this normal for the time of year?')).toBeVisible();
+	const normal = page.getByText('Is this normal for the time of year?');
+	await expect(async () => {
+		await page.evaluate(() => scrollTo(0, document.body.scrollHeight));
+		await expect(normal).toBeVisible({ timeout: 2000 });
+	}).toPass({ timeout: 20000 });
+	await page.evaluate(() => scrollTo(0, 0));
 }
 
 const blankPng = Buffer.from(

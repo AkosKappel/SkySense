@@ -199,6 +199,7 @@ test('compares weather models behind a link', async ({ page }) => {
 
 test('compares today with the climate and past years', async ({ page }) => {
 	await page.goto('/p/48.15,17.11/Bratislava');
+	await placeReady(page);
 	const normal = page.locator('section', { hasText: 'Is this normal for the time of year?' });
 	await expect(normal.getByText(/than usual\.|About normal/)).toBeVisible();
 	await expect(normal.getByText(/\(1991 to 2020\)/)).toBeVisible();
@@ -210,6 +211,7 @@ test('compares today with the climate and past years', async ({ page }) => {
 
 test('says how long it has been dry', async ({ page }) => {
 	await page.goto('/p/48.15,17.11/Bratislava');
+	await placeReady(page);
 	const dry = page.locator('section', { hasText: 'How dry has it been?' });
 	await expect(dry.getByText('Dry for 9 days.')).toBeVisible();
 	await expect(dry.getByText(/^Last rain: .+ on Saturday 31 October\.$/)).toBeVisible();
@@ -421,8 +423,26 @@ test('steps through saved places with previous and next', async ({ page }) => {
 	expect((await name.boundingBox())?.width).toBeGreaterThan(40);
 });
 
+test("says how good yesterday's forecast was", async ({ page }) => {
+	await page.goto('/p/48.15,17.11/Bratislava');
+	await placeReady(page);
+	const check = page.locator('section', { hasText: 'How good was the forecast?' });
+	await expect(check.getByText("Yesterday's forecast for the high was 2° too warm.")).toBeVisible();
+	await expect(check.getByText('Right on 27 of the last 30 days.')).toBeVisible();
+});
+
+test('says what tomorrow brings next to today', async ({ page }) => {
+	await page.goto('/p/48.15,17.11/Bratislava');
+	const tomorrow = page.locator('section', { hasText: 'What about tomorrow?' });
+	await expect(
+		tomorrow.getByText('About as warm as today, up to 6°. Dry during the day.')
+	).toBeVisible();
+	await expect(tomorrow.getByText(/Low 3° · 23% chance of rain/)).toBeVisible();
+});
+
 test('shows the past year from the "past years" tile', async ({ page }) => {
 	await page.goto('/p/48.15,17.11/Bratislava');
+	await placeReady(page);
 	await page.getByRole('link', { name: 'The past year in Bratislava' }).click();
 	await expect(page).toHaveURL(/\?year$/);
 	await expect(
