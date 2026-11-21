@@ -65,6 +65,7 @@
 	"compare_title": "Weather models for {place}",
 	"compare_title_two": "{a} or {b}?",
 	"compare_with": "Compare with",
+	"compass_north": "N",
 	"cond_clear": "Clear",
 	"cond_cloudy": "Cloudy",
 	"cond_drizzle": "Drizzle",

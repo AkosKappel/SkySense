@@ -5,7 +5,6 @@
 		ChevronRight,
 		MapPin,
 		Moon,
-		Navigation,
 		Plus,
 		Settings,
 		Sparkles,
@@ -26,6 +25,7 @@
 	import ClimateTiles from '#lib/components/ClimateTiles.svelte';
 	import DryTile from '#lib/components/DryTile.svelte';
 	import HindcastTile from '#lib/components/HindcastTile.svelte';
+	import WindDial from '#lib/components/WindDial.svelte';
 	import CompareWith from '#lib/components/CompareWith.svelte';
 	import DayFacts from '#lib/components/DayFacts.svelte';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
@@ -633,16 +633,16 @@
 					</section>
 
 					<section class="glass p-6">
-						<p class="question"><Wind size={18} aria-hidden="true" /> {m.wind_question()}</p>
-						<p class="mt-2 answer">{windAnswer}</p>
-						<p class="mt-2 flex items-center gap-1.5 text-sm text-ink-muted">
-							<Navigation
-								size={14}
-								aria-hidden="true"
-								style="transform: rotate({now.windDirection + 180}deg)"
-							/>
-							{direction} · {m.wind_detail({ speed: f.wind(now.wind), gust: f.wind(now.gust) })}
-						</p>
+						<div class="flex items-start justify-between gap-4">
+							<div class="min-w-0">
+								<p class="question"><Wind size={18} aria-hidden="true" /> {m.wind_question()}</p>
+								<p class="mt-2 answer">{windAnswer}</p>
+								<p class="mt-2 text-sm text-ink-muted">
+									{direction} · {m.wind_detail({ speed: f.wind(now.wind), gust: f.wind(now.gust) })}
+								</p>
+							</div>
+							<WindDial from={now.windDirection} />
+						</div>
 						{#if strongestGust >= STRONG_GUST_KMH}
 							<p class="mt-3 flex items-start gap-1.5 text-sm font-semibold text-sun">
 								<TriangleAlert size={16} class="mt-0.5 shrink-0" aria-hidden="true" />
