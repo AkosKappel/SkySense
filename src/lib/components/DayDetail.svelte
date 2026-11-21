@@ -81,7 +81,7 @@
 				{m.high_low({ max: f.temp(day.max), min: f.temp(day.min) })}
 			</p>
 		</div>
-		<WeatherIcon condition={day.condition} size={72} strokeWidth={1.25} class="shrink-0" />
+		<WeatherIcon condition={day.condition} size={72} strokeWidth={1.25} halo />
 	</section>
 
 	<section class="glass p-6">

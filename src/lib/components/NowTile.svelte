@@ -77,7 +77,9 @@
 				<p class="text-sm font-medium text-ink-muted">
 					{selected === 0 ? m.now_at({ time: when }) : m.at_time({ time: when })}
 				</p>
-				<p class="mt-2 text-8xl font-bold tracking-tight tabular-nums">{f.temp(shown.temp)}</p>
+				<p class="mt-2 text-7xl font-bold tracking-tight tabular-nums min-[380px]:text-8xl">
+					{f.temp(shown.temp)}
+				</p>
 				<p class="mt-1 text-lg">
 					{conditionLabel(shown.condition, shown.isDay)} · {m.feels_like({
 						temp: f.temp(shown.feels)
@@ -90,7 +92,7 @@
 				size={88}
 				strokeWidth={1.25}
 				animated
-				class="shrink-0 drop-shadow-[0_0_24px_rgba(251,191,36,.35)]"
+				halo
 			/>
 		</div>
 		<div class="@2xl:[&>:first-child]:mt-0">

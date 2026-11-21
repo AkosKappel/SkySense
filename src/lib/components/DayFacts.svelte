@@ -1,5 +1,17 @@
 <script lang="ts">
-	import { CloudFog, Droplets, Gauge } from '@lucide/svelte';
+	import {
+		CloudFog,
+		CloudRain,
+		Droplet,
+		Droplets,
+		Eye,
+		Gauge,
+		Sun,
+		Sunrise,
+		Sunset,
+		Thermometer,
+		Umbrella
+	} from '@lucide/svelte';
 	import Meter from '#lib/components/Meter.svelte';
 	import { dewComfort, fogAhead } from '#lib/details.js';
 	import { uvLevel, type Formatter } from '#lib/format.js';
@@ -56,10 +68,22 @@
 			extreme: m.uv_extreme
 		}[uvLevel(day.uvMax)]()
 	);
+	// The level as a badge in the colour of its band, so a high UV stands out at a glance.
+	const uvTone = $derived(
+		{
+			low: 'bg-good/15 text-good',
+			moderate: 'bg-sun/15 text-sun',
+			high: 'bg-warm/20 text-warm',
+			veryHigh: 'bg-rose/15 text-rose',
+			extreme: 'bg-rose/25 text-rose'
+		}[uvLevel(day.uvMax)]
+	);
 
 	type Fact = {
 		label: string;
+		Icon: typeof Sun;
 		value: string;
+		badge?: { text: string; tone: string };
 		meter?: { value: number; min: number; max: number; bands?: [number, string][] };
 	};
 	// UV bands follow the WHO scale: low, moderate, high, very high and extreme.
@@ -75,28 +99,32 @@
 			[
 				{
 					label: m.uv_index(),
-					value: `${Math.round(day.uvMax)} · ${uvLabel}`,
+					Icon: Sun,
+					value: String(Math.round(day.uvMax)),
+					badge: { text: uvLabel, tone: uvTone },
 					meter: { value: day.uvMax, min: 0, max: 12, bands: uvBands }
 				},
 				humidity === undefined
 					? null
 					: {
 							label: m.humidity(),
+							Icon: Droplet,
 							value: f.percent(humidity),
 							meter: { value: humidity, min: 0, max: 100 }
 						},
-				dewText === null ? null : { label: m.dew_point(), value: dewText },
+				dewText === null ? null : { label: m.dew_point(), Icon: Thermometer, value: dewText },
 				hour?.visibility === undefined
 					? null
-					: { label: m.visibility(), value: f.distance(hour.visibility) },
-				{ label: m.rain_amount(), value: f.rain(day.rain) },
+					: { label: m.visibility(), Icon: Eye, value: f.distance(hour.visibility) },
+				{ label: m.rain_amount(), Icon: CloudRain, value: f.rain(day.rain) },
 				{
 					label: m.rain_chance_label(),
+					Icon: Umbrella,
 					value: f.percent(day.rainChance),
 					meter: { value: day.rainChance, min: 0, max: 100 }
 				},
-				{ label: m.sunrise(), value: day.sunrise ? f.time(day.sunrise) : '–' },
-				{ label: m.sunset(), value: day.sunset ? f.time(day.sunset) : '–' }
+				{ label: m.sunrise(), Icon: Sunrise, value: day.sunrise ? f.time(day.sunrise) : '–' },
+				{ label: m.sunset(), Icon: Sunset, value: day.sunset ? f.time(day.sunset) : '–' }
 			] satisfies (Fact | null)[]
 		).filter((fact) => fact !== null)
 	);
@@ -104,18 +132,27 @@
 
 <!-- An odd last fact spans both columns rather than leaving a gap beside it. -->
 <dl class="mt-4 grid grid-cols-2 gap-3 [&>:last-child:nth-child(odd)]:col-span-2">
-	{#each facts as { label, value, meter } (label)}
+	{#each facts as { label, Icon, value, badge, meter } (label)}
 		<div class="rounded-2xl bg-veil/5 p-4 outline-1 outline-veil/10">
-			<dt class="text-sm wrap-anywhere hyphens-auto text-ink-muted">{label}</dt>
+			<dt class="flex items-center gap-1.5 text-sm wrap-anywhere hyphens-auto text-ink-muted">
+				<Icon size={16} class="shrink-0" aria-hidden="true" />
+				{label}
+			</dt>
 			<dd class="mt-1 text-xl font-bold tabular-nums">
 				<span>{value}</span>
+				{#if badge}<span class="ml-1 rounded-full px-2 py-0.5 align-middle text-sm {badge.tone}">
+						{badge.text}
+					</span>{/if}
 				{#if meter}<Meter {...meter} />{/if}
 			</dd>
 		</div>
 	{/each}
 	{#if pressureText && pressure}
 		<div class="col-span-2 rounded-2xl bg-veil/5 p-4 outline-1 outline-veil/10">
-			<dt class="text-sm text-ink-muted">{m.pressure()}</dt>
+			<dt class="flex items-center gap-1.5 text-sm text-ink-muted">
+				<Gauge size={16} class="shrink-0" aria-hidden="true" />
+				{m.pressure()}
+			</dt>
 			<dd class="mt-1 text-xl font-bold tabular-nums">
 				<span>{pressureText}</span>
 				<!-- From a deep low to a strong high; most days sit between 1000 and 1030 hPa. -->

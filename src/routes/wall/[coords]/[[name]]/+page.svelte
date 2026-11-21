@@ -154,7 +154,7 @@
 		<p class="mt-1 text-lg text-ink-muted md:text-xl">{f.date(local.slice(0, 10))}</p>
 
 		<div class="mt-8 flex items-center gap-5">
-			<WeatherIcon condition={now.condition} isDay={now.isDay} size={88} strokeWidth={1.25} />
+			<WeatherIcon condition={now.condition} isDay={now.isDay} size={88} strokeWidth={1.25} halo />
 			<div>
 				<p class="text-6xl font-bold tracking-tight tabular-nums md:text-7xl">{f.temp(now.temp)}</p>
 				<p class="mt-1 text-lg md:text-xl">{conditionLabel(now.condition, now.isDay)}</p>
