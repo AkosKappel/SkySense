@@ -20,10 +20,11 @@ export async function savePlace(page: Page) {
  */
 export async function placeReady(page: Page) {
 	const normal = page.getByText('Is this normal for the time of year?');
+	const spot = page.locator('[data-when-near]');
 	await expect(async () => {
-		await page.evaluate(() => scrollTo(0, document.body.scrollHeight));
-		await expect(normal).toBeVisible({ timeout: 2000 });
-	}).toPass({ timeout: 20000 });
+		if (await spot.count()) await spot.scrollIntoViewIfNeeded({ timeout: 2000 });
+		await expect(normal).toBeVisible({ timeout: 5000 });
+	}).toPass({ timeout: 30000 });
 	await page.evaluate(() => scrollTo(0, 0));
 }
 

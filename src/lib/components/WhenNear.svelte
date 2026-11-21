@@ -25,5 +25,5 @@
 {#if near}
 	{@render children()}
 {:else}
-	<div bind:this={marker} aria-hidden="true"></div>
+	<div bind:this={marker} aria-hidden="true" data-when-near></div>
 {/if}
