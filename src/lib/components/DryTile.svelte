@@ -2,7 +2,7 @@
 	import { Sprout } from '@lucide/svelte';
 	import type { Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
-	import { drySpell, type RainDay } from '#lib/recent.js';
+	import { drySpell, WET_OF, wetRun, type RainDay } from '#lib/recent.js';
 	import type { Coordinates } from '#lib/weather.js';
 
 	// How dry it has been (H-04). Loaded in the browser like the climate tiles: it is extra, and the
@@ -25,6 +25,7 @@
 	});
 
 	const spell = $derived(days ? drySpell(days, today) : null);
+	const wet = $derived(days ? wetRun(days, today) : null);
 </script>
 
 {#if spell}
@@ -41,6 +42,9 @@
 			<p class="mt-2 text-sm text-ink-muted">
 				{m.dry_last({ rain: f.rain(spell.last.rain), date: f.date(spell.last.date) })}
 			</p>
+		{/if}
+		{#if wet}
+			<p class="mt-1 text-sm text-ink-muted">{m.dry_wet_run({ wet, days: WET_OF })}</p>
 		{/if}
 		{#if spell.month}
 			<p class="mt-1 text-sm text-ink-muted">{m.dry_month({ rain: f.rain(spell.month.rain) })}</p>

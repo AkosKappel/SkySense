@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { drySpell } from './recent.js';
+import { drySpell, wetRun } from './recent.js';
 
 const days = (rains: number[], start = '2026-10-28') =>
 	rains.map((rain, i) => {
@@ -31,5 +31,19 @@ describe('drySpell', () => {
 
 	it('gives nothing without past days', () => {
 		expect(drySpell([], '2026-11-10')).toBeNull();
+	});
+});
+
+describe('wetRun', () => {
+	const days = (rain: number[]) =>
+		rain.map((mm, i) => ({ date: `2026-11-${String(i + 1).padStart(2, '0')}`, rain: mm }));
+
+	it('counts rain days among the last ten when most of them were wet', () => {
+		expect(wetRun(days([0, 0, 5, 2, 1, 0, 3, 4, 1, 6, 2, 9]), '2026-11-13')).toBe(9);
+		expect(wetRun(days([5, 5, 5, 0, 0, 0, 0, 2, 2, 2, 2]), '2026-11-12')).toBeNull();
+	});
+
+	it('leaves out today and needs ten days', () => {
+		expect(wetRun(days([1, 1, 1, 1, 1, 1, 1, 1, 1]), '2026-11-10')).toBeNull();
 	});
 });

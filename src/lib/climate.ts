@@ -48,3 +48,17 @@ export function forDate(climate: Climate, date: string) {
 			.toSorted((a, b) => b.date.localeCompare(a.date))
 	};
 }
+
+/** Fewer past years than this make "the warmest in years" too easy to reach. */
+const RECORD_YEARS = 5;
+
+/**
+ * Whether today's high would beat the same date in every past year loaded (F-27), as a fact for
+ * the past-years tile; null when it would not or too few years are known.
+ */
+export function pastRecord(max: number, past: PastDay[]): 'warmest' | 'coldest' | null {
+	if (past.length < RECORD_YEARS) return null;
+	if (past.every((d) => max > d.max)) return 'warmest';
+	if (past.every((d) => max < d.max)) return 'coldest';
+	return null;
+}

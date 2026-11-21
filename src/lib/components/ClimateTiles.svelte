@@ -3,7 +3,7 @@
 	import type { Snippet } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { compareToNormal, forDate, type Climate } from '#lib/climate.js';
+	import { compareToNormal, forDate, pastRecord, type Climate } from '#lib/climate.js';
 	import type { Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import type { Coordinates } from '#lib/weather.js';
@@ -43,6 +43,7 @@
 
 	const day = $derived(climate ? forDate(climate, date) : null);
 	const comparison = $derived(day?.normal ? compareToNormal(max, day.normal) : null);
+	const record = $derived(day ? pastRecord(max, day.past) : null);
 	const extremes = $derived.by(() => {
 		const past = day?.past ?? [];
 		if (past.length < 2) return null;
@@ -92,6 +93,13 @@
 				cold: f.temp(extremes.cold.max)
 			})}
 		</p>
+		{#if record}
+			<p class="mt-1 text-sm text-ink-muted">
+				{(record === 'warmest' ? m.past_record_warmest : m.past_record_coldest)({
+					years: day.past.length
+				})}
+			</p>
+		{/if}
 		<div class="relative mt-4 overflow-x-auto">
 			<table class="w-full text-sm tabular-nums">
 				<caption class="sr-only">{m.past_question()}</caption>

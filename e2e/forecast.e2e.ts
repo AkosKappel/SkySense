@@ -423,6 +423,13 @@ test('steps through saved places with previous and next', async ({ page }) => {
 	expect((await name.boundingBox())?.width).toBeGreaterThan(40);
 });
 
+test('says when most of the last ten days were wet', async ({ page }) => {
+	await page.goto('/p/1.29,103.85/Singapore');
+	await placeReady(page);
+	const dry = page.locator('section', { hasText: 'How dry has it been?' });
+	await expect(dry.getByText('Rain on 8 of the last 10 days.')).toBeVisible();
+});
+
 test("says how good yesterday's forecast was", async ({ page }) => {
 	await page.goto('/p/48.15,17.11/Bratislava');
 	await placeReady(page);

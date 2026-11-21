@@ -36,3 +36,15 @@ export function drySpell(days: RainDay[], today: string): DrySpell | null {
 			: null
 	};
 }
+
+/** A wet run worth a line: rain on at least this many of the last `WET_OF` days (F-27). */
+export const WET_DAYS = 7;
+export const WET_OF = 10;
+
+/** How many of the last 10 days before `today` had rain, when that is most of them; else null. */
+export function wetRun(days: RainDay[], today: string): number | null {
+	const last = days.filter((d) => d.date < today).slice(-WET_OF);
+	if (last.length < WET_OF) return null;
+	const wet = last.filter((d) => d.rain >= RAIN_DAY_MM).length;
+	return wet >= WET_DAYS ? wet : null;
+}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { toClimate } from '#lib/server/open-meteo.js';
-import { compareToNormal, forDate, percentBelow, type Normal } from './climate.js';
+import { compareToNormal, forDate, pastRecord, percentBelow, type Normal } from './climate.js';
 
 const deciles = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const normal: Normal = { date: '2026-11-10', max: deciles.map((d) => d + 5), min: deciles };
@@ -62,5 +62,24 @@ describe('toClimate', () => {
 			'2016'
 		]);
 		expect(past[1].rain).toBe(3);
+	});
+});
+
+describe('pastRecord', () => {
+	const past = [8, 11, 6, 9, 10].map((max, i) => ({
+		date: `${2020 + i}-11-21`,
+		max,
+		min: 0,
+		rain: 0
+	}));
+
+	it('names a high above or below every past year', () => {
+		expect(pastRecord(12, past)).toBe('warmest');
+		expect(pastRecord(5, past)).toBe('coldest');
+		expect(pastRecord(11, past)).toBeNull();
+	});
+
+	it('needs at least five years', () => {
+		expect(pastRecord(20, past.slice(1))).toBeNull();
 	});
 });
