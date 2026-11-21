@@ -16,7 +16,7 @@ pnpm only (`pnpm-lock.yaml`).
 | `pnpm test:e2e` | Playwright against `pnpm build && pnpm preview` (port 4173)     |
 | `pnpm build`    | Production build with `adapter-vercel`                          |
 
-Run `lint`, `check`, `test` and `build` before committing, and `test:e2e` before pushing: CI runs it too, and Lighthouse's script budgets (`lighthouserc.json`) fail CI, so `e2e/budget.e2e.ts` checks them first. Each script file counts its headers, so many tiny chunks add up; `vite.config.ts` groups shared icons and messages.
+Run `lint`, `check`, `test` and `build` before committing, and `test:e2e` before pushing: CI runs it too, and Lighthouse's script budgets (`lighthouserc.json`) fail CI, so `e2e/budget.e2e.ts` checks them first. Each script file counts its headers, so many tiny chunks add up; `vite.config.ts` groups shared icons and messages. The budgets cover the first load: tiles below the fold load with `WhenNear`, and `lighthouserc.json` turns off Lighthouse's full-page screenshot, which stretches the viewport over the whole page and would load them all.
 
 ## Architecture
 

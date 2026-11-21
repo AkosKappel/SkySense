@@ -15,7 +15,8 @@
 			"settings": {
 				"preset": "desktop",
 				"chromeFlags": "--no-sandbox --headless=new",
-				"skipAudits": ["is-crawlable"]
+				"skipAudits": ["is-crawlable"],
+				"disableFullPageScreenshot": true
 			}
 		},
 		"assert": {

@@ -734,9 +734,11 @@ test('arranges the tiles and keeps the layout', async ({ page }) => {
 
 	// Dragging by the handle onto another tile takes that tile's place.
 	const handle = page.getByRole('button', { name: 'Drag to move: Today in detail' });
-	await handle.scrollIntoViewIfNeeded();
+	// Mid-screen, clear of the edit bar pinned to the bottom, and pressed through hover, which fails
+	// if anything covers the handle.
+	await handle.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+	await handle.hover();
 	const from = (await handle.boundingBox())!;
-	await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
 	await page.mouse.down();
 	// Held at the top edge, the page scrolls and the tile passes the 10 days above it.
 	await page.mouse.move(from.x + from.width / 2, 8, { steps: 8 });
