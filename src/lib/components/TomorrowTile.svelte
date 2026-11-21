@@ -25,11 +25,6 @@
 			wind: Math.max(0, ...hours.filter((h) => h.time.startsWith(day.date)).map((h) => h.wind))
 		}))
 	);
-	const dayHref = (date: string) =>
-		`${resolve('/p/[coords]/[[name]]', {
-			coords: page.params.coords ?? '',
-			name: encodeURIComponent(page.params.name ?? '')
-		})}?day=${date}`;
 
 	const tempText = $derived.by(() => {
 		if (!outlook) return '';
@@ -81,7 +76,10 @@
 			{#each next as { day, wind } (day.date)}
 				<li>
 					<a
-						href={dayHref(day.date)}
+						href="{resolve('/p/[coords]/[[name]]', {
+							coords: page.params.coords ?? '',
+							name: encodeURIComponent(page.params.name ?? '')
+						})}?day={day.date}"
 						class="flex h-full flex-col items-center gap-1 rounded-2xl bg-veil/5 px-2 py-3 text-center transition hover:bg-veil/10 sm:py-4"
 					>
 						<span class="text-sm font-semibold">{f.weekday(day.date)}</span>
