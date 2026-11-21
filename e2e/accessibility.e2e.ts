@@ -46,6 +46,11 @@ for (const path of pages.slice(0, 14)) {
 		await context.addCookies([
 			{ name: 'skysense_theme', value: 'light', url: 'http://localhost:4173' }
 		]);
+		// The wall display turns dark after the place's sunset by the real clock, so its check runs
+		// in the morning of the recorded day.
+		if (path.startsWith('/wall/')) {
+			await page.clock.install({ time: new Date('2026-11-10T09:20:00Z') });
+		}
 		await page.goto(path);
 		await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
 		await expectAccessible(page);
