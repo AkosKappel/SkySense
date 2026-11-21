@@ -454,6 +454,18 @@
 	"time_format": "Zeitformat",
 	"today": "Heute",
 	"today_details": "Heute im Detail",
+	"tomorrow_colder": "Kälter als heute, bis {max}.",
+	"tomorrow_detail": "Tiefstwert {min} · Regenwahrscheinlichkeit {chance}",
+	"tomorrow_dry": "Tagsüber trocken.",
+	"tomorrow_question": "Und morgen?",
+	"tomorrow_rain_from": "Regen wahrscheinlich ab {from}.",
+	"tomorrow_rain_window": "Regen wahrscheinlich von {from} bis {until}.",
+	"tomorrow_same": "Etwa so warm wie heute, bis {max}.",
+	"tomorrow_snow_from": "Schnee wahrscheinlich ab {from}.",
+	"tomorrow_snow_window": "Schnee wahrscheinlich von {from} bis {until}.",
+	"tomorrow_thunder_from": "Gewitter wahrscheinlich ab {from}.",
+	"tomorrow_thunder_window": "Gewitter wahrscheinlich von {from} bis {until}.",
+	"tomorrow_warmer": "Wärmer als heute, bis {max}.",
 	"try_again": "Erneut versuchen",
 	"tz_ahead": [
 		{

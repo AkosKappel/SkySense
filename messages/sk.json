@@ -461,6 +461,18 @@
 	"time_format": "Formát času",
 	"today": "Dnes",
 	"today_details": "Dnes podrobne",
+	"tomorrow_colder": "Chladnejšie ako dnes, najviac {max}.",
+	"tomorrow_detail": "Najnižšia {min} · pravdepodobnosť dažďa {chance}",
+	"tomorrow_dry": "Cez deň sucho.",
+	"tomorrow_question": "A čo zajtra?",
+	"tomorrow_rain_from": "Dážď pravdepodobne od {from}.",
+	"tomorrow_rain_window": "Dážď pravdepodobne od {from} do {until}.",
+	"tomorrow_same": "Asi tak teplo ako dnes, najviac {max}.",
+	"tomorrow_snow_from": "Sneh pravdepodobne od {from}.",
+	"tomorrow_snow_window": "Sneh pravdepodobne od {from} do {until}.",
+	"tomorrow_thunder_from": "Búrky pravdepodobne od {from}.",
+	"tomorrow_thunder_window": "Búrky pravdepodobne od {from} do {until}.",
+	"tomorrow_warmer": "Teplejšie ako dnes, až {max}.",
 	"try_again": "Skúsiť znova",
 	"tz_ahead": [
 		{

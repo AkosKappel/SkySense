@@ -26,6 +26,7 @@
 	import DryTile from '#lib/components/DryTile.svelte';
 	import HindcastTile from '#lib/components/HindcastTile.svelte';
 	import WindDial from '#lib/components/WindDial.svelte';
+	import TomorrowTile from '#lib/components/TomorrowTile.svelte';
 	import CompareWith from '#lib/components/CompareWith.svelte';
 	import DayFacts from '#lib/components/DayFacts.svelte';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
@@ -650,6 +651,8 @@
 							</p>
 						{/if}
 					</section>
+
+					<TomorrowTile days={forecast.days} hours={forecast.hours} {f} />
 
 					<section class="glass p-6">
 						<h2 class="question">{m.ten_days()}</h2>

@@ -454,6 +454,18 @@
 	"time_format": "Formato de hora",
 	"today": "Hoy",
 	"today_details": "Hoy en detalle",
+	"tomorrow_colder": "Más frío que hoy, hasta {max}.",
+	"tomorrow_detail": "Mínima {min} · {chance} de probabilidad de lluvia",
+	"tomorrow_dry": "Seco durante el día.",
+	"tomorrow_question": "¿Y mañana?",
+	"tomorrow_rain_from": "Probable lluvia desde las {from}.",
+	"tomorrow_rain_window": "Probable lluvia de {from} a {until}.",
+	"tomorrow_same": "Más o menos como hoy, hasta {max}.",
+	"tomorrow_snow_from": "Probable nieve desde las {from}.",
+	"tomorrow_snow_window": "Probable nieve de {from} a {until}.",
+	"tomorrow_thunder_from": "Probables tormentas desde las {from}.",
+	"tomorrow_thunder_window": "Probables tormentas de {from} a {until}.",
+	"tomorrow_warmer": "Más cálido que hoy, hasta {max}.",
 	"try_again": "Reintentar",
 	"tz_ahead": [
 		{
