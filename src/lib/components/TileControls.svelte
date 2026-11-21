@@ -33,7 +33,23 @@
 
 	// On the window, not the handle: moving a tile re-inserts its element, which drops a pointer
 	// capture, and the release would then go unseen.
-	const track = (event: PointerEvent) => (pointer = { x: event.clientX, y: event.clientY });
+	function track(event: PointerEvent) {
+		pointer = { x: event.clientX, y: event.clientY };
+		takePlace();
+	}
+
+	// Takes the place of the tile under the pointer: on every move, and each frame while the page
+	// scrolls under a still pointer.
+	function takePlace() {
+		if (!dragging) return;
+		const over = document
+			.elementFromPoint(pointer.x, pointer.y)
+			?.closest<HTMLElement>('[data-tile]')?.dataset.tile as TileId | undefined;
+		if (over && over !== tile.id && over !== lastOver) {
+			lastOver = over;
+			onmove(over);
+		}
+	}
 
 	function start(event: PointerEvent) {
 		dragging = true;
@@ -55,18 +71,15 @@
 	// Leaving the edit mode mid-drag ends the drag too.
 	$effect(() => stop);
 
-	// Each frame while dragging: scroll at the edges, then take the place of the tile underneath.
+	// Each frame while dragging: scroll when the pointer is at an edge.
 	function follow() {
 		if (!dragging) return;
-		const { x, y } = pointer;
+		const { y } = pointer;
 		const step =
 			y < EDGE ? -(EDGE - y) / 4 : y > innerHeight - EDGE ? (y - innerHeight + EDGE) / 4 : 0;
-		if (step) scrollBy(0, step);
-		const over = document.elementFromPoint(x, y)?.closest<HTMLElement>('[data-tile]')?.dataset
-			.tile as TileId | undefined;
-		if (over && over !== tile.id && over !== lastOver) {
-			lastOver = over;
-			onmove(over);
+		if (step) {
+			scrollBy(0, step);
+			takePlace();
 		}
 		requestAnimationFrame(follow);
 	}

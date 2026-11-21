@@ -11,7 +11,12 @@ export default defineConfig({
 		// The build runs first; on a busy machine or CI runner it can take over a minute.
 		timeout: 180_000
 	},
-	use: { baseURL: 'http://localhost:4173', locale: 'en-GB' },
+	use: {
+		baseURL: 'http://localhost:4173',
+		locale: 'en-GB',
+		// A failure in CI keeps its trace, which the workflow uploads with test-results/.
+		trace: process.env.CI ? 'retain-on-failure' : 'off'
+	},
 	projects: [
 		{ name: 'desktop', use: { ...devices['Desktop Chrome'] } },
 		{ name: 'mobile', use: { ...devices['Pixel 7'] } }
