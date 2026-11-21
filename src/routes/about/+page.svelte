@@ -73,6 +73,7 @@
 			>
 			· ODbL
 		</p>
+		<p>{m.about_space()}</p>
 		<p>{m.about_languages()}</p>
 		<h2 class="question pt-2">{m.about_accessibility_title()}</h2>
 		<p>

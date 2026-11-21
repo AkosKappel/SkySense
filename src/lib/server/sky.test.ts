@@ -26,3 +26,22 @@ describe('skyEvents', () => {
 		expect(days.some((d) => d.moonrise === null || d.moonset === null)).toBe(true);
 	});
 });
+
+describe('eclipses and planets', () => {
+	const bratislava = skyEvents({ lat: 48.15, lon: 17.11 }, '2026-11-10T06:00', 3600);
+
+	it('finds an eclipse within two weeks only where it can be seen', () => {
+		// 12 August 2026: total in Valencia at sunset, partial in Madrid; 28 August: a partial
+		// lunar eclipse at 04:13 UTC, with the moon still up over Madrid.
+		const valencia = skyEvents({ lat: 39.47, lon: -0.38 }, '2026-08-05T12:00', 7200).eclipse;
+		expect(valencia).toEqual({ body: 'sun', kind: 'total', at: '2026-08-12T20:32' });
+		const madrid = skyEvents({ lat: 40.42, lon: -3.7 }, '2026-08-20T12:00', 7200).eclipse;
+		expect(madrid).toEqual({ body: 'moon', kind: 'partial', at: '2026-08-28T06:12' });
+		expect(bratislava.eclipse).toBeNull();
+	});
+
+	it('lists the bright planets up after dusk, and none under the midnight sun', () => {
+		expect(bratislava.planets).toEqual(['saturn']);
+		expect(skyEvents({ lat: 69.65, lon: 18.96 }, '2026-06-20T06:00', 7200).planets).toEqual([]);
+	});
+});

@@ -76,7 +76,21 @@ export type Sky = {
 	moonset: string | null;
 	fullMoon: string;
 	newMoon: string;
+	/** The next eclipse within two weeks that can be seen from the place, at its peak. */
+	eclipse?: SkyEclipse | null;
+	/** Bright planets up after dusk tonight, brightest first. */
+	planets?: Planet[];
+	/** Tonight's strongest geomagnetic activity when the aurora may be seen from the place. */
+	aurora?: { kp: number; south: boolean } | null;
 };
+
+export type SkyEclipse = {
+	body: 'sun' | 'moon';
+	kind: 'partial' | 'annular' | 'total';
+	at: string;
+};
+
+export type Planet = 'venus' | 'jupiter' | 'mars' | 'saturn';
 
 export type Forecast = {
 	timezone: string;

@@ -7,10 +7,12 @@ import {
 } from '#lib/server/open-meteo.js';
 import { memo } from '#lib/server/memo.js';
 import { skyEvents } from '#lib/server/sky.js';
+import { auroraTonight, fetchKp } from '#lib/server/aurora.js';
 import { parseCoordinates, roundCoordinates } from '#lib/weather.js';
 import type { RequestHandler } from './$types';
 
 const MINUTE = 60_000;
+const HOUR = 60 * MINUTE;
 
 export const GET: RequestHandler = async ({ url, fetch, setHeaders }) => {
 	const parsed = parseCoordinates(
@@ -30,7 +32,14 @@ export const GET: RequestHandler = async ({ url, fetch, setHeaders }) => {
 			10 * MINUTE,
 			() => fetchForecast(coordinates, fetch, demo)
 		);
-		const sky = skyEvents(coordinates, forecast.current.time, forecast.utcOffsetSeconds);
+		const { time } = forecast.current;
+		// One NOAA forecast serves every place. Failures are not kept, and without it there is
+		// simply no aurora line.
+		const kp = await memo('kp', HOUR, () => fetchKp(fetch)).catch(() => []);
+		const sky = {
+			...skyEvents(coordinates, time, forecast.utcOffsetSeconds),
+			aurora: auroraTonight(kp, coordinates, time, forecast.utcOffsetSeconds)
+		};
 		// Open-Meteo updates hourly; 15 minutes keeps "now" fresh while the CDN absorbs repeats.
 		setHeaders({
 			'cache-control':

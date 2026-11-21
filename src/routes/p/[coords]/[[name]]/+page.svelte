@@ -11,6 +11,7 @@
 		Sparkles,
 		Sunset,
 		Tablet,
+		Telescope,
 		TriangleAlert,
 		Wind
 	} from '@lucide/svelte';
@@ -49,7 +50,7 @@
 	import { isSearchShortcut } from '#lib/keys.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
-	import { meteorPeak } from '#lib/meteors.js';
+	import { CLOUDY_NIGHT, meteorPeak, nightClouds } from '#lib/meteors.js';
 	import { moon, nextPhase } from '#lib/moon.js';
 	import { MAX_PLACES, pageName, rememberLastPlace, savedPlaces } from '#lib/places.svelte.js';
 	import { precipitation, skies, skyKind } from '#lib/sky.js';
@@ -235,9 +236,53 @@
 			geminids: m.shower_geminids
 		}[peak.shower.id]();
 		const rate = peak.shower.rate;
-		return peak.days === 0
-			? m.meteor_tonight({ shower, rate })
+		if (peak.days === 0) return m.meteor_tonight({ shower, rate });
+		const tomorrow = forecast.days[1]?.date;
+		const clouds = tomorrow ? nightClouds(forecast.hours, tomorrow) : null;
+		return clouds !== null && clouds >= CLOUDY_NIGHT
+			? m.meteor_tomorrow_cloudy({ shower })
 			: m.meteor_tomorrow({ shower, rate });
+	});
+
+	// An eclipse within two weeks, the bright planets and the aurora tonight (H-07), and whether
+	// clouds will hide tonight's sky; all but the clouds computed on the server.
+	const skyLines = $derived.by(() => {
+		const sky = forecast.sky;
+		if (!sky) return [];
+		const lines: string[] = [];
+		if (sky.eclipse) {
+			const { body, kind, at } = sky.eclipse;
+			const eclipse =
+				body === 'moon'
+					? kind === 'total'
+						? m.eclipse_moon_total
+						: m.eclipse_moon_partial
+					: {
+							total: m.eclipse_sun_total,
+							annular: m.eclipse_sun_annular,
+							partial: m.eclipse_sun_partial
+						}[kind];
+			lines.push(eclipse({ day: f.date(at.slice(0, 10)), time: f.time(at) }));
+		}
+		if (sky.planets?.length) {
+			const planetName = {
+				venus: m.planet_venus,
+				jupiter: m.planet_jupiter,
+				mars: m.planet_mars,
+				saturn: m.planet_saturn
+			};
+			const names = sky.planets.map((planet) => planetName[planet]());
+			const list = new Intl.ListFormat(getLocale(), { type: 'conjunction' }).format(names);
+			lines.push(m.planets_up({ planets: list }));
+		}
+		if (sky.aurora) {
+			const kp = new Intl.NumberFormat(getLocale()).format(sky.aurora.kp);
+			lines.push((sky.aurora.south ? m.aurora_south : m.aurora_north)({ kp }));
+		}
+		const tonight = !!sky.planets?.length || !!sky.aurora || meteorPeak(today.date)?.days === 0;
+		const clouds = nightClouds(forecast.hours, today.date);
+		if (tonight && clouds !== null && clouds >= CLOUDY_NIGHT) lines.push(m.sky_cloudy_tonight());
+		return lines;
 	});
 
 	const direction = $derived(
@@ -580,6 +625,10 @@
 						{#if meteors}<p class="mt-2 flex items-start gap-1.5 text-sm text-ink-muted">
 								<Sparkles size={14} class="mt-0.5 shrink-0" aria-hidden="true" />
 								{meteors}
+							</p>{/if}
+						{#if skyLines.length}<p class="mt-2 flex items-start gap-1.5 text-sm text-ink-muted">
+								<Telescope size={14} class="mt-0.5 shrink-0" aria-hidden="true" />
+								{skyLines.join(' ')}
 							</p>{/if}
 					</section>
 

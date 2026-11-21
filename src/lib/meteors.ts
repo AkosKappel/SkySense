@@ -24,3 +24,23 @@ export function meteorPeak(today: string): { shower: Shower; days: 0 | 1 } | nul
 	}
 	return null;
 }
+
+/** Cloud cover from this much, on average, hides most of the night sky. */
+export const CLOUDY_NIGHT = 75;
+
+/**
+ * Mean cloud cover from 22:00 on `date` to 03:00 the next morning, for whether a shower, the
+ * planets or the aurora can be seen; null when the forecast has no cloud cover for those hours.
+ */
+export function nightClouds(
+	hours: { time: string; clouds?: number }[],
+	date: string
+): number | null {
+	const next = new Date(Date.parse(`${date}T00:00Z`) + 86_400_000).toISOString().slice(0, 10);
+	const from = `${date}T22:00`;
+	const to = `${next}T03:00`;
+	const clouds = hours
+		.filter((h) => h.time >= from && h.time <= to && h.clouds !== undefined)
+		.map((h) => h.clouds!);
+	return clouds.length ? clouds.reduce((a, b) => a + b, 0) / clouds.length : null;
+}
