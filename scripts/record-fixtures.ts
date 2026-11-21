@@ -109,6 +109,7 @@ async function record(name: string, { lat, lon, past }: Fixture) {
 		await recordAir(name.replace('forecast-', 'air-'), lat, lon, first);
 		await recordYear(name.replace('forecast-', 'year-'), lat, lon, first);
 		await recordRecent(name.replace('forecast-', 'recent-'), lat, lon, first);
+		await recordHindcast(name.replace('forecast-', 'hindcast-'), lat, lon, first);
 	}
 	const codes = [...new Set(data.hourly.weather_code.slice(0, 48))].sort((a, b) => a - b);
 	console.log(
@@ -240,6 +241,25 @@ async function recordRecent(name: string, lat: number, lon: number, firstHour: s
 		end_date: addDays(today, -1)
 	});
 	const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
+	if (!response.ok) throw new Error(`${name}: ${response.status} ${await response.text()}`);
+	writeFileSync(
+		new URL(`../src/lib/server/fixtures/${name}.json`, import.meta.url),
+		JSON.stringify(await response.json()) + '\n'
+	);
+}
+
+// The 30 days before, forecast a day ahead and as they turned out (`hindcast-*`, X-14).
+async function recordHindcast(name: string, lat: number, lon: number, firstHour: string) {
+	const today = firstHour.slice(0, 10);
+	const params = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		hourly: 'temperature_2m,temperature_2m_previous_day1,precipitation,precipitation_previous_day1',
+		timezone: 'auto',
+		start_date: addDays(today, -30),
+		end_date: addDays(today, -1)
+	});
+	const response = await fetch(`https://previous-runs-api.open-meteo.com/v1/forecast?${params}`);
 	if (!response.ok) throw new Error(`${name}: ${response.status} ${await response.text()}`);
 	writeFileSync(
 		new URL(`../src/lib/server/fixtures/${name}.json`, import.meta.url),

@@ -18,6 +18,7 @@ import { gridPoints } from '#lib/grid.js';
 import type { GridCell, RadarFrames } from '#lib/radar.js';
 import { pressureAt } from '#lib/pressure.js';
 import type { RainDay } from '#lib/recent.js';
+import type { HindcastDay } from '#lib/hindcast.js';
 import { SITE_URL } from '#lib/site.js';
 
 export class WeatherServiceError extends Error {}
@@ -545,6 +546,74 @@ export async function fetchRecent(
 		end_date: addDays(today, -1)
 	}).toString();
 	return toRecent(await getJson(url, fetchFn));
+}
+
+/** Keeps each model run's forecast, so a day's forecast from one day ahead can be read back (X-14). */
+const PREVIOUS_RUNS_URL = 'https://previous-runs-api.open-meteo.com/v1/forecast';
+export const HINDCAST_DAYS = 30;
+
+const hindcastSchema = z.object({
+	hourly: z.object({
+		time: z.array(z.string()),
+		temperature_2m: numbers,
+		temperature_2m_previous_day1: numbers,
+		precipitation: numbers,
+		precipitation_previous_day1: numbers
+	})
+});
+
+/** Hourly values folded into days; a day with a missing hour is dropped rather than half counted. */
+export function toHindcast(raw: unknown): HindcastDay[] {
+	const parsed = hindcastSchema.safeParse(raw);
+	if (!parsed.success) throw new WeatherServiceError('Unexpected previous runs response');
+	const h = parsed.data.hourly;
+	const days = new Map<string, number[]>();
+	h.time.forEach((time, i) => {
+		const date = time.slice(0, 10);
+		days.set(date, [...(days.get(date) ?? []), i]);
+	});
+	return [...days].flatMap(([date, hours]) => {
+		const column = (values: (number | null)[]) => hours.map((i) => values[i]);
+		const high = column(h.temperature_2m);
+		const forecastHigh = column(h.temperature_2m_previous_day1);
+		const rain = column(h.precipitation);
+		const forecastRain = column(h.precipitation_previous_day1);
+		const all = [high, forecastHigh, rain, forecastRain];
+		if (all.some((values) => values.some((v) => v === null))) return [];
+		const [hi, fhi, r, fr] = all as number[][];
+		const sum = (values: number[]) => Math.round(values.reduce((a, b) => a + b, 0) * 10) / 10;
+		return [
+			{
+				date,
+				high: Math.max(...hi),
+				forecastHigh: Math.max(...fhi),
+				rain: sum(r),
+				forecastRain: sum(fr)
+			}
+		];
+	});
+}
+
+/** The 30 days before `today`, forecast a day ahead and as they turned out. */
+export async function fetchHindcast(
+	coordinates: Coordinates,
+	today: string,
+	fetchFn: typeof fetch = fetch
+): Promise<HindcastDay[]> {
+	const { lat, lon } = roundCoordinates(coordinates);
+	if (useFixtures()) {
+		return toHindcast(fixtures[`./fixtures/hindcast-${nearestFixture({ lat, lon })}.json`].default);
+	}
+	const url = new URL(PREVIOUS_RUNS_URL);
+	url.search = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		hourly: 'temperature_2m,temperature_2m_previous_day1,precipitation,precipitation_previous_day1',
+		timezone: 'auto',
+		start_date: addDays(today, -HINDCAST_DAYS),
+		end_date: addDays(today, -1)
+	}).toString();
+	return toHindcast(await getJson(url, fetchFn));
 }
 
 const gridSchema = z.array(

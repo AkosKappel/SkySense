@@ -24,6 +24,7 @@
 	import DayDetail from '#lib/components/DayDetail.svelte';
 	import ClimateTiles from '#lib/components/ClimateTiles.svelte';
 	import DryTile from '#lib/components/DryTile.svelte';
+	import HindcastTile from '#lib/components/HindcastTile.svelte';
 	import CompareWith from '#lib/components/CompareWith.svelte';
 	import DayFacts from '#lib/components/DayFacts.svelte';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
@@ -634,6 +635,7 @@
 						{f}
 					>
 						<DryTile coordinates={data.coordinates} today={today.date} {f} />
+						<HindcastTile coordinates={data.coordinates} today={today.date} {f} />
 					</ClimateTiles>
 				</div>
 			</div>

@@ -6,6 +6,7 @@ import places from './fixtures/places-bratisl.json';
 import tromso from './fixtures/forecast-tromso.json';
 import areaBratislava from './fixtures/area-bratislava.json';
 import heat from './fixtures/scenario-heat.json';
+import hindcastBratislava from './fixtures/hindcast-bratislava.json';
 import reverseBratislava from './fixtures/reverse-bratislava.json';
 import reverseTromso from './fixtures/reverse-tromso.json';
 import midnightSun from './fixtures/scenario-midnight-sun.json';
@@ -16,6 +17,7 @@ import {
 	reverseGeocode,
 	searchPlaces,
 	toForecast,
+	toHindcast,
 	toPlaces,
 	toAir,
 	toArea,
@@ -290,5 +292,18 @@ describe('toArea', () => {
 		expect(cells[24].hours[0].time).toBe('2026-11-10T00:00');
 		expect(cells[24].day?.sunrise).toMatch(/^2026-11-10T06:\d\d$/);
 		expect(() => toArea({ hourly: {} })).toThrow(WeatherServiceError);
+	});
+});
+
+describe('toHindcast', () => {
+	it('folds the hours into days, and drops a day with a missing hour', () => {
+		const days = toHindcast(hindcastBratislava);
+		expect(days).toHaveLength(30);
+		expect(days[0].date).toBe('2026-10-11');
+		expect(days.at(-1)?.date).toBe('2026-11-09');
+		const raw = structuredClone(hindcastBratislava);
+		raw.hourly.temperature_2m_previous_day1[5] = null as unknown as number;
+		expect(toHindcast(raw)).toHaveLength(29);
+		expect(() => toHindcast({ hourly: {} })).toThrow(WeatherServiceError);
 	});
 });

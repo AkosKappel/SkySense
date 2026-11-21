@@ -17,7 +17,7 @@ The weather, made sense of. Most weather apps show a grid of numbers and icons a
 
 - **What is the weather doing?** One or two plain sentences on top ("Rain until 16:00, then dry."), what to wear ("A warm jacket. Something waterproof too."), then tiles that each answer one question: do I need an umbrella, when does it get dark, how windy is it. Today's details add the dew point, visibility and coming fog ("Fog likely until 13:00."). Light and dark themes follow the system unless you pick one.
 - **When should I go out?** Every hour is scored for running, cycling, walking, hiking, a picnic, laundry outside, stargazing and golden hour photos. The tile names the best time today and in the next 10 days, or why there is none ("Too wet in the next 24 hours."), each score opens into the factors behind it, and the good times download as a calendar file. A comfort setting shifts the temperatures for people who get cold or warm easily.
-- **How sure is it?** 51 runs of the ECMWF ensemble give a likely range around the temperature line, "96% of model runs show it right now" under the umbrella answer, and "Less sure" or "Uncertain" on later days. The summary hedges when the runs disagree. Five weather models can be compared side by side.
+- **How sure is it?** 51 runs of the ECMWF ensemble give a likely range around the temperature line, "96% of model runs show it right now" under the umbrella answer, and "Less sure" or "Uncertain" on later days. The summary hedges when the runs disagree. A forecast check says how far off yesterday's forecast was and how often it was right in the last 30 days ("Right on 27 of the last 30 days."). Five weather models can be compared side by side.
 - **Is this normal?** Today's high against the 1991 to 2020 climate for the date ("3° colder than usual."), the same date in each of the last ten years, and how long it has been dry ("Dry for 9 days.").
 - **Anything else I should know?** Air quality and pollen when they matter, tonight's moon with its rise, set and the next full moon, meteor shower peaks, whether the pressure is rising or falling, strong gusts, frost and heat, and how far the place's clock is from yours.
 - **Is rain coming my way?** A radar map of the last 2 hours, then the model's rain for the next 3, said in words too ("The model shows rain within about 60 km from 11:00."). The same map switches to the model's temperature and wind ("Warmer to the south, by about 2°."), shows the other saved places, and opens full screen.
@@ -81,6 +81,8 @@ Only `/embed/` pages allow framing; every other page sends `frame-ancestors 'non
 ## Data and attribution
 
 Weather data by [Open-Meteo.com](https://open-meteo.com/), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Historical data from ERA5 (Copernicus Climate Change Service), forecasts from the national weather services' models that Open-Meteo combines.
+
+The forecast check compares yesterday's forecast with later model values from Open-Meteo's Previous Runs API.
 
 ## License
 
