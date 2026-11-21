@@ -33,6 +33,13 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test
       - run: pnpm test:e2e
+      # The failed tests' traces and, for the screenshot tests (T-20), the expected, actual and diff images.
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: e2e-results
+          path: test-results/
+          retention-days: 7
 
   lighthouse:
     runs-on: ubuntu-latest
