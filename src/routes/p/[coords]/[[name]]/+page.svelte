@@ -3,6 +3,7 @@
 		ChevronDown,
 		ChevronLeft,
 		ChevronRight,
+		Map as MapIcon,
 		MapPin,
 		Moon,
 		Plus,
@@ -418,6 +419,18 @@
 				</button>
 			{/if}
 			<ShareButton {title} />
+			<!-- The map was only in the footer; a page of its own (MapLibre), so a full load. -->
+			<a
+				href={resolve('/map/[coords]/[[name]]', {
+					coords: page.params.coords ?? '',
+					name: encodeURIComponent(page.params.name ?? '')
+				})}
+				data-sveltekit-reload
+				aria-label={m.map_link()}
+				class="grid size-11 pill place-items-center"
+			>
+				<MapIcon size={18} aria-hidden="true" />
+			</a>
 			<a
 				href={resolve('/settings')}
 				aria-label={m.settings()}
