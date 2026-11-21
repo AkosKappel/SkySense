@@ -771,9 +771,29 @@ test('arranges the tiles and keeps the layout', async ({ page }) => {
 		'chart',
 		'tomorrow',
 		'days',
+		'map',
 		'details',
+		'charts',
 		'wind',
 		'dark',
 		'past'
 	]);
+});
+
+test('shows the map and the wind and UV charts when scrolled near', async ({ page }) => {
+	await page.goto('/p/48.15,17.11/Bratislava');
+	const map = page.locator('[data-tile="map"]');
+	await map.scrollIntoViewIfNeeded();
+	await expect(map.getByText(/^Radar picture from \d\d:\d\d\.$/)).toBeVisible();
+	await expect(map.getByRole('link', { name: 'Open the map' })).toHaveAttribute(
+		'href',
+		'/map/48.15,17.11/Bratislava'
+	);
+
+	const charts = page.locator('[data-tile="charts"]');
+	await charts.scrollIntoViewIfNeeded();
+	await expect(charts.getByText(/^Gusts up to \d+ km\/h around \d\d:\d\d\.$/)).toBeVisible();
+	await charts.getByText('Show as a table').click();
+	await expect(charts.getByRole('row')).toHaveCount(26);
+	await expectAccessible(page);
 });

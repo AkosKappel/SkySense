@@ -827,6 +827,27 @@
 	</WhenNear>
 {/snippet}
 
+{#snippet mapTile()}
+	<WhenNear>
+		{#await import('#lib/components/MapTile.svelte') then { default: MapTile }}
+			<MapTile
+				coordinates={data.coordinates}
+				place={name}
+				utcOffsetSeconds={forecast.utcOffsetSeconds}
+				{f}
+			/>
+		{/await}
+	</WhenNear>
+{/snippet}
+
+{#snippet chartsTile()}
+	<WhenNear>
+		{#await import('#lib/components/ChartsTile.svelte') then { default: ChartsTile }}
+			<ChartsTile hours={forecast.hours.slice(0, 25)} {f} />
+		{/await}
+	</WhenNear>
+{/snippet}
+
 {#snippet tilesById(id: TileId)}
 	{#if id === 'umbrella'}{@render umbrellaTile()}
 	{:else if id === 'activities'}{@render activitiesTile()}
@@ -834,7 +855,9 @@
 	{:else if id === 'chart'}{@render chartTile()}
 	{:else if id === 'tomorrow'}{@render tomorrowTile()}
 	{:else if id === 'days'}{@render daysTile()}
+	{:else if id === 'map'}{@render mapTile()}
 	{:else if id === 'details'}{@render detailsTile()}
+	{:else if id === 'charts'}{@render chartsTile()}
 	{:else if id === 'wind'}{@render windTile()}
 	{:else if id === 'dark'}{@render darkTile()}
 	{:else}{@render pastTile()}

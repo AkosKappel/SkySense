@@ -116,7 +116,14 @@
 	<summary class="min-h-11 cursor-pointer content-center text-sm font-semibold">
 		{m.show_table()}
 	</summary>
-	<div class="max-h-72 overflow-y-auto">
+	<!-- Scrolls, so it takes a tab stop for keyboards to scroll it, as the hourly strip does. -->
+	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+	<div
+		tabindex="0"
+		role="region"
+		aria-label={m.temp_question()}
+		class="max-h-72 overflow-y-auto rounded-lg focus-visible:outline-2 focus-visible:outline-veil"
+	>
 		<table class="w-full text-sm tabular-nums [&_td]:pr-3 [&_th]:pr-3">
 			<thead class="text-left text-ink-muted">
 				<tr>

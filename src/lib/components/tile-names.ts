@@ -10,7 +10,9 @@ export function tileName(id: TileId): string {
 		chart: m.temp_question,
 		tomorrow: m.tomorrow_question,
 		days: m.ten_days,
+		map: m.map_question,
 		details: m.today_details,
+		charts: m.charts_question,
 		wind: m.wind_question,
 		dark: m.dark_question,
 		past: m.tiles_past

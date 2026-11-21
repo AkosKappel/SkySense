@@ -11,7 +11,9 @@ export const TILE_IDS = [
 	'chart',
 	'tomorrow',
 	'days',
+	'map',
 	'details',
+	'charts',
 	'wind',
 	'dark',
 	'past'

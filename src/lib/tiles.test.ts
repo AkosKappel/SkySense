@@ -19,7 +19,7 @@ describe('readTiles', () => {
 
 	it('reads order, hidden tiles and sizes, dropping unknown and repeated ones', () => {
 		const tiles = readTiles(
-			'days,-wind,hours:h,umbrella:w,radar,days,activities,chart,tomorrow,details,dark,past'
+			'days,-wind,hours:h,umbrella:w,radar,days,activities,chart,tomorrow,map,details,charts,dark,past'
 		);
 		expect(ids(tiles).slice(0, 5)).toEqual(['days', 'wind', 'hours', 'umbrella', 'activities']);
 		expect(tiles[1]).toEqual({ id: 'wind', wide: false, hidden: true });
@@ -29,7 +29,9 @@ describe('readTiles', () => {
 	});
 
 	it('puts a tile the cookie does not name yet after its default neighbour', () => {
-		const tiles = readTiles('days,umbrella,activities,hours,chart,details,wind,dark,past');
+		const tiles = readTiles(
+			'days,umbrella,activities,hours,chart,map,details,charts,wind,dark,past'
+		);
 		expect(ids(tiles)).toEqual([
 			'days',
 			'umbrella',
@@ -37,7 +39,9 @@ describe('readTiles', () => {
 			'hours',
 			'chart',
 			'tomorrow',
+			'map',
 			'details',
+			'charts',
 			'wind',
 			'dark',
 			'past'

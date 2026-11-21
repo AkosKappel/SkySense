@@ -22,7 +22,8 @@ export async function placeReady(page: Page) {
 	const normal = page.getByText('Is this normal for the time of year?');
 	const spot = page.locator('[data-when-near]');
 	await expect(async () => {
-		if (await spot.count()) await spot.scrollIntoViewIfNeeded({ timeout: 2000 });
+		// Each deferred spot disappears once it loads, so the first one left is the next to reach.
+		if (await spot.count()) await spot.first().scrollIntoViewIfNeeded({ timeout: 2000 });
 		await expect(normal).toBeVisible({ timeout: 5000 });
 	}).toPass({ timeout: 30000 });
 	await page.evaluate(() => scrollTo(0, 0));
