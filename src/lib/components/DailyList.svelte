@@ -17,6 +17,15 @@
 		days.map((d) => dayConfidence(hours.filter((h) => h.time.startsWith(d.date))))
 	);
 	const position = (t: number) => ((t - low) / Math.max(1, high - low)) * 100;
+	// The week's range, with a day's own span at least a pill wide so a steady day is not a dot.
+	// The gradient spans the whole track, so a warm day's span is warm and a cold day's cold.
+	const MIN_SPAN = 10;
+	function span(day: Day) {
+		const middle = (position(day.min) + position(day.max)) / 2;
+		const half = Math.max(MIN_SPAN, position(day.max) - position(day.min)) / 2;
+		const left = Math.min(100 - 2 * half, Math.max(0, middle - half));
+		return { left, right: 100 - left - 2 * half };
+	}
 </script>
 
 <ul class="mt-3 divide-y divide-veil/10">
@@ -27,7 +36,7 @@
 					coords: page.params.coords ?? '',
 					name: encodeURIComponent(page.params.name ?? '')
 				})}?day={day.date}"
-				class="grid min-h-11 grid-cols-[3.25rem_1.75rem_2.75rem_2.5rem_1fr_2.5rem] items-center gap-1.5 rounded-xl py-2.5 text-sm transition hover:bg-veil/5 min-[380px]:grid-cols-[4.5rem_1.75rem_2.75rem_2.5rem_1fr_2.5rem_1rem] min-[380px]:gap-2"
+				class="grid min-h-11 grid-cols-[3.25rem_2.25rem_2.5rem_1fr_2.5rem] items-center gap-1.5 rounded-xl py-2.5 text-sm transition hover:bg-veil/5 min-[380px]:grid-cols-[4.5rem_2.25rem_2.5rem_1fr_2.5rem_1rem] min-[380px]:gap-2"
 			>
 				<span class="leading-tight">
 					<span class="block font-semibold">{i === 0 ? m.today() : f.weekday(day.date)}</span>
@@ -37,10 +46,12 @@
 						</span>
 					{/if}
 				</span>
-				<WeatherIcon condition={day.condition} size={20} />
-				<span class="text-xs text-rain-soft tabular-nums">
+				<span class="flex flex-col items-center leading-none">
+					<WeatherIcon condition={day.condition} size={20} />
 					{#if day.rainChance >= 20}
-						<span class="sr-only">{`${m.rain_chance_label()} `}</span>{f.percent(day.rainChance)}
+						<span class="mt-0.5 text-[0.6875rem] font-semibold text-rain-soft tabular-nums">
+							<span class="sr-only">{`${m.rain_chance_label()} `}</span>{f.percent(day.rainChance)}
+						</span>
 					{/if}
 				</span>
 				<span class="text-right text-ink-muted tabular-nums">
@@ -48,8 +59,8 @@
 				</span>
 				<span class="relative h-1.5 rounded-full bg-veil/10" aria-hidden="true">
 					<span
-						class="absolute inset-y-0 rounded-full bg-linear-to-r from-cold to-warm forced-color-adjust-none forced-colors:bg-[CanvasText]"
-						style="left: {position(day.min)}%; right: {100 - position(day.max)}%"
+						class="absolute inset-0 rounded-full bg-linear-to-r from-cold to-warm forced-color-adjust-none forced-colors:bg-[CanvasText]"
+						style="clip-path: inset(0 {span(day).right}% 0 {span(day).left}% round 999px)"
 					></span>
 				</span>
 				<span class="font-semibold tabular-nums">
