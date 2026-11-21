@@ -52,15 +52,19 @@
 					<a
 						href={resolve('/map/[coords]/[[name]]', params)}
 						aria-current={better ? undefined : 'page'}
-						class={chip(!better)}>{m.map_mode_weather()}</a
+						class={chip(!better)}
 					>
+						{m.map_mode_weather()}
+					</a>
 				</li>
 				<li>
 					<a
 						href="{resolve('/map/[coords]/[[name]]', params)}?better"
 						aria-current={better ? 'page' : undefined}
-						class={chip(better)}>{m.better_link()}</a
+						class={chip(better)}
 					>
+						{m.better_link()}
+					</a>
 				</li>
 			</ul>
 		</nav>

@@ -51,9 +51,9 @@
 			{/if}
 			{#if nicer}<Check size={16} class="text-good" aria-hidden="true" />{/if}
 		</span>
-		<span class="sr-only"
-			>{conditionLabel(day.condition)}{nicer ? `, ${m.compare_nicer()}` : ''}</span
-		>
+		<span class="sr-only">
+			{conditionLabel(day.condition)}{nicer ? `, ${m.compare_nicer()}` : ''}
+		</span>
 	</td>
 {/snippet}
 

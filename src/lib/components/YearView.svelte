@@ -89,9 +89,9 @@
 
 		<p class="mt-2 text-sm text-ink-muted">{m.year_chart_note()}</p>
 		<details class="mt-3">
-			<summary class="min-h-11 cursor-pointer content-center text-sm font-semibold"
-				>{m.show_table()}</summary
-			>
+			<summary class="min-h-11 cursor-pointer content-center text-sm font-semibold">
+				{m.show_table()}
+			</summary>
 			<table class="w-full text-sm tabular-nums [&_td]:pr-3 [&_th]:pr-3">
 				<thead class="text-left text-ink-muted">
 					<tr>

@@ -398,14 +398,16 @@
 					href={neighbours.previous.href}
 					aria-label={m.previous_place({ name: neighbours.previous.label })}
 					class="hidden size-11 pill place-items-center min-[380px]:grid"
-					><ChevronLeft size={18} aria-hidden="true" /></a
 				>
+					<ChevronLeft size={18} aria-hidden="true" />
+				</a>
 				<a
 					href={neighbours.next.href}
 					aria-label={m.next_place({ name: neighbours.next.label })}
 					class="hidden size-11 pill place-items-center min-[380px]:grid"
-					><ChevronRight size={18} aria-hidden="true" /></a
 				>
+					<ChevronRight size={18} aria-hidden="true" />
+				</a>
 			{/if}
 			{#if !savedPlaces.has(place)}
 				<button
@@ -421,8 +423,10 @@
 			<a
 				href={resolve('/settings')}
 				aria-label={m.settings()}
-				class="grid size-11 pill place-items-center"><Settings size={18} aria-hidden="true" /></a
+				class="grid size-11 pill place-items-center"
 			>
+				<Settings size={18} aria-hidden="true" />
+			</a>
 		</div>
 	</header>
 	{#if offline}
@@ -550,8 +554,10 @@
 							name: encodeURIComponent(page.params.name ?? '')
 						})}?radar"
 						class="mt-auto inline-flex min-h-11 items-center gap-1.5 pt-2 text-sm font-semibold underline-offset-4 hover:underline"
-						>{m.radar_link()} <ChevronRight size={16} aria-hidden="true" /></a
 					>
+						{m.radar_link()}
+						<ChevronRight size={16} aria-hidden="true" />
+					</a>
 				</section>
 
 				<section class="glass p-6">
@@ -570,8 +576,10 @@
 							name: encodeURIComponent(page.params.name ?? '')
 						})}?better"
 						class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
-						>{m.better_link()} <ChevronRight size={16} aria-hidden="true" /></a
 					>
+						{m.better_link()}
+						<ChevronRight size={16} aria-hidden="true" />
+					</a>
 				</section>
 
 				<section class="glass p-5 md:col-span-2">
@@ -587,8 +595,10 @@
 							name: encodeURIComponent(page.params.name ?? '')
 						})}?models"
 						class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
-						>{m.compare_models()} <ChevronRight size={16} aria-hidden="true" /></a
 					>
+						{m.compare_models()}
+						<ChevronRight size={16} aria-hidden="true" />
+					</a>
 				</section>
 
 				<!-- Wide screens: the tiles below differ a lot in height, so they flow in two balanced columns
@@ -663,8 +673,10 @@
 								name: encodeURIComponent(page.params.name ?? '')
 							})}?week"
 							class="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
-							>{m.week_link()} <ChevronRight size={16} aria-hidden="true" /></a
 						>
+							{m.week_link()}
+							<ChevronRight size={16} aria-hidden="true" />
+						</a>
 						<CompareWith current={place} />
 					</section>
 

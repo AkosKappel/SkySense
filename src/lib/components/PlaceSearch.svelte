@@ -177,8 +177,10 @@
 					type="button"
 					class="absolute top-1/2 right-1.5 icon-button -translate-y-1/2"
 					aria-label={m.clear_search()}
-					onclick={clear}><X size={20} aria-hidden="true" /></button
+					onclick={clear}
 				>
+					<X size={20} aria-hidden="true" />
+				</button>
 			{/if}
 		</div>
 		{#if compact}
@@ -226,8 +228,9 @@
 					<MapPin size={18} class="shrink-0 text-ink-muted" aria-hidden="true" />
 					<span>
 						<span class="block font-semibold">{result.name}</span>
-						{#if result.detail}<span class="block text-sm text-ink-muted">{result.detail}</span
-							>{/if}
+						{#if result.detail}<span class="block text-sm text-ink-muted">
+								{result.detail}
+							</span>{/if}
 					</span>
 				</li>
 			{/each}

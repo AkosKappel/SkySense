@@ -29,9 +29,9 @@
 	<a href="https://open-meteo.com/" class="py-2 underline-offset-4 hover:underline" rel="noopener">
 		{m.data_attribution()}
 	</a>
-	<a href={resolve('/map')} data-sveltekit-reload class="py-2 underline-offset-4 hover:underline"
-		>{m.map_link()}</a
-	>
+	<a href={resolve('/map')} data-sveltekit-reload class="py-2 underline-offset-4 hover:underline">
+		{m.map_link()}
+	</a>
 	<a href={resolve('/about')} class="py-2 underline-offset-4 hover:underline">{m.about()}</a>
 	<a href={resolve('/privacy')} class="py-2 underline-offset-4 hover:underline">{m.privacy()}</a>
 	<a href={resolve('/settings')} class="py-2 underline-offset-4 hover:underline">{m.settings()}</a>
@@ -46,8 +46,10 @@
 					lang={locale}
 					rel="nofollow"
 					data-sveltekit-reload
-					class="py-2 underline-offset-4 hover:underline">{languageNames[locale]}</a
+					class="py-2 underline-offset-4 hover:underline"
 				>
+					{languageNames[locale]}
+				</a>
 			{/if}
 		{/each}
 	</nav>

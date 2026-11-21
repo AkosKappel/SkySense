@@ -19,9 +19,9 @@
 			transform="rotate({angle} 32 32)"
 		/>
 	{/each}
-	<text x="32" y="19" text-anchor="middle" class="fill-ink-muted text-[9px] font-bold"
-		>{m.compass_north()}</text
-	>
+	<text x="32" y="19" text-anchor="middle" class="fill-ink-muted text-[9px] font-bold">
+		{m.compass_north()}
+	</text>
 	<g transform="rotate({from + 180} 32 32)">
 		<line
 			x1="32"

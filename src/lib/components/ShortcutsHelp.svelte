@@ -35,9 +35,9 @@
 			<Keyboard size={18} aria-hidden="true" />
 			{m.shortcuts_title()}
 		</h2>
-		<button type="button" class="icon-button" aria-label={m.close()} onclick={() => (open = false)}
-			><X size={20} aria-hidden="true" /></button
-		>
+		<button type="button" class="icon-button" aria-label={m.close()} onclick={() => (open = false)}>
+			<X size={20} aria-hidden="true" />
+		</button>
 	</div>
 	<dl class="mt-4 space-y-3">
 		{#each shortcuts as [keys, label] (label)}
@@ -46,8 +46,9 @@
 					{#each keys as key (key)}
 						<kbd
 							class="rounded-md bg-veil/10 px-2 py-0.5 font-sans text-sm font-semibold outline-1 outline-veil/20"
-							>{key}</kbd
 						>
+							{key}
+						</kbd>
 					{/each}
 				</dt>
 				<dd class="text-right text-sm text-ink-muted">{label}</dd>

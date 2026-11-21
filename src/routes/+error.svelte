@@ -36,12 +36,13 @@
 					type="button"
 					onclick={() => location.reload()}
 					class="flex h-12 cursor-pointer items-center rounded-full bg-veil px-5 font-bold text-on-veil"
-					>{m.try_again()}</button
 				>
+					{m.try_again()}
+				</button>
 			{/if}
-			<a href="{resolve('/')}?choose" class="flex h-12 pill items-center px-5 font-semibold"
-				>{m.search_again()}</a
-			>
+			<a href="{resolve('/')}?choose" class="flex h-12 pill items-center px-5 font-semibold">
+				{m.search_again()}
+			</a>
 		</div>
 	</section>
 	<SiteFooter />

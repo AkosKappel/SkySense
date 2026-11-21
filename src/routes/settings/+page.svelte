@@ -115,9 +115,10 @@
 
 	<form method="POST" class="mt-6 space-y-6 glass p-6">
 		<div>
-			<label for="language" class="mb-2 question"
-				><Languages size={18} aria-hidden="true" /> {m.language()}</label
-			>
+			<label for="language" class="mb-2 question">
+				<Languages size={18} aria-hidden="true" />
+				{m.language()}
+			</label>
 			<div class="relative">
 				<select
 					id="language"
@@ -125,8 +126,9 @@
 					class="h-12 w-full cursor-pointer appearance-none rounded-2xl bg-veil/10 pr-12 pl-4 text-ink outline-1 outline-veil/20"
 				>
 					{#each locales as locale (locale)}
-						<option value={locale} selected={locale === getLocale()}>{languageNames[locale]}</option
-						>
+						<option value={locale} selected={locale === getLocale()}>
+							{languageNames[locale]}
+						</option>
 					{/each}
 				</select>
 				<ChevronDown
@@ -139,9 +141,10 @@
 
 		{#each groups as group (group.name)}
 			<fieldset>
-				<legend class="mb-2 question"
-					><group.icon size={18} aria-hidden="true" /> {group.legend()}</legend
-				>
+				<legend class="mb-2 question">
+					<group.icon size={18} aria-hidden="true" />
+					{group.legend()}
+				</legend>
 				<div class="flex flex-wrap gap-2">
 					{#each group.options as [value, label] (value)}
 						<label
@@ -165,8 +168,9 @@
 		<button
 			type="submit"
 			class="h-12 w-full cursor-pointer rounded-full bg-veil font-bold text-on-veil transition hover:bg-veil/90"
-			>{m.save()}</button
 		>
+			{m.save()}
+		</button>
 	</form>
 
 	<SiteFooter />

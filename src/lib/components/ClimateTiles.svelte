@@ -106,9 +106,9 @@
 				<tbody>
 					{#each day.past as past (past.date)}
 						<tr class="border-t border-veil/10">
-							<th scope="row" class="py-1.5 pr-3 text-left font-semibold"
-								>{past.date.slice(0, 4)}</th
-							>
+							<th scope="row" class="py-1.5 pr-3 text-left font-semibold">
+								{past.date.slice(0, 4)}
+							</th>
 							<td class="pr-3">{f.temp(past.max)}</td>
 							<td class="pr-3 text-ink-muted">{f.temp(past.min)}</td>
 							<td class={past.rain >= 0.1 ? 'text-rain-soft' : 'text-ink-muted'}>
@@ -128,7 +128,9 @@
 				name: encodeURIComponent(page.params.name ?? '')
 			})}?year"
 			class="mt-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
-			>{m.year_title({ place })} <ChevronRight size={16} aria-hidden="true" /></a
 		>
+			{m.year_title({ place })}
+			<ChevronRight size={16} aria-hidden="true" />
+		</a>
 	</section>
 {/if}

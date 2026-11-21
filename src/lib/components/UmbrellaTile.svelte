@@ -83,9 +83,9 @@
 					style:opacity={hour.rainChance >= RAIN_LIKELY ? 1 : 0.35}
 				></div>
 			</div>
-			<span class="h-4 text-[11px] font-semibold text-ink-muted"
-				>{i % 6 === 0 ? (i === 0 && fromNow ? m.now() : f.hour(hour.time)) : ''}</span
-			>
+			<span class="h-4 text-[11px] font-semibold text-ink-muted">
+				{i % 6 === 0 ? (i === 0 && fromNow ? m.now() : f.hour(hour.time)) : ''}
+			</span>
 		</div>
 	{/each}
 </div>

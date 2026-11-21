@@ -52,11 +52,13 @@
 				})}
 				target="_blank"
 				rel="noopener"
-				class="font-semibold text-ink underline underline-offset-4">{m.embed_open()}</a
+				class="font-semibold text-ink underline underline-offset-4"
 			>
-			<a href="https://open-meteo.com/" target="_blank" rel="noopener" class="underline"
-				>{m.data_attribution()}</a
-			>
+				{m.embed_open()}
+			</a>
+			<a href="https://open-meteo.com/" target="_blank" rel="noopener" class="underline">
+				{m.data_attribution()}
+			</a>
 		</p>
 	</article>
 </main>

@@ -69,8 +69,10 @@
 			<a
 				href="https://www.openstreetmap.org/copyright"
 				class="font-semibold underline underline-offset-4"
-				rel="noopener">© OpenStreetMap contributors</a
+				rel="noopener"
 			>
+				© OpenStreetMap contributors
+			</a>
 			· ODbL
 		</p>
 		<p>{m.about_space()}</p>
@@ -81,15 +83,19 @@
 			<a
 				href="https://github.com/AkosKappel/SkySense/issues"
 				class="font-semibold underline underline-offset-4"
-				rel="noopener">{m.about_accessibility_report()}</a
+				rel="noopener"
 			>
+				{m.about_accessibility_report()}
+			</a>
 		</p>
 		<p>
 			<a
 				href="https://open-meteo.com/"
 				class="font-semibold underline underline-offset-4"
-				rel="noopener">{m.data_attribution()}</a
+				rel="noopener"
 			>
+				{m.data_attribution()}
+			</a>
 			· CC BY 4.0
 		</p>
 	</article>

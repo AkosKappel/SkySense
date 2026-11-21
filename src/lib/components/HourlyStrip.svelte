@@ -30,9 +30,9 @@
 					? 'bg-veil/15 outline-1 outline-veil/25'
 					: ''}"
 			>
-				<span class="text-xs font-medium text-ink-muted"
-					>{i === 0 && fromNow ? m.now() : f.hour(hour.time)}</span
-				>
+				<span class="text-xs font-medium text-ink-muted">
+					{i === 0 && fromNow ? m.now() : f.hour(hour.time)}
+				</span>
 				<WeatherIcon condition={hour.condition} isDay={hour.isDay} />
 				<span class="sr-only">{conditionLabel(hour.condition, hour.isDay)}</span>
 				<span class="font-semibold tabular-nums">{f.temp(hour.temp)}</span>

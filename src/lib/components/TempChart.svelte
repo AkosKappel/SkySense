@@ -86,8 +86,10 @@
 		<span
 			class="absolute"
 			style:left="{at * 100}%"
-			style:translate={at === 0 ? '0' : at > 0.9 ? '-100%' : '-50%'}>{f.hour(tick.time)}</span
+			style:translate={at === 0 ? '0' : at > 0.9 ? '-100%' : '-50%'}
 		>
+			{f.hour(tick.time)}
+		</span>
 	{/each}
 </div>
 
@@ -111,9 +113,9 @@
 </ul>
 
 <details class="mt-3">
-	<summary class="min-h-11 cursor-pointer content-center text-sm font-semibold"
-		>{m.show_table()}</summary
-	>
+	<summary class="min-h-11 cursor-pointer content-center text-sm font-semibold">
+		{m.show_table()}
+	</summary>
 	<div class="max-h-72 overflow-y-auto">
 		<table class="w-full text-sm tabular-nums [&_td]:pr-3 [&_th]:pr-3">
 			<thead class="text-left text-ink-muted">
@@ -132,12 +134,12 @@
 						<td>{f.temp(hour.temp)}</td>
 						<td>{f.temp(hour.feels)}</td>
 						{#if band && hour.spread}
-							<td
-								>{m.range_value({
+							<td>
+								{m.range_value({
 									low: f.temp(hour.spread.low),
 									high: f.temp(hour.spread.high)
-								})}</td
-							>
+								})}
+							</td>
 						{/if}
 						<td>{f.percent(hour.rainChance)}</td>
 					</tr>

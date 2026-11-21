@@ -94,9 +94,9 @@
 				{/each}
 			</ul>
 			<details class="mt-3">
-				<summary class="min-h-11 cursor-pointer content-center text-sm font-semibold"
-					>{m.show_table()}</summary
-				>
+				<summary class="min-h-11 cursor-pointer content-center text-sm font-semibold">
+					{m.show_table()}
+				</summary>
 				<div class="max-h-72 overflow-auto">
 					<table class="w-full text-sm tabular-nums [&_td]:pr-3 [&_th]:pr-3">
 						<thead class="text-left text-ink-muted">

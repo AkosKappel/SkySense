@@ -50,9 +50,9 @@
 		<div class="p-6">
 			<div class="flex items-center justify-between gap-4">
 				<h2 id="place-sheet-title" class="answer">{m.change_place()}</h2>
-				<button type="button" class="icon-button" aria-label={m.close()} onclick={dismiss}
-					><X size={20} aria-hidden="true" /></button
-				>
+				<button type="button" class="icon-button" aria-label={m.close()} onclick={dismiss}>
+					<X size={20} aria-hidden="true" />
+				</button>
 			</div>
 
 			<div class="mt-4"><PlaceSearch replace floating={false} /></div>
@@ -85,12 +85,12 @@
 										aria-hidden="true"
 									/>{/if}
 								<span class="min-w-0 flex-1">
-									<span class="block truncate font-semibold"
-										>{place.live ? m.my_location() : place.name}</span
-									>
-									{#if place.detail}<span class="block truncate text-sm text-ink-muted"
-											>{place.detail}</span
-										>{/if}
+									<span class="block truncate font-semibold">
+										{place.live ? m.my_location() : place.name}
+									</span>
+									{#if place.detail}<span class="block truncate text-sm text-ink-muted">
+											{place.detail}
+										</span>{/if}
 								</span>
 								{#if here}<span class="text-sm text-ink-muted">{m.current_place()}</span>{/if}
 							</a>

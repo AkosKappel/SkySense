@@ -482,9 +482,9 @@
 							class="w-full accent-sun"
 						/>
 					</label>
-					<span class="shrink-0 text-sm font-semibold tabular-nums" aria-hidden="true"
-						>{step ? f.time(step.time) : ''}</span
-					>
+					<span class="shrink-0 text-sm font-semibold tabular-nums" aria-hidden="true">
+						{step ? f.time(step.time) : ''}
+					</span>
 				</div>
 			</div>
 			{#if layer === 'temperature'}

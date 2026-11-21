@@ -32,9 +32,9 @@
 				<span class="leading-tight">
 					<span class="block font-semibold">{i === 0 ? m.today() : f.weekday(day.date)}</span>
 					{#if confidence[i] === 'medium' || confidence[i] === 'low'}
-						<span class="block text-xs text-ink-muted"
-							>{confidence[i] === 'low' ? m.confidence_low() : m.confidence_medium()}</span
-						>
+						<span class="block text-xs text-ink-muted">
+							{confidence[i] === 'low' ? m.confidence_low() : m.confidence_medium()}
+						</span>
 					{/if}
 				</span>
 				<WeatherIcon condition={day.condition} size={20} />

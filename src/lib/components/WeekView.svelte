@@ -75,8 +75,9 @@
 							name: encodeURIComponent(page.params.name ?? '')
 						})}?day={row.day.date}"
 						class="font-semibold whitespace-nowrap underline-offset-4 hover:underline"
-						>{dayLabel(row.day.date)}</a
 					>
+						{dayLabel(row.day.date)}
+					</a>
 					<p class="mt-1 flex items-center gap-2 text-sm tabular-nums">
 						<WeatherIcon condition={row.day.condition} size={20} />
 						<span class="sr-only">{conditionLabel(row.day.condition)}</span>

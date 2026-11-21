@@ -100,8 +100,10 @@
 							type="button"
 							class="-my-2 min-h-11 cursor-pointer px-2 font-semibold underline-offset-4 hover:underline"
 							aria-pressed={editing}
-							onclick={() => (editing = !editing)}>{editing ? m.done() : m.edit()}</button
+							onclick={() => (editing = !editing)}
 						>
+							{editing ? m.done() : m.edit()}
+						</button>
 					</div>
 					<ul class="mt-3 space-y-2">
 						{#each savedPlaces.list as place, i (placeKey(place))}
@@ -125,19 +127,20 @@
 												aria-hidden="true"
 											/>{/if}
 										<span class="min-w-0">
-											<span class="block truncate font-semibold"
-												>{place.live ? m.my_location() : place.name}</span
-											>
-											{#if place.detail}<span class="block truncate text-sm text-ink-muted"
-													>{place.detail}</span
-												>{/if}
+											<span class="block truncate font-semibold">
+												{place.live ? m.my_location() : place.name}
+											</span>
+											{#if place.detail}<span class="block truncate text-sm text-ink-muted">
+													{place.detail}
+												</span>{/if}
 										</span>
 									</a>
 								{:else}
 									{#if place.live}
 										<!-- Its name follows the language; it is the reader's position, not a place to name. -->
-										<span class="min-w-0 flex-1 truncate px-4 font-semibold">{m.my_location()}</span
-										>
+										<span class="min-w-0 flex-1 truncate px-4 font-semibold">
+											{m.my_location()}
+										</span>
 									{:else}
 										<input
 											aria-label={m.rename_place({ name: place.name })}
@@ -155,22 +158,26 @@
 										aria-label={m.move_up({ name: place.name })}
 										disabled={i === 0}
 										onclick={() => savedPlaces.move(i, -1)}
-										><ArrowUp size={18} aria-hidden="true" /></button
 									>
+										<ArrowUp size={18} aria-hidden="true" />
+									</button>
 									<button
 										type="button"
 										class="icon-button"
 										aria-label={m.move_down({ name: place.name })}
 										disabled={i === savedPlaces.list.length - 1}
 										onclick={() => savedPlaces.move(i, 1)}
-										><ArrowDown size={18} aria-hidden="true" /></button
 									>
+										<ArrowDown size={18} aria-hidden="true" />
+									</button>
 									<button
 										type="button"
 										class="mr-1 icon-button"
 										aria-label={m.remove_place({ name: place.name })}
-										onclick={() => remove(i)}><X size={18} aria-hidden="true" /></button
+										onclick={() => remove(i)}
 									>
+										<X size={18} aria-hidden="true" />
+									</button>
 								{/if}
 							</li>
 						{/each}
@@ -182,9 +189,13 @@
 				{#if removed}
 					<p class="mt-4 flex items-center justify-between gap-4 glass px-5 py-3">
 						{m.place_removed({ name: removed.place.name })}
-						<button type="button" class="min-h-11 cursor-pointer font-bold underline" onclick={undo}
-							>{m.undo()}</button
+						<button
+							type="button"
+							class="min-h-11 cursor-pointer font-bold underline"
+							onclick={undo}
 						>
+							{m.undo()}
+						</button>
 					</p>
 				{/if}
 			</div>
@@ -239,9 +250,10 @@
 								name: encodeURIComponent(sample.name)
 							})}
 							class="mt-4 inline-flex min-h-11 items-center gap-1.5 font-semibold underline-offset-4 hover:underline"
-							>{m.home_open({ place: sample.name })}
-							<ChevronRight size={18} aria-hidden="true" /></a
 						>
+							{m.home_open({ place: sample.name })}
+							<ChevronRight size={18} aria-hidden="true" />
+						</a>
 					</div>
 					<SkyLayer kind={sample.sky} falling={null} />
 				{/if}

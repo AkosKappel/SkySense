@@ -155,8 +155,10 @@
 							<span
 								class="shrink-0 rounded-full px-2.5 py-1 text-sm font-semibold {row.window.great
 									? 'bg-good/20 text-good'
-									: 'bg-veil/10'}">{row.window.great ? m.window_great() : m.window_good()}</span
+									: 'bg-veil/10'}"
 							>
+								{row.window.great ? m.window_great() : m.window_good()}
+							</span>
 						{/if}
 						{#if row.detail || row.week}
 							<ChevronDown
