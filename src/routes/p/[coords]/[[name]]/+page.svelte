@@ -134,7 +134,7 @@
 	// `?day=2026-11-12` shows one day; anything not in the forecast shows the overview.
 	const day = $derived(forecast.days.find((d) => d.date === page.url.searchParams.get('day')));
 	const comparing = $derived(page.url.searchParams.has('models'));
-	const pastYear = $derived(page.url.searchParams.has('year'));
+	const showHistory = $derived(page.url.searchParams.has('history'));
 	const showRadar = $derived(page.url.searchParams.has('radar'));
 	const showBetter = $derived(page.url.searchParams.has('better'));
 	const showWeek = $derived(page.url.searchParams.has('week'));
@@ -145,8 +145,8 @@
 				? m.better_title({ place: name })
 				: showWeek
 					? m.week_title({ place: name })
-					: pastYear
-						? m.year_title({ place: name })
+					: showHistory
+						? m.history_title({ place: name })
 						: comparing
 							? m.compare_title({ place: name })
 							: day
@@ -522,10 +522,10 @@
 		{#await import('#lib/components/WeekView.svelte') then { default: WeekView }}
 			<WeekView days={forecast.days} hours={forecast.hours} {f} comfort={data.comfort} />
 		{/await}
-	{:else if pastYear}
-		<ViewHeader title={m.year_title({ place: name })} />
-		{#await import('#lib/components/YearView.svelte') then { default: YearView }}
-			<YearView year={data.year} {f} />
+	{:else if showHistory}
+		<ViewHeader title={m.history_title({ place: name })} />
+		{#await import('#lib/components/HistoryView.svelte') then { default: HistoryView }}
+			<HistoryView coordinates={data.coordinates} today={forecast.days[0].date} {f} />
 		{/await}
 	{:else if comparing}
 		<ViewHeader title={m.compare_models()} />
@@ -820,13 +820,7 @@
 {#snippet pastTile()}
 	<WhenNear>
 		{#await import('#lib/components/PastTiles.svelte') then { default: PastTiles }}
-			<PastTiles
-				coordinates={data.coordinates}
-				date={today.date}
-				max={today.max}
-				place={name}
-				{f}
-			/>
+			<PastTiles coordinates={data.coordinates} date={today.date} max={today.max} {f} />
 		{/await}
 	</WhenNear>
 {/snippet}

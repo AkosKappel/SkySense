@@ -22,13 +22,14 @@ export default defineConfig({
 					// of each kind instead; those used in one place only stay there. The app's own shared
 					// modules (format, weather, time and the like) too: one chunk saved the place page
 					// 13 requests and 9 kB. Not `basemap.ts`: it reads `$app/env/public`, which only the map
-					// views may load, after the app has started.
+					// views may load, after the app has started. Not `history.ts` either: only the history
+					// view and its load use it, and in the shared chunk it would load with every place.
 					groups: [
 						{ name: 'icons', test: /@lucide[\\/]svelte/, minShareCount: 2 },
 						{ name: 'messages', test: /paraglide/, minShareCount: 2 },
 						{
 							name: 'lib',
-							test: /[\\/]src[\\/]lib[\\/](?!basemap\.)[^/\\]+\.ts$/,
+							test: /[\\/]src[\\/]lib[\\/](?!basemap\.|history\.)[^/\\]+\.ts$/,
 							minShareCount: 2
 						}
 					]

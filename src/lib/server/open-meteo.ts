@@ -12,7 +12,8 @@ import {
 } from '#lib/weather.js';
 import type { Climate, Normal } from '#lib/climate.js';
 import { modelIds, type ModelRun } from '#lib/models.js';
-import { summarizeYear, type YearInWeather } from '#lib/year.js';
+import type { DailyHistory } from '#lib/year.js';
+import type { DayNormal } from '#lib/history.js';
 import { areaPoints, type AreaCell } from '#lib/better.js';
 import { gridPoints } from '#lib/grid.js';
 import type { GridCell, RadarFrames } from '#lib/radar.js';
@@ -468,46 +469,111 @@ const yearSchema = z.object({
 	})
 });
 
-/** A year of ERA5 days, gaps dropped, reduced to records and months (X-13). */
-export function toYear(raw: unknown): YearInWeather | null {
+/** ERA5 days, gaps (the last days ERA5 has not reached yet) dropped (H-09). */
+export function toHistory(raw: unknown): DailyHistory {
 	const parsed = yearSchema.safeParse(raw);
 	if (!parsed.success) throw new WeatherServiceError('Unexpected archive response');
 	const d = parsed.data.daily;
-	return summarizeYear(
-		d.time.flatMap((date, i) => {
-			const max = d.temperature_2m_max[i];
-			const min = d.temperature_2m_min[i];
-			if (max === null || min === null) return [];
-			return [
-				{ date, max, min, rain: d.precipitation_sum[i] ?? 0, gust: d.wind_gusts_10m_max[i] ?? 0 }
-			];
-		})
-	);
+	return d.time.flatMap((date, i) => {
+		const max = d.temperature_2m_max[i];
+		const min = d.temperature_2m_min[i];
+		if (max === null || min === null) return [];
+		return [
+			{ date, max, min, rain: d.precipitation_sum[i] ?? 0, gust: d.wind_gusts_10m_max[i] ?? 0 }
+		];
+	});
 }
 
-/** The twelve full months before `month` ("2026-11" gives November 2025 to October 2026). */
-export async function fetchYear(
+/** Each day from `from` to `to`, a year at most (the route checks it), so the request stays light. */
+export async function fetchHistory(
 	coordinates: Coordinates,
-	month: string,
+	from: string,
+	to: string,
 	fetchFn: typeof fetch = fetch
-): Promise<YearInWeather | null> {
+): Promise<DailyHistory> {
 	const { lat, lon } = roundCoordinates(coordinates);
 	if (useFixtures()) {
-		return toYear(fixtures[`./fixtures/year-${nearestFixture({ lat, lon })}.json`].default);
+		const name = nearestFixture({ lat, lon });
+		return toHistory(fixtures[`./fixtures/history-${name}.json`].default).filter(
+			(d) => d.date >= from && d.date <= to
+		);
 	}
-	const end = addDays(`${month}-01`, -1);
-	const start = `${Number(month.slice(0, 4)) - 1}${month.slice(4)}-01`;
 	const url = new URL(ARCHIVE_URL);
 	url.search = new URLSearchParams({
 		latitude: String(lat),
 		longitude: String(lon),
-		start_date: start,
-		end_date: end,
+		start_date: from,
+		end_date: to,
 		daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum,wind_gusts_10m_max',
 		models: 'era5',
 		timezone: 'auto'
 	}).toString();
-	return toYear(await getJson(url, fetchFn));
+	return toHistory(await getJson(url, fetchFn));
+}
+
+/**
+ * The 1991 to 2020 normal of every calendar day, from all days within a week of it in all 30
+ * years: mean high, low and daily rain (H-09). 29 February shares 1 March's.
+ */
+export function toNormals(raw: unknown): DayNormal[] {
+	const parsed = archiveSchema.safeParse(raw);
+	if (!parsed.success) throw new WeatherServiceError('Unexpected archive response');
+	const d = parsed.data.daily;
+	const totals = Array.from({ length: 365 }, () => ({ max: 0, min: 0, rain: 0, n: 0 }));
+	d.time.forEach((date, i) => {
+		const max = d.temperature_2m_max[i];
+		const min = d.temperature_2m_min[i];
+		const year = Number(date.slice(0, 4));
+		if (max === null || min === null || year < NORMAL_YEARS[0] || year > NORMAL_YEARS[1]) return;
+		const t = totals[dayOfYear(date)];
+		t.max += max;
+		t.min += min;
+		t.rain += d.precipitation_sum[i] ?? 0;
+		t.n++;
+	});
+	const normals: DayNormal[] = [];
+	// A leap year, so the list has 29 February too.
+	for (let date = '2020-01-01'; date < '2021-01-01'; date = addDays(date, 1)) {
+		const sum = { max: 0, min: 0, rain: 0, n: 0 };
+		for (let k = -NORMAL_WINDOW_DAYS; k <= NORMAL_WINDOW_DAYS; k++) {
+			const t = totals[(dayOfYear(date) + k + 365) % 365];
+			sum.max += t.max;
+			sum.min += t.min;
+			sum.rain += t.rain;
+			sum.n += t.n;
+		}
+		if (sum.n) {
+			normals.push({
+				day: date.slice(5),
+				max: tenth(sum.max / sum.n),
+				min: tenth(sum.min / sum.n),
+				rain: tenth(sum.rain / sum.n)
+			});
+		}
+	}
+	return normals;
+}
+
+/** One heavy request per place (30 years of days), but the answer never changes. */
+export async function fetchNormals(
+	coordinates: Coordinates,
+	fetchFn: typeof fetch = fetch
+): Promise<DayNormal[]> {
+	const { lat, lon } = roundCoordinates(coordinates);
+	if (useFixtures()) {
+		return toNormals(fixtures[`./fixtures/normals-${nearestFixture({ lat, lon })}.json`].default);
+	}
+	const url = new URL(ARCHIVE_URL);
+	url.search = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		start_date: `${NORMAL_YEARS[0]}-01-01`,
+		end_date: `${NORMAL_YEARS[1]}-12-31`,
+		daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum',
+		models: 'era5',
+		timezone: 'auto'
+	}).toString();
+	return toNormals(await getJson(url, fetchFn));
 }
 
 const recentSchema = z.object({

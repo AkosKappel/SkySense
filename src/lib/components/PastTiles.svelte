@@ -12,13 +12,11 @@
 		coordinates,
 		date,
 		max,
-		place,
 		f
-	}: { coordinates: Coordinates; date: string; max: number; place: string; f: Formatter } =
-		$props();
+	}: { coordinates: Coordinates; date: string; max: number; f: Formatter } = $props();
 </script>
 
-<ClimateTiles {coordinates} {date} {max} {place} {f}>
+<ClimateTiles {coordinates} {date} {max} {f}>
 	<DryTile {coordinates} today={date} {f} />
 	<GardenTile {coordinates} today={date} {f} />
 	<HindcastTile {coordinates} today={date} {f} />

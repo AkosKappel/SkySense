@@ -21,10 +21,12 @@ import {
 export function formatter(locale: string, units: Units) {
 	const intl = intlLocale(locale, units.clock);
 	return {
+		/** The `Intl` locale, for formats only one view needs. */
+		locale: intl,
 		temp: (celsius: number) => `${temperature(celsius, units)}°`,
 		/** A difference between two temperatures: scaled, not shifted, for Fahrenheit. */
-		tempDelta: (celsius: number) =>
-			`${Math.round(units.temperature === 'f' ? celsius * 1.8 : celsius)}°`,
+		tempDelta: (celsius: number, fractionDigits = 0) =>
+			`${new Intl.NumberFormat(intl, { maximumFractionDigits: fractionDigits }).format(units.temperature === 'f' ? celsius * 1.8 : celsius)}°`,
 		time: (local: string) => formatTime(local, intl, units.clock),
 		hour: (local: string) => formatHour(local, intl, units.clock),
 		weekday: (date: string) => formatWeekday(date, intl),

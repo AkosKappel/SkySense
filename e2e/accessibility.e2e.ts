@@ -12,7 +12,7 @@ const pages = [
 	'/p/48.15,17.11/Bratislava',
 	'/p/48.15,17.11/Bratislava?day=2026-11-12',
 	'/p/48.15,17.11/Bratislava?models',
-	'/p/48.15,17.11/Bratislava?year',
+	'/p/48.15,17.11/Bratislava?history',
 	'/p/48.15,17.11/Bratislava?radar',
 	'/p/40.42,-3.7/Madrid?better',
 	'/p/48.15,17.11/Bratislava?week',

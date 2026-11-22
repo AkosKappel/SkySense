@@ -1,6 +1,5 @@
 import { error } from '@sveltejs/kit';
 import type { ModelRun } from '#lib/models.js';
-import type { YearInWeather } from '#lib/year.js';
 import { parseCoordinates, type Forecast } from '#lib/weather.js';
 import type { PageLoad } from './$types';
 
@@ -21,21 +20,10 @@ export const load: PageLoad = async ({ params, fetch, url }) => {
 	if (!response.ok) error(503, 'Weather service unavailable');
 	const forecast = (await response.json()) as Forecast;
 
-	// `?year` shows the twelve months before the place's current month (X-13). The month comes
-	// from the forecast, so it is the place's, not the reader's or the server's.
-	const month = forecast.days[0]?.date.slice(0, 7);
-	const year =
-		url.searchParams.has('year') && month
-			? await fetch(`/api/year?${query}&month=${month}`).then((r) =>
-					r.ok ? (r.json() as Promise<YearInWeather | null>) : null
-				)
-			: null;
-
 	return {
 		coordinates,
 		name: params.name?.trim().slice(0, 80) || null,
 		forecast,
-		models,
-		year
+		models
 	};
 };

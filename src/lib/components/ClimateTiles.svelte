@@ -12,14 +12,12 @@
 		coordinates,
 		date,
 		max,
-		place,
 		f,
 		children
 	}: {
 		coordinates: Coordinates;
 		date: string;
 		max: number;
-		place: string;
 		f: Formatter;
 		/** Short tiles stacked under the normal, beside the taller table of past years. */
 		children?: Snippet;
@@ -134,10 +132,10 @@
 			href="{resolve('/p/[coords]/[[name]]', {
 				coords: page.params.coords ?? '',
 				name: encodeURIComponent(page.params.name ?? '')
-			})}?year"
+			})}?history"
 			class="mt-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold underline-offset-4 hover:underline"
 		>
-			{m.year_title({ place })}
+			{m.history_link()}
 			<ChevronRight size={16} aria-hidden="true" />
 		</a>
 	</section>

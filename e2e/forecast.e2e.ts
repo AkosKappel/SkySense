@@ -459,16 +459,34 @@ test('says what tomorrow brings next to today', async ({ page }) => {
 	await expect(tomorrow.getByText(/Low 3° · 23% chance of rain/)).toBeVisible();
 });
 
-test('shows the past year from the "past years" tile', async ({ page }) => {
+test('explores the past from the "past years" tile', async ({ page }) => {
 	await page.goto('/p/48.15,17.11/Bratislava');
 	await placeReady(page);
-	await page.getByRole('link', { name: 'The past year in Bratislava' }).click();
-	await expect(page).toHaveURL(/\?year$/);
+	await page.getByRole('link', { name: 'Explore the past' }).click();
+	await expect(page).toHaveURL(/\?history$/);
 	await expect(
-		page.getByRole('heading', { level: 1, name: 'The past year in Bratislava' })
+		page.getByRole('heading', { level: 1, name: 'Weather history in Bratislava' })
 	).toBeVisible();
-	await expect(page.getByRole('definition').filter({ hasText: '29 June 2026' })).toBeVisible();
-	await expect(page.getByText(/of rain in total; \d+ days had at least 1\.0 mm\./)).toBeVisible();
+	// The last whole month before ERA5's newest day (the fixtures' 4 November 2026).
+	const period = page.getByRole('region', { name: 'October 2026' });
+	await expect(period.getByText('0.5° colder than usual.')).toBeVisible();
+	await expect(period.getByText(/^Drier than usual: .+ of rain, usually .+\.$/)).toBeVisible();
+
+	await page.getByRole('link', { name: 'Year', exact: true }).click();
+	await expect(page.getByRole('region', { name: '2026' })).toContainText(
+		'Recorded until 4 November 2026 so far'
+	);
+	await page.getByRole('link', { name: 'Earlier' }).click();
+	await expect(page).toHaveURL(/\?history=year&at=2025-01-01$/);
+	await expect(page.getByRole('region', { name: '2025' })).toBeVisible();
+	await expect(page.getByRole('definition').filter({ hasText: '3 July 2025' })).toBeVisible();
+
+	await page.getByRole('link', { name: 'Day', exact: true }).click();
+	await page.getByLabel('Date').fill('2025-07-03');
+	await page.getByRole('button', { name: 'Show' }).click();
+	await expect(page).toHaveURL(/\?history=day&at=2025-07-03$/);
+	await expect(page.getByRole('region', { name: '3 July 2025' })).toBeVisible();
+	await expect(page.getByText(/^usually \d+°$/).first()).toBeVisible();
 });
 
 test('shares today as a picture, or downloads it where sharing files is not possible', async ({
