@@ -1,9 +1,11 @@
-// How today compares with the climate (H-01) and with the same date in recent years (H-02).
+// How today compares with the climate (H-01), whether that is unusual (H-08), and the same date in
+// recent years (H-02).
+import { RAIN_DAY_MM } from '#lib/year.js';
 
 /** Eleven values: the 0th, 10th, ..., 100th percentile. */
 export type Deciles = number[];
 /** The 1991 to 2020 normal for a calendar day, from days within a week of it in every year. */
-export type Normal = { date: string; max: Deciles; min: Deciles };
+export type Normal = { date: string; max: Deciles; min: Deciles; rain: Deciles };
 /** One day of a recent year, for "on this day". */
 export type PastDay = { date: string; max: number; min: number; rain: number };
 /**
@@ -61,4 +63,49 @@ export function pastRecord(max: number, past: PastDay[]): 'warmest' | 'coldest' 
 	if (past.every((d) => max > d.max)) return 'warmest';
 	if (past.every((d) => max < d.max)) return 'coldest';
 	return null;
+}
+
+/** One way today stands out: its high, its low (the night) or its rain, as a share of the normal's days. */
+export type Standout = { measure: 'day' | 'night' | 'rain'; percent: number };
+export type Unusual = { level: 'usual' | 'unusual' | 'rare'; standouts: Standout[] };
+
+/**
+ * Whether today is unusual for the time of year (H-08): beyond the 10th or 90th percentile of
+ * the days around this date in 1991 to 2020 is unusual, beyond all of them is rare. Rain only
+ * counts on the wet side, and from a rain day: most days are dry, so a dry one says nothing.
+ */
+export function unusual(
+	today: { max: number; min: number; rain: number },
+	normal: Normal
+): Unusual {
+	const standouts: Standout[] = [
+		{ measure: 'day' as const, percent: percentBelow(today.max, normal.max) },
+		{ measure: 'night' as const, percent: percentBelow(today.min, normal.min) },
+		...(today.rain >= RAIN_DAY_MM
+			? [{ measure: 'rain' as const, percent: percentBelow(today.rain, normal.rain) }]
+			: [])
+	].filter((s) => s.percent >= 90 || (s.measure !== 'rain' && s.percent <= 10));
+	const rare = standouts.some((s) => s.percent === 100 || s.percent === 0);
+	return { level: rare ? 'rare' : standouts.length ? 'unusual' : 'usual', standouts };
+}
+
+/** Fewer days of the week with a normal than this, and the week says nothing. */
+const WEEK_DAYS_NEEDED = 4;
+
+/**
+ * The 7 days before today against their normal median high and low (H-08), in °C; null when too
+ * few of them have a normal (the first days of a month, as the climate is loaded by month).
+ */
+export function lastWeek(
+	days: { date: string; max: number; min: number }[],
+	climate: Climate,
+	today: string
+): number | null {
+	const week = days.filter((d) => d.date < today).slice(-7);
+	const diffs = week.flatMap((d) => {
+		const normal = climate.normals.find((n) => n.date.endsWith(d.date.slice(4)));
+		return normal ? [(d.max + d.min) / 2 - (normal.max[5] + normal.min[5]) / 2] : [];
+	});
+	if (diffs.length < WEEK_DAYS_NEEDED) return null;
+	return Math.round((diffs.reduce((a, b) => a + b, 0) / diffs.length) * 10) / 10;
 }

@@ -19,7 +19,7 @@ import { areaPoints, type AreaCell } from '#lib/better.js';
 import { gridPoints } from '#lib/grid.js';
 import type { GridCell, RadarFrames } from '#lib/radar.js';
 import { pressureAt } from '#lib/pressure.js';
-import type { RainDay } from '#lib/recent.js';
+import type { RecentDay } from '#lib/recent.js';
 import type { HindcastDay } from '#lib/hindcast.js';
 import type { GardenDay } from '#lib/garden.js';
 import { SITE_URL } from '#lib/site.js';
@@ -417,7 +417,8 @@ export function toClimate(raw: unknown, month: string): Climate {
 			normals.push({
 				date: day,
 				max: deciles(near.map((r) => r.max)),
-				min: deciles(near.map((r) => r.min))
+				min: deciles(near.map((r) => r.min)),
+				rain: deciles(near.map((r) => r.rain))
 			});
 		}
 	}
@@ -591,28 +592,35 @@ export async function fetchRecord(
 }
 
 const recentSchema = z.object({
-	daily: z.object({ time: z.array(z.string()), precipitation_sum: numbers })
+	daily: z.object({
+		time: z.array(z.string()),
+		precipitation_sum: numbers,
+		temperature_2m_max: numbers,
+		temperature_2m_min: numbers
+	})
 });
 
-/** Rain per day, gaps dropped (H-04). */
-export function toRecent(raw: unknown): RainDay[] {
+/** Rain, high and low per day, gaps dropped (H-04, H-08). */
+export function toRecent(raw: unknown): RecentDay[] {
 	const parsed = recentSchema.safeParse(raw);
 	if (!parsed.success) throw new WeatherServiceError('Unexpected forecast response');
 	const d = parsed.data.daily;
 	return d.time.flatMap((date, i) => {
 		const rain = d.precipitation_sum[i];
-		return rain === null ? [] : [{ date, rain }];
+		const max = d.temperature_2m_max[i];
+		const min = d.temperature_2m_min[i];
+		return rain === null || max === null || min === null ? [] : [{ date, rain, max, min }];
 	});
 }
 
 export const RECENT_DAYS = 60;
 
-/** Rain on each of the 60 days before `today` (the place's date), from the forecast API's past. */
+/** Rain, high and low on each of the 60 days before `today` (the place's date), from the forecast API's past. */
 export async function fetchRecent(
 	coordinates: Coordinates,
 	today: string,
 	fetchFn: typeof fetch = fetch
-): Promise<RainDay[]> {
+): Promise<RecentDay[]> {
 	const { lat, lon } = roundCoordinates(coordinates);
 	if (useFixtures()) {
 		return toRecent(fixtures[`./fixtures/recent-${nearestFixture({ lat, lon })}.json`].default);
@@ -621,7 +629,7 @@ export async function fetchRecent(
 	url.search = new URLSearchParams({
 		latitude: String(lat),
 		longitude: String(lon),
-		daily: 'precipitation_sum',
+		daily: 'precipitation_sum,temperature_2m_max,temperature_2m_min',
 		timezone: 'auto',
 		start_date: addDays(today, -RECENT_DAYS),
 		end_date: addDays(today, -1)

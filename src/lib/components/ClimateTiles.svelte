@@ -3,21 +3,29 @@
 	import type { Snippet } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { compareToNormal, forDate, pastRecord, type Climate } from '#lib/climate.js';
+	import {
+		compareToNormal,
+		forDate,
+		lastWeek,
+		pastRecord,
+		unusual,
+		type Climate,
+		type Standout
+	} from '#lib/climate.js';
+	import type { RecentDay } from '#lib/recent.js';
 	import type { Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
-	import type { Coordinates } from '#lib/weather.js';
+	import type { Coordinates, Day } from '#lib/weather.js';
 
 	let {
 		coordinates,
-		date,
-		max,
+		today,
 		f,
 		children
 	}: {
 		coordinates: Coordinates;
-		date: string;
-		max: number;
+		/** Today's forecast: its high, low and rain against the normal. */
+		today: Day;
 		f: Formatter;
 		/** Short tiles stacked under the normal, beside the taller table of past years. */
 		children?: Snippet;
@@ -25,6 +33,7 @@
 
 	// Loaded in the browser, not with the page: the history is extra, and the browser's request
 	// reaches the CDN, which keeps a place's month of history for 30 days.
+	const date = $derived(today.date);
 	let climate = $state<Climate | null>(null);
 	$effect(() => {
 		const controller = new AbortController();
@@ -39,9 +48,43 @@
 		return () => controller.abort();
 	});
 
+	// The days before today for "the last 7 days" (H-08); the dry tile asks for the same answer.
+	let recent = $state<RecentDay[] | null>(null);
+	$effect(() => {
+		const controller = new AbortController();
+		recent = null;
+		fetch(`/api/recent?lat=${coordinates.lat}&lon=${coordinates.lon}&today=${date}`, {
+			signal: controller.signal
+		})
+			.then((r) => (r.ok ? (r.json() as Promise<RecentDay[]>) : null))
+			.then((days) => (recent = days))
+			.catch(() => {
+				// No week line then.
+			});
+		return () => controller.abort();
+	});
+
 	const day = $derived(climate ? forDate(climate, date) : null);
-	const comparison = $derived(day?.normal ? compareToNormal(max, day.normal) : null);
-	const record = $derived(day ? pastRecord(max, day.past) : null);
+	const comparison = $derived(day?.normal ? compareToNormal(today.max, day.normal) : null);
+	const verdict = $derived(day?.normal ? unusual(today, day.normal) : null);
+	const week = $derived(climate && recent ? lastWeek(recent, climate, date) : null);
+	const record = $derived(day ? pastRecord(today.max, day.past) : null);
+
+	const standout = ({ measure, percent }: Standout) => {
+		const share = f.percent(percent >= 50 ? percent : 100 - percent);
+		if (measure === 'rain')
+			return percent === 100 ? m.unusual_rain_any() : m.unusual_rain({ percent: share });
+		if (measure === 'night') {
+			if (percent >= 50)
+				return percent === 100
+					? m.unusual_night_mild_any()
+					: m.unusual_night_mild({ percent: share });
+			return percent === 0 ? m.unusual_night_cold_any() : m.unusual_night_cold({ percent: share });
+		}
+		if (percent >= 50)
+			return percent === 100 ? m.unusual_day_warm_any() : m.normal_rank_warm({ percent: share });
+		return percent === 0 ? m.unusual_day_cold_any() : m.normal_rank_cold({ percent: share });
+	};
 	const extremes = $derived.by(() => {
 		const past = day?.past ?? [];
 		if (past.length < 2) return null;
@@ -66,13 +109,23 @@
 			<p class="mt-2 text-ink-muted">
 				{m.normal_typical({ max: f.temp(day.normal.max[5]), min: f.temp(day.normal.min[5]) })}
 			</p>
-			{#if comparison.percent >= 90}
-				<p class="mt-1 text-sm text-ink-muted">
-					{m.normal_rank_warm({ percent: f.percent(comparison.percent) })}
+			{#if verdict && verdict.level !== 'usual'}
+				<p class="mt-3 font-semibold">
+					{verdict.level === 'rare' ? m.unusual_rare() : m.unusual_unusual()}
 				</p>
-			{:else if comparison.percent <= 10}
-				<p class="mt-1 text-sm text-ink-muted">
-					{m.normal_rank_cold({ percent: f.percent(100 - comparison.percent) })}
+				<ul class="mt-1 text-sm text-ink-muted">
+					{#each verdict.standouts as item (item.measure)}
+						<li>{standout(item)}</li>
+					{/each}
+				</ul>
+			{/if}
+			{#if week !== null}
+				<p class="mt-2 text-sm text-ink-muted">
+					{week >= 1
+						? m.unusual_week_warmer({ diff: f.tempDelta(week) })
+						: week <= -1
+							? m.unusual_week_colder({ diff: f.tempDelta(-week) })
+							: m.unusual_week_usual()}
 				</p>
 			{/if}
 		</section>

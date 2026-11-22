@@ -2,7 +2,7 @@
 	import { Sprout } from '@lucide/svelte';
 	import type { Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
-	import { drySpell, WET_OF, wetRun, type RainDay } from '#lib/recent.js';
+	import { drySpell, WET_OF, wetRun, type RecentDay } from '#lib/recent.js';
 	import type { Coordinates } from '#lib/weather.js';
 
 	// How dry it has been (H-04). Loaded in the browser like the climate tiles: it is extra, and the
@@ -10,13 +10,13 @@
 	let { coordinates, today, f }: { coordinates: Coordinates; today: string; f: Formatter } =
 		$props();
 
-	let days = $state<RainDay[] | null>(null);
+	let days = $state<RecentDay[] | null>(null);
 	$effect(() => {
 		const controller = new AbortController();
 		const query = `lat=${coordinates.lat}&lon=${coordinates.lon}&today=${today}`;
 		days = null;
 		fetch(`/api/recent?${query}`, { signal: controller.signal })
-			.then((r) => (r.ok ? (r.json() as Promise<RainDay[]>) : null))
+			.then((r) => (r.ok ? (r.json() as Promise<RecentDay[]>) : null))
 			.then((d) => (days = d))
 			.catch(() => {
 				// No tile then.

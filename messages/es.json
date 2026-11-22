@@ -159,7 +159,7 @@
 	"feature_answers": "Primero, respuestas claras: una frase sobre las próximas 24 horas, qué ponerte, si necesitas paraguas, cuándo oscurece y cuánto viento hace.",
 	"feature_comfort": "Un ajuste para quien se enfría o se acalora fácilmente, que desplaza las temperaturas ideales de las actividades.",
 	"feature_confidence": "Cuánta seguridad hay: el rango probable de 51 ejecuciones del modelo ECMWF, avisos en los días inciertos y cinco modelos meteorológicos lado a lado.",
-	"feature_normal": "Cómo es hoy comparado con los años 1991 a 2020, cómo fue esta fecha en cada uno de los últimos diez años, cuánto lleva sin llover, y cualquier día, semana, mes o año desde 1940 frente a lo habitual, y cómo ha cambiado el tiempo desde 1961.",
+	"feature_normal": "Cómo es hoy frente a 1991 a 2020, si es inusual, esta fecha en años recientes, cuánto lleva sin llover, cualquier día desde 1940 y el cambio desde 1961.",
 	"feature_offline": "Se instala como una app y muestra sin conexión los lugares que ya abriste.",
 	"feature_places": "Lugares que puedes guardar, renombrar, ordenar y copiar en un archivo, una entrada «Mi ubicación» que te vuelve a encontrar al abrirla, dos lugares comparados día a día, una búsqueda en tu idioma y un enlace para compartir cualquier lugar.",
 	"feature_radar": "Un radar de lluvia de las últimas 2 horas y la lluvia del modelo para las próximas 3, en un mapa, también con temperatura y viento.",
@@ -676,5 +676,18 @@
 	"trend_hot": "Días de {temp} o más",
 	"trend_frost": "Noches bajo {temp}",
 	"trend_years_table": "Mostrar los años como tabla",
-	"trend_against_reference": "Frente a {from}–{until}"
+	"trend_against_reference": "Frente a {from}–{until}",
+	"unusual_unusual": "Inusual para la época del año.",
+	"unusual_rare": "Raro para la época del año.",
+	"unusual_day_warm_any": "Más cálido que cualquier día de esta época entre 1991 y 2020.",
+	"unusual_day_cold_any": "Más frío que cualquier día de esta época entre 1991 y 2020.",
+	"unusual_night_mild": "Una noche más templada que el {percent} de las noches de esta época entre 1991 y 2020.",
+	"unusual_night_cold": "Una noche más fría que el {percent} de las noches de esta época entre 1991 y 2020.",
+	"unusual_night_mild_any": "Una noche más templada que cualquiera de esta época entre 1991 y 2020.",
+	"unusual_night_cold_any": "Una noche más fría que cualquiera de esta época entre 1991 y 2020.",
+	"unusual_rain": "Más lluvioso que el {percent} de los días de esta época entre 1991 y 2020.",
+	"unusual_rain_any": "Más lluvioso que cualquier día de esta época entre 1991 y 2020.",
+	"unusual_week_warmer": "Los últimos 7 días fueron {diff} más cálidos de lo habitual.",
+	"unusual_week_colder": "Los últimos 7 días fueron {diff} más fríos de lo habitual.",
+	"unusual_week_usual": "Los últimos 7 días fueron más o menos tan cálidos como de costumbre."
 }

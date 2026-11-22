@@ -264,13 +264,13 @@ async function recordRecord(name: string, lat: number, lon: number, firstHour: s
 	);
 }
 
-// Rain on each of the 60 days before the recorded date (H-04).
+// Rain, high and low on each of the 60 days before the recorded date (H-04, H-08).
 async function recordRecent(name: string, lat: number, lon: number, firstHour: string) {
 	const today = firstHour.slice(0, 10);
 	const params = new URLSearchParams({
 		latitude: String(lat),
 		longitude: String(lon),
-		daily: 'precipitation_sum',
+		daily: 'precipitation_sum,temperature_2m_max,temperature_2m_min',
 		timezone: 'auto',
 		start_date: addDays(today, -60),
 		end_date: addDays(today, -1)

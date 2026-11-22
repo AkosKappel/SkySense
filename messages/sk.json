@@ -162,7 +162,7 @@
 	"feature_answers": "Najprv jasné odpovede: veta o najbližších 24 hodinách, čo si obliecť, či potrebuješ dáždnik, kedy sa zotmie a aký je vietor.",
 	"feature_comfort": "Nastavenie pre tých, ktorým je ľahko zima alebo teplo; posunie ideálne teploty pre aktivity.",
 	"feature_confidence": "Nakoľko je predpoveď istá: pravdepodobný rozsah z 51 behov modelu ECMWF, označenie neistých dní a päť meteorologických modelov vedľa seba.",
-	"feature_normal": "Aký je dnešok v porovnaní s rokmi 1991 až 2020, aký bol tento dátum v každom z posledných desiatich rokov, ako dlho už nepršalo, a ktorýkoľvek deň, týždeň, mesiac či rok od roku 1940 v porovnaní so zvyčajným, a ako sa počasie zmenilo od roku 1961.",
+	"feature_normal": "Aký je dnešok oproti rokom 1991 až 2020, či je nezvyčajný, tento dátum v minulých rokoch, ako je sucho, ktorýkoľvek deň od 1940 a zmena od 1961.",
 	"feature_offline": "Dá sa nainštalovať ako aplikácia a bez pripojenia ukáže miesta, ktoré si už otvoril.",
 	"feature_places": "Miesta, ktoré si môžeš uložiť, premenovať, zoradiť a zálohovať do súboru, položka „Moja poloha“, ktorá ťa pri otvorení znova nájde, porovnanie dvoch miest deň po dni, vyhľadávanie v tvojom jazyku a odkaz na zdieľanie ktoréhokoľvek miesta.",
 	"feature_radar": "Zrážkový radar za posledné 2 hodiny a dážď podľa modelu na najbližšie 3, na mape, aj s teplotou a vetrom.",
@@ -687,5 +687,18 @@
 	"trend_hot": "Dni s {temp} a viac",
 	"trend_frost": "Noci pod {temp}",
 	"trend_years_table": "Zobraziť roky ako tabuľku",
-	"trend_against_reference": "Oproti rokom {from} až {until}"
+	"trend_against_reference": "Oproti rokom {from} až {until}",
+	"unusual_unusual": "Nezvyčajné na toto ročné obdobie.",
+	"unusual_rare": "Zriedkavé na toto ročné obdobie.",
+	"unusual_day_warm_any": "Teplejšie ako ktorýkoľvek deň okolo tohto dátumu v rokoch 1991 až 2020.",
+	"unusual_day_cold_any": "Chladnejšie ako ktorýkoľvek deň okolo tohto dátumu v rokoch 1991 až 2020.",
+	"unusual_night_mild": "Miernejšia noc ako {percent} nocí okolo tohto dátumu v rokoch 1991 až 2020.",
+	"unusual_night_cold": "Chladnejšia noc ako {percent} nocí okolo tohto dátumu v rokoch 1991 až 2020.",
+	"unusual_night_mild_any": "Miernejšia noc ako ktorákoľvek okolo tohto dátumu v rokoch 1991 až 2020.",
+	"unusual_night_cold_any": "Chladnejšia noc ako ktorákoľvek okolo tohto dátumu v rokoch 1991 až 2020.",
+	"unusual_rain": "Daždivejšie ako {percent} dní okolo tohto dátumu v rokoch 1991 až 2020.",
+	"unusual_rain_any": "Daždivejšie ako ktorýkoľvek deň okolo tohto dátumu v rokoch 1991 až 2020.",
+	"unusual_week_warmer": "Posledných 7 dní bolo o {diff} teplejších ako zvyčajne.",
+	"unusual_week_colder": "Posledných 7 dní bolo o {diff} chladnejších ako zvyčajne.",
+	"unusual_week_usual": "Posledných 7 dní bolo asi také teplé ako zvyčajne."
 }

@@ -201,12 +201,25 @@ test('compares today with the climate and past years', async ({ page }) => {
 	await page.goto('/p/48.15,17.11/Bratislava');
 	await placeReady(page);
 	const normal = page.locator('section', { hasText: 'Is this normal for the time of year?' });
-	await expect(normal.getByText(/than usual\.|About normal/)).toBeVisible();
+	await expect(normal.getByText(/^\d+° (warmer|colder) than usual\.$|About normal/)).toBeVisible();
 	await expect(normal.getByText(/\(1991 to 2020\)/)).toBeVisible();
+	await expect(normal.getByText('The last 7 days were 2° colder than usual.')).toBeVisible();
+	await expect(normal.getByText(/for the time of year\.$/)).toHaveCount(0);
 	const past = page.locator('section', { hasText: 'What was this day like in past years?' });
 	await expect(past.getByRole('rowheader', { name: '2025' })).toBeVisible();
 	await expect(past.getByRole('rowheader', { name: '2016' })).toBeVisible();
 	await expectAccessible(page);
+});
+
+test('says when today is unusual for the time of year', async ({ page }) => {
+	await page.goto('/p/69.35,88.2/Norilsk');
+	await placeReady(page);
+	const normal = page.locator('section', { hasText: 'Is this normal for the time of year?' });
+	await expect(normal.getByText('Unusual for the time of year.')).toBeVisible();
+	await expect(
+		normal.getByText('A milder night than 91% of nights around this date in 1991 to 2020.')
+	).toBeVisible();
+	await expect(normal.getByText(/^The last 7 days were \d° warmer than usual\.$/)).toBeVisible();
 });
 
 test('says how long it has been dry', async ({ page }) => {

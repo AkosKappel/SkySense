@@ -2,7 +2,9 @@
 // before today. Today is left out because its total still includes forecast hours.
 import { RAIN_DAY_MM } from '#lib/year.js';
 
-export type RainDay = { date: string; rain: number };
+export type RecentDay = { date: string; rain: number; max: number; min: number };
+/** What the dry spell needs of a day. */
+export type RainDay = Pick<RecentDay, 'date' | 'rain'>;
 
 export type DrySpell = {
 	/** The last day before today with at least `RAIN_DAY_MM`, or null if none in the days given. */

@@ -1,9 +1,23 @@
 import { describe, expect, it } from 'vitest';
 import { toClimate } from '#lib/server/open-meteo.js';
-import { compareToNormal, forDate, pastRecord, percentBelow, type Normal } from './climate.js';
+import {
+	compareToNormal,
+	forDate,
+	lastWeek,
+	pastRecord,
+	percentBelow,
+	unusual,
+	type Normal
+} from './climate.js';
 
 const deciles = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-const normal: Normal = { date: '2026-11-10', max: deciles.map((d) => d + 5), min: deciles };
+// Highs 5° to 15°, lows 0° to 10°, rain up to 10 mm, the 90th percentile 9 mm.
+const normal: Normal = {
+	date: '2026-11-10',
+	max: deciles.map((d) => d + 5),
+	min: deciles,
+	rain: deciles
+};
 
 describe('percentBelow', () => {
 	it('interpolates between deciles and clamps at the ends', () => {
@@ -81,5 +95,52 @@ describe('pastRecord', () => {
 
 	it('needs at least five years', () => {
 		expect(pastRecord(20, past.slice(1))).toBeNull();
+	});
+});
+
+describe('unusual', () => {
+	it('calls a day beyond the 10th or 90th percentile unusual, beyond them all rare', () => {
+		expect(unusual({ max: 10, min: 5, rain: 0 }, normal)).toEqual({
+			level: 'usual',
+			standouts: []
+		});
+		expect(unusual({ max: 14.5, min: 5, rain: 0 }, normal)).toEqual({
+			level: 'unusual',
+			standouts: [{ measure: 'day', percent: 95 }]
+		});
+		expect(unusual({ max: 10, min: -1, rain: 12 }, normal)).toEqual({
+			level: 'rare',
+			standouts: [
+				{ measure: 'night', percent: 0 },
+				{ measure: 'rain', percent: 100 }
+			]
+		});
+	});
+
+	it('never calls a dry day unusual for its rain', () => {
+		const dry = { ...normal, rain: [0, 0, 0, 0, 0, 0, 0, 1, 2, 5, 20] };
+		expect(unusual({ max: 10, min: 5, rain: 0.5 }, dry).standouts).toEqual([]);
+	});
+});
+
+describe('lastWeek', () => {
+	const climate = {
+		normals: Array.from({ length: 9 }, (_, i) => ({ ...normal, date: `2026-11-0${i + 1}` })),
+		past: []
+	};
+	const day = (date: string, max: number) => ({ date, max, min: max - 10, rain: 0 });
+
+	it('averages the 7 days before today against their median high and low', () => {
+		// Normal mean (10 + 5) / 2 = 7.5; 2 to 8 November are (14 + 4) / 2 = 9. The cold 1 November
+		// and today itself fall outside the week.
+		const days = ['01', '02', '03', '04', '05', '06', '07', '08', '09'].map((d, i) =>
+			day(`2026-11-${d}`, i === 0 || i === 8 ? 0 : 14)
+		);
+		expect(lastWeek(days, climate, '2026-11-09')).toBe(1.5);
+	});
+
+	it('says nothing when too few of the days have a normal', () => {
+		const days = ['10-29', '10-30', '10-31', '11-01', '11-02'].map((d) => day(`2026-${d}`, 14));
+		expect(lastWeek(days, climate, '2026-11-03')).toBeNull();
 	});
 });

@@ -159,7 +159,7 @@
 	"feature_answers": "Zuerst klare Antworten: ein Satz zu den nächsten 24 Stunden, was du anziehen solltest, ob du einen Schirm brauchst, wann es dunkel wird und wie windig es ist.",
 	"feature_comfort": "Eine Einstellung für alle, denen schnell kalt oder warm ist; sie verschiebt die idealen Temperaturen der Aktivitäten.",
 	"feature_confidence": "Wie sicher die Vorhersage ist: der wahrscheinliche Bereich aus 51 Läufen des ECMWF-Modells, Hinweise an unsicheren Tagen und fünf Wettermodelle im Vergleich.",
-	"feature_normal": "Wie heute im Vergleich zu den Jahren 1991 bis 2020 ist, wie dieses Datum in jedem der letzten zehn Jahre war, wie lange es schon trocken ist, und jeder vergangene Tag, jede Woche, jeder Monat oder jedes Jahr seit 1940 im Vergleich zum Üblichen, und wie sich das Wetter seit 1961 verändert hat.",
+	"feature_normal": "Wie heute im Vergleich zu 1991 bis 2020 ist, ob ungewöhnlich, dieses Datum in den letzten Jahren, wie trocken es ist, jeder Tag seit 1940 und der Wandel seit 1961.",
 	"feature_offline": "Lässt sich als App installieren und zeigt offline die Orte, die du schon geöffnet hast.",
 	"feature_places": "Orte, die du speichern, umbenennen, sortieren und in einer Datei sichern kannst, ein Eintrag „Mein Standort“, der dich beim Öffnen neu findet, zwei Orte im Vergleich Tag für Tag, eine Suche in deiner Sprache und ein Link zum Teilen jedes Ortes.",
 	"feature_radar": "Ein Regenradar der letzten 2 Stunden und der Modellregen der nächsten 3, auf einer Karte, dazu Temperatur und Wind.",
@@ -676,5 +676,18 @@
 	"trend_hot": "Tage ab {temp}",
 	"trend_frost": "Nächte unter {temp}",
 	"trend_years_table": "Jahre als Tabelle zeigen",
-	"trend_against_reference": "Gegenüber {from} bis {until}"
+	"trend_against_reference": "Gegenüber {from} bis {until}",
+	"unusual_unusual": "Ungewöhnlich für die Jahreszeit.",
+	"unusual_rare": "Selten für die Jahreszeit.",
+	"unusual_day_warm_any": "Wärmer als jeder Tag um dieses Datum von 1991 bis 2020.",
+	"unusual_day_cold_any": "Kälter als jeder Tag um dieses Datum von 1991 bis 2020.",
+	"unusual_night_mild": "Eine mildere Nacht als {percent} der Nächte um dieses Datum von 1991 bis 2020.",
+	"unusual_night_cold": "Eine kältere Nacht als {percent} der Nächte um dieses Datum von 1991 bis 2020.",
+	"unusual_night_mild_any": "Eine mildere Nacht als jede um dieses Datum von 1991 bis 2020.",
+	"unusual_night_cold_any": "Eine kältere Nacht als jede um dieses Datum von 1991 bis 2020.",
+	"unusual_rain": "Nasser als {percent} der Tage um dieses Datum von 1991 bis 2020.",
+	"unusual_rain_any": "Nasser als jeder Tag um dieses Datum von 1991 bis 2020.",
+	"unusual_week_warmer": "Die letzten 7 Tage waren {diff} wärmer als üblich.",
+	"unusual_week_colder": "Die letzten 7 Tage waren {diff} kälter als üblich.",
+	"unusual_week_usual": "Die letzten 7 Tage waren etwa so warm wie üblich."
 }

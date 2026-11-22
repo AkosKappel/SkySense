@@ -820,7 +820,7 @@
 {#snippet pastTile()}
 	<WhenNear>
 		{#await import('#lib/components/PastTiles.svelte') then { default: PastTiles }}
-			<PastTiles coordinates={data.coordinates} date={today.date} max={today.max} {f} />
+			<PastTiles coordinates={data.coordinates} {today} {f} />
 		{/await}
 	</WhenNear>
 {/snippet}
