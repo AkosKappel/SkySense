@@ -6,6 +6,7 @@
 		Snowflake,
 		Sun,
 		Thermometer,
+		TrendingUp,
 		Wind
 	} from '@lucide/svelte';
 	import { resolve } from '$app/paths';
@@ -19,10 +20,17 @@
 		periodOf,
 		scales,
 		step,
-		choosePeriod,
-		type DayNormal
+		choosePeriod
 	} from '#lib/history.js';
 	import { m } from '#lib/paraglide/messages.js';
+	import {
+		era5Cell,
+		HOT_DAY,
+		lastWholeYear,
+		REFERENCE,
+		trendOf,
+		type ClimateRecord
+	} from '#lib/trend.js';
 	import type { Coordinates } from '#lib/weather.js';
 	import type { DailyHistory } from '#lib/year.js';
 
@@ -31,11 +39,11 @@
 
 	// Fetched in the browser, like the other tiles about the past: the place page's load and first
 	// scripts stay as they were, and the browser's requests reach the CDN, which keeps the past for
-	// a month. Undefined while loading, null when it failed.
+	// a month or, for the long record, a year. Undefined while loading, null when it failed.
 	const query = $derived(`lat=${coordinates.lat}&lon=${coordinates.lon}`);
 	const chosen = $derived(choosePeriod(page.url.searchParams, today));
 	let days = $state<DailyHistory | null>();
-	let normals = $state<DayNormal[] | null>();
+	let record = $state<ClimateRecord | null>();
 	const load = <T,>(url: string, signal: AbortSignal) =>
 		fetch(url, { signal }).then((r) => (r.ok ? (r.json() as Promise<T>) : null));
 	$effect(() => {
@@ -51,13 +59,30 @@
 	});
 	$effect(() => {
 		const controller = new AbortController();
-		normals = undefined;
-		load<DayNormal[]>(`/api/normals?${query}`, controller.signal)
-			.then((n) => (normals = n))
-			.catch(() => !controller.signal.aborted && (normals = null));
+		const cell = era5Cell(coordinates);
+		record = undefined;
+		load<ClimateRecord>(
+			`/api/record?lat=${cell.lat}&lon=${cell.lon}&until=${lastWholeYear(today)}`,
+			controller.signal
+		)
+			.then((r) => (record = r))
+			.catch(() => !controller.signal.aborted && (record = null));
 		return () => controller.abort();
 	});
-	const history = $derived({ ...chosen, days, normals });
+	const history = $derived({
+		...chosen,
+		days,
+		normals: record === undefined ? undefined : (record?.normals ?? null)
+	});
+	const trend = $derived(record ? trendOf(record, Number(chosen.at.slice(5, 7))) : null);
+	const strongest = $derived(
+		Math.max(0.1, ...(trend?.stripes.map((s) => Math.abs(s.anomaly)) ?? []))
+	);
+	const monthName = $derived(
+		new Intl.DateTimeFormat(f.locale, { month: 'long', timeZone: 'UTC' }).format(
+			new Date(`${chosen.at.slice(0, 7)}-01T00:00:00Z`)
+		)
+	);
 
 	const scaleLabel = {
 		day: m.history_day,
@@ -319,4 +344,108 @@
 			</details>
 		</section>
 	{/if}
+{/if}
+
+{#if trend}
+	<section class="mt-4 glass p-6" aria-labelledby="history-trend">
+		<h2 id="history-trend" class="question">
+			<TrendingUp size={18} aria-hidden="true" />
+			{m.trend_question()}
+		</h2>
+		<p class="mt-2 answer">
+			{trend.warming >= 0.5
+				? m.trend_warmer({ diff: f.tempDelta(trend.warming, 1) })
+				: trend.warming <= -0.5
+					? m.trend_colder({ diff: f.tempDelta(-trend.warming, 1) })
+					: m.trend_same()}
+		</p>
+		{#if trend.monthPerDecade !== null}
+			<p class="mt-2 text-lg font-semibold">
+				{trend.monthPerDecade >= 0.1
+					? m.trend_month_warmer({
+							month: monthName,
+							diff: f.tempDelta(trend.monthPerDecade, 1),
+							from: trend.firstYear
+						})
+					: trend.monthPerDecade <= -0.1
+						? m.trend_month_colder({
+								month: monthName,
+								diff: f.tempDelta(-trend.monthPerDecade, 1),
+								from: trend.firstYear
+							})
+						: m.trend_month_same({ month: monthName, from: trend.firstYear })}
+			</p>
+		{/if}
+
+		<!-- Warming stripes: one per year, the warm colour above the reference, the cool one below,
+		     stronger the further from it. The table of years says the same in numbers. -->
+		<div class="mt-4 flex h-16 overflow-hidden rounded-md" aria-hidden="true">
+			{#each trend.stripes as stripe (stripe.year)}
+				<div
+					class="flex-1 forced-color-adjust-none {stripe.anomaly >= 0 ? 'bg-warm' : 'bg-cold'}"
+					style:opacity={Math.max(0.08, Math.abs(stripe.anomaly) / strongest)}
+				></div>
+			{/each}
+		</div>
+		<div class="mt-1 flex justify-between text-[11px] text-ink-muted" aria-hidden="true">
+			<span>{trend.firstYear}</span>
+			<span>{trend.lastYear}</span>
+		</div>
+		<p class="mt-2 text-sm text-ink-muted">
+			{m.trend_stripes_note({ from: REFERENCE[0], until: REFERENCE[1] })}
+		</p>
+
+		<table class="mt-4 w-full text-sm tabular-nums [&_td]:pr-3 [&_th]:pr-3">
+			<caption class="pb-1 text-left text-sm text-ink-muted">{m.trend_decades_caption()}</caption>
+			<thead class="text-left text-ink-muted">
+				<tr>
+					<th scope="col" class="py-1 font-medium">{m.trend_decade()}</th>
+					<th scope="col" class="py-1 font-medium">{m.trend_hot({ temp: f.temp(HOT_DAY) })}</th>
+					<th scope="col" class="py-1 font-medium">{m.trend_frost({ temp: f.temp(0) })}</th>
+					<th scope="col" class="py-1 font-medium">{m.year_rain_days()}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{#each trend.decades as decade (decade.decade)}
+					<tr class="border-t border-veil/10">
+						<th scope="row" class="py-1 text-left font-medium">
+							{m.trend_decade_label({ decade: decade.decade, end: decade.to })}
+						</th>
+						<td>{decade.hot}</td>
+						<td>{decade.frost}</td>
+						<td>{decade.rainDays}</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+
+		<details class="mt-3">
+			<summary class="min-h-11 cursor-pointer content-center text-sm font-semibold">
+				{m.trend_years_table()}
+			</summary>
+			<table class="w-full text-sm tabular-nums [&_td]:pr-3 [&_th]:pr-3">
+				<thead class="text-left text-ink-muted">
+					<tr>
+						<th scope="col" class="py-1 font-medium">{m.history_year()}</th>
+						<th scope="col" class="py-1 font-medium">
+							{m.trend_against_reference({ from: REFERENCE[0], until: REFERENCE[1] })}
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each trend.stripes.toReversed() as stripe (stripe.year)}
+						<tr class="border-t border-veil/10">
+							<th scope="row" class="py-1 text-left font-medium">{stripe.year}</th>
+							<td>
+								{stripe.anomaly > 0 ? '+' : stripe.anomaly < 0 ? '−' : ''}{f.tempDelta(
+									Math.abs(stripe.anomaly),
+									1
+								)}
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		</details>
+	</section>
 {/if}

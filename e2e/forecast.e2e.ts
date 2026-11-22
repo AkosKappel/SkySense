@@ -469,8 +469,16 @@ test('explores the past from the "past years" tile', async ({ page }) => {
 	).toBeVisible();
 	// The last whole month before ERA5's newest day (the fixtures' 4 November 2026).
 	const period = page.getByRole('region', { name: 'October 2026' });
-	await expect(period.getByText('0.5° colder than usual.')).toBeVisible();
+	await expect(period.getByText(/^\d\.\d° warmer than usual\.$/)).toBeVisible();
 	await expect(period.getByText(/^Drier than usual: .+ of rain, usually .+\.$/)).toBeVisible();
+	const trend = page.getByRole('region', { name: 'How has the weather changed here?' });
+	await expect(
+		trend.getByText('Years here are now about 1.9° warmer than in 1961 to 1990.')
+	).toBeVisible();
+	await expect(
+		trend.getByText(/^October has warmed by about .+ a decade since 1961\.$/)
+	).toBeVisible();
+	await expect(trend.getByRole('rowheader', { name: '2020–2025' })).toBeVisible();
 
 	await page.getByRole('link', { name: 'Year', exact: true }).click();
 	await expect(page.getByRole('region', { name: '2026' })).toContainText(

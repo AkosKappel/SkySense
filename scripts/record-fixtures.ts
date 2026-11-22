@@ -1,7 +1,7 @@
 // Records Open-Meteo responses into src/lib/server/fixtures for tests, e2e and demos (T-08, T-10).
 // Each live forecast gets its ensemble (`ensemble-*`), model comparison (`models-*`), climate
-// history (`climate-*`), air quality (`air-*`), daily history and normals (`history-*`,
-// `normals-*`), the rain of the 60 days before (`recent-*`), the 30 days before as forecast a day
+// history (`climate-*`), air quality (`air-*`), daily history and the long record (`history-*`,
+// `record-*`), the rain of the 60 days before (`recent-*`), the 30 days before as forecast a day
 // ahead (`hindcast-*`) and a week either side for the garden (`garden-*`).
 // Run: node scripts/record-fixtures.ts [name ...]   (no names records all of them)
 //
@@ -109,7 +109,7 @@ async function record(name: string, { lat, lon, past }: Fixture) {
 		await recordClimate(name.replace('forecast-', 'climate-'), lat, lon, first);
 		await recordAir(name.replace('forecast-', 'air-'), lat, lon, first);
 		await recordHistory(name.replace('forecast-', 'history-'), lat, lon, first);
-		await recordNormals(name.replace('forecast-', 'normals-'), lat, lon);
+		await recordRecord(name.replace('forecast-', 'record-'), lat, lon, first);
 		await recordRecent(name.replace('forecast-', 'recent-'), lat, lon, first);
 		await recordHindcast(name.replace('forecast-', 'hindcast-'), lat, lon, first);
 		await recordGarden(name.replace('forecast-', 'garden-'), lat, lon, first);
@@ -233,22 +233,28 @@ async function recordHistory(name: string, lat: number, lon: number, firstHour: 
 	);
 }
 
-// The daily normals' request (H-09), trimmed to its last three years: all 30 would be 300 KB per
-// place, and three still give every calendar day a normal.
-async function recordNormals(name: string, lat: number, lon: number) {
+// The long record (H-09, H-10): ERA5 from 1961 to the end of the year before the recorded date,
+// one day a week kept: every day would be 700 KB per place. Normals and yearly means come out
+// about right from a weekly sample; counts of hot and frosty days are a seventh of the real ones.
+async function recordRecord(name: string, lat: number, lon: number, firstHour: string) {
 	const params = new URLSearchParams({
-		latitude: String(lat),
-		longitude: String(lon),
-		start_date: '1991-01-01',
-		end_date: '2020-12-31',
+		latitude: String(Math.round(lat * 4) / 4),
+		longitude: String(Math.round(lon * 4) / 4),
+		start_date: '1961-01-01',
+		end_date: `${Number(firstHour.slice(0, 4)) - 1}-12-31`,
 		daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum',
 		models: 'era5',
 		timezone: 'auto'
 	});
-	const response = await fetch(`https://archive-api.open-meteo.com/v1/archive?${params}`);
+	let response = await fetch(`https://archive-api.open-meteo.com/v1/archive?${params}`);
+	// One request weighs hundreds of calls; past the per-minute limit, wait a minute once.
+	if (response.status === 429) {
+		await new Promise((resolve) => setTimeout(resolve, 65_000));
+		response = await fetch(`https://archive-api.open-meteo.com/v1/archive?${params}`);
+	}
 	if (!response.ok) throw new Error(`${name}: ${response.status} ${await response.text()}`);
 	const data = await response.json();
-	const keep = data.daily.time.map((t: string) => t >= '2018-01-01');
+	const keep = data.daily.time.map((_: string, i: number) => i % 7 === 0);
 	for (const key of Object.keys(data.daily)) {
 		data.daily[key] = data.daily[key].filter((_: unknown, i: number) => keep[i]);
 	}
@@ -356,15 +362,18 @@ const wanted = process.argv.slice(2);
 for (const [name, fixture] of Object.entries(fixtures)) {
 	if (wanted.length === 0 || wanted.includes(name)) await record(name, fixture);
 }
-// `history-*` and `normals-*` alone, for the forecast fixture already recorded (its first hour).
+// `history-*` or `record-*` alone, for the forecast fixture already recorded (its first hour).
 for (const [name, { lat, lon }] of Object.entries(fixtures)) {
+	if (!name.startsWith('forecast-')) continue;
 	const history = name.replace('forecast-', 'history-');
-	if (!name.startsWith('forecast-') || !wanted.includes(history)) continue;
+	const record = name.replace('forecast-', 'record-');
+	if (!wanted.includes(history) && !wanted.includes(record)) continue;
 	const recorded = await import(`../src/lib/server/fixtures/${name}.json`, {
 		with: { type: 'json' }
 	});
-	await recordHistory(history, lat, lon, recorded.default.hourly.time[0]);
-	await recordNormals(name.replace('forecast-', 'normals-'), lat, lon);
+	const first = recorded.default.hourly.time[0];
+	if (wanted.includes(history)) await recordHistory(history, lat, lon, first);
+	if (wanted.includes(record)) await recordRecord(record, lat, lon, first);
 }
 for (const [name, fixture] of Object.entries(fixtures)) {
 	const area = name.replace('forecast-', 'area-');

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import bratislavaNormals from '#lib/server/fixtures/normals-bratislava.json';
+import bratislavaRecord from '#lib/server/fixtures/record-bratislava.json';
 import bratislavaHistory from '#lib/server/fixtures/history-bratislava.json';
-import { toHistory, toNormals } from '#lib/server/open-meteo.js';
+import { toHistory, toRecord } from '#lib/server/open-meteo.js';
 import { againstNormal, periodOf, records, step, type DayNormal } from './history.js';
 
 describe('periodOf', () => {
@@ -65,9 +65,9 @@ describe('againstNormal', () => {
 	});
 });
 
-describe('toNormals', () => {
+describe('the normals of the long record', () => {
 	it('gives every calendar day a normal, winter colder than summer', () => {
-		const normals = toNormals(bratislavaNormals);
+		const { normals } = toRecord(bratislavaRecord);
 		expect(normals).toHaveLength(366);
 		const of = (day: string) => normals.find((n) => n.day === day)!;
 		expect({ ...of('02-29'), day: '03-01' }).toEqual(of('03-01'));
