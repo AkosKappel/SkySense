@@ -1,7 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import bratislava from '#lib/server/fixtures/forecast-bratislava.json';
 import { toForecast } from '#lib/server/open-meteo.js';
-import { activities, band, bestDay, bestWindow, comfortShift, scoreHour } from './activities.js';
+import {
+	activities,
+	band,
+	bestDay,
+	bestWindow,
+	comfortShift,
+	hiddenSky,
+	scoreHour
+} from './activities.js';
 import type { Day, Hour } from './weather.js';
 
 const day: Day = {
@@ -97,6 +105,27 @@ describe('scoreHour', () => {
 		expect(score('stars', fullMoon, 21).reason).toBe('moon');
 		expect(score('golden', list, 16).score).toBeGreaterThan(90);
 		expect(score('golden', list, 12).reason).toBe('notGolden');
+	});
+
+	it('lets thin high cloud dim the stars where low or mid cloud hides them (X-23)', () => {
+		expect(hiddenSky(hour(21, { condition: 'cloudy', clouds: 90, lowClouds: 0 }))).toBe(36);
+		expect(hiddenSky(hour(21, { condition: 'cloudy', clouds: 90, lowClouds: 90 }))).toBe(90);
+		expect(hiddenSky(hour(21, { condition: 'fog', clouds: 0, lowClouds: 0 }))).toBe(100);
+		const veil = hours(() => ({ condition: 'cloudy', clouds: 80, lowClouds: 5 }));
+		const deck = hours(() => ({ condition: 'cloudy', clouds: 80, lowClouds: 80 }));
+		expect(score('stars', veil, 21).score).toBeGreaterThan(score('stars', deck, 21).score);
+		expect(score('stars', deck, 21).reason).toBe('clouds');
+	});
+
+	it('prefers high cloud at sunset to a clear sky, and a clear sky to low cloud', () => {
+		const at = (clouds: number, lowClouds: number) =>
+			score(
+				'golden',
+				hours(() => ({ condition: 'partly', clouds, lowClouds })),
+				16
+			).score;
+		expect(at(50, 10)).toBeGreaterThan(at(5, 0));
+		expect(at(5, 0)).toBeGreaterThan(at(70, 70));
 	});
 });
 

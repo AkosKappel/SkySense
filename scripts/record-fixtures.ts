@@ -22,6 +22,9 @@ const hourly = [
 	'uv_index',
 	'is_day',
 	'pressure_msl',
+	'cloud_cover',
+	'cloud_cover_low',
+	'cloud_cover_mid',
 	'snow_depth'
 ];
 const daily = [

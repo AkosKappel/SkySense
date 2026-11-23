@@ -212,7 +212,7 @@ export const activities: Record<ActivityId, Activity> = {
 				id: 'clouds',
 				weight: 3,
 				reason: 'clouds',
-				value: (h) => (h.condition === 'clear' ? 1 : h.condition === 'partly' ? 0.4 : 0)
+				value: (h) => band(hiddenSky(h), [0, 75], [0, 15])
 			},
 			// A full moon washes out all but the brightest stars: at most "good", never "great".
 			{
@@ -244,12 +244,31 @@ export const activities: Record<ActivityId, Activity> = {
 				id: 'clouds',
 				weight: 1,
 				reason: 'clouds',
-				value: (h) => (h.condition === 'partly' ? 1 : 0.8)
+				value: (h) => {
+					if (h.clouds === undefined || h.lowClouds === undefined) {
+						return h.condition === 'partly' ? 1 : 0.8;
+					}
+					const high = h.clouds - h.lowClouds;
+					return (high >= 20 ? 1 : 0.8) * band(h.lowClouds, [0, 90], [0, 40]);
+				}
 			},
 			dry(40, 10, 1)
 		]
 	}
 };
+
+/**
+ * How much of the sky clouds hide, in percent (X-23). Low and mid cloud hide the stars; thin high
+ * cloud only dims them, so it counts for less. Recordings without the layers fall back to the
+ * weather symbol, and fog or rain hide everything.
+ */
+export function hiddenSky(h: Hour): number {
+	if (!['clear', 'partly', 'cloudy'].includes(h.condition)) return 100;
+	if (h.clouds === undefined || h.lowClouds === undefined) {
+		return { clear: 0, partly: 45, cloudy: 100 }[h.condition as 'clear' | 'partly' | 'cloudy'];
+	}
+	return Math.min(100, h.lowClouds + 0.4 * Math.max(0, h.clouds - h.lowClouds));
+}
 
 /** A factor's value from 0 to 1; requirements are left out, as a window always meets them. */
 export type FactorValue = { id: FactorId; value: number };

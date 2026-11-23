@@ -57,6 +57,8 @@ const hourly = [
 	'visibility',
 	'dew_point_2m',
 	'cloud_cover',
+	'cloud_cover_low',
+	'cloud_cover_mid',
 	'snow_depth'
 ] as const;
 
@@ -118,7 +120,9 @@ const forecastSchema = z.object({
 		visibility: numbers.optional(),
 		dew_point_2m: numbers.optional(),
 		cloud_cover: numbers.optional(),
-		// Optional for the same reason (X-23); metres.
+		// Optional for the same reason (X-23), as is snow depth, in metres.
+		cloud_cover_low: numbers.optional(),
+		cloud_cover_mid: numbers.optional(),
 		snow_depth: numbers.optional()
 	}),
 	daily: z.object({
@@ -159,6 +163,10 @@ export function sunTimes(date: string, sunrise: string | null, sunset: string | 
 type HourlyColumns = Omit<ForecastResponse['hourly'], 'pressure_msl'>;
 type DailyColumns = ForecastResponse['daily'];
 
+/** The thicker of the low and mid cloud layers, as one number for the stars and sunsets (X-23). */
+const thickClouds = (low: number | null | undefined, mid: number | null | undefined) =>
+	low == null || mid == null ? undefined : Math.max(low, mid);
+
 function toHour(h: HourlyColumns, i: number, temp: number): Hour {
 	return {
 		time: h.time[i],
@@ -173,7 +181,8 @@ function toHour(h: HourlyColumns, i: number, temp: number): Hour {
 		uv: h.uv_index[i] ?? 0,
 		visibility: h.visibility?.[i] ?? undefined,
 		dewPoint: h.dew_point_2m?.[i] ?? undefined,
-		clouds: h.cloud_cover?.[i] ?? undefined
+		clouds: h.cloud_cover?.[i] ?? undefined,
+		lowClouds: thickClouds(h.cloud_cover_low?.[i], h.cloud_cover_mid?.[i])
 	};
 }
 

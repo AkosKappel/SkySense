@@ -39,6 +39,8 @@ export type Hour = {
 	visibility?: number;
 	dewPoint?: number;
 	clouds?: number;
+	/** Low and mid cloud in %, the layers that hide the sky (X-23); missing in older recordings. */
+	lowClouds?: number;
 	/** The ensemble's spread for this hour (C-01), missing when the ensemble is unavailable. */
 	spread?: Spread;
 	/** European Air Quality Index (H-03), missing where or when the air quality API has none. */
