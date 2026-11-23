@@ -11,6 +11,7 @@
 		Sparkles,
 		Tablet,
 		TriangleAlert,
+		Waves,
 		Wind
 	} from '@lucide/svelte';
 	import { onMount } from 'svelte';
@@ -49,6 +50,7 @@
 	import ShareCardButton from '#lib/components/ShareCardButton.svelte';
 	import SummaryLine from '#lib/components/SummaryLine.svelte';
 	import { holidayLine } from '#lib/holidays.js';
+	import { seaState } from '#lib/sea.js';
 	import { summaryText } from '#lib/components/summary-text.js';
 	import SkyLayer from '#lib/components/SkyLayer.svelte';
 	import UmbrellaTile from '#lib/components/UmbrellaTile.svelte';
@@ -208,6 +210,19 @@
 			nw: m.wind_from_nw
 		}[compass(now.windDirection)]()
 	);
+	// Today's waves at coastal places (X-18), with the wind that raises them.
+	const sea = $derived.by(() => {
+		if (!forecast.sea) return null;
+		const { height, time } = forecast.sea.highest;
+		const values = { height: f.waves(height), time: f.time(time) };
+		return {
+			calm: m.sea_calm,
+			slight: m.sea_slight,
+			moderate: m.sea_moderate,
+			rough: m.sea_rough,
+			veryRough: m.sea_very_rough
+		}[seaState(height)](values);
+	});
 	const strongestGust = $derived(
 		Math.max(now.gust, ...forecast.hours.slice(0, 12).map((h) => h.gust))
 	);
@@ -661,6 +676,15 @@
 			<p class="mt-3 flex items-start gap-1.5 text-sm font-semibold text-sun">
 				<TriangleAlert size={16} class="mt-0.5 shrink-0" aria-hidden="true" />
 				{m.wind_gust_warning({ gust: f.wind(strongestGust) })}
+			</p>
+		{/if}
+		{#if sea}
+			<p class="mt-3 flex items-start gap-1.5 text-sm text-ink-muted">
+				<Waves size={16} class="mt-0.5 shrink-0" aria-hidden="true" />
+				<span>
+					{sea}
+					{#if forecast.sea?.temp != null}{m.sea_temp({ temp: f.temp(forecast.sea.temp) })}{/if}
+				</span>
 			</p>
 		{/if}
 	</section>

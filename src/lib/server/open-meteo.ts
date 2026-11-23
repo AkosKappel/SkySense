@@ -23,6 +23,7 @@ import type { RecentDay } from '#lib/recent.js';
 import type { HindcastDay } from '#lib/hindcast.js';
 import type { GardenDay } from '#lib/garden.js';
 import type { Holiday } from '#lib/holidays.js';
+import type { MarineHour } from '#lib/sea.js';
 import { SITE_URL } from '#lib/site.js';
 
 export class WeatherServiceError extends Error {}
@@ -37,6 +38,7 @@ const GEOCODING_URL = 'https://geocoding-api.open-meteo.com/v1/search';
 /** Open-Meteo has no reverse geocoding; OpenStreetMap's Nominatim names a position (F-12, 0006). */
 const REVERSE_URL = 'https://nominatim.openstreetmap.org/reverse';
 const HOLIDAYS_URL = 'https://date.nager.at/api/v3/PublicHolidays';
+const MARINE_URL = 'https://marine-api.open-meteo.com/v1/marine';
 /** Nominatim's usage policy asks every app to identify itself. */
 const REVERSE_AGENT = `SkySense (${SITE_URL})`;
 const DAYS = 10;
@@ -1209,6 +1211,44 @@ export async function fetchHolidays(
 	if (response.status === 404 || response.status === 204) return [];
 	if (!response.ok) throw new WeatherServiceError(`Holidays service answered ${response.status}`);
 	return toHolidays(await response.json());
+}
+
+const marineSchema = z.object({
+	hourly: z.object({
+		time: z.array(z.string()),
+		wave_height: numbers,
+		sea_surface_temperature: numbers
+	})
+});
+
+export function toMarine(raw: unknown): MarineHour[] {
+	const parsed = marineSchema.safeParse(raw);
+	if (!parsed.success) throw new WeatherServiceError('Unexpected marine response');
+	const h = parsed.data.hourly;
+	return h.time.map((time, i) => ({
+		time,
+		waves: h.wave_height[i],
+		temp: h.sea_surface_temperature[i]
+	}));
+}
+
+/** Waves and sea temperature for today and tomorrow (X-18); nulls where the place is inland. */
+export async function fetchMarine(
+	{ lat, lon }: Coordinates,
+	fetchFn: typeof fetch = fetch
+): Promise<MarineHour[]> {
+	if (useFixtures()) {
+		return toMarine(fixtures[`./fixtures/marine-${nearestFixture({ lat, lon })}.json`].default);
+	}
+	const url = new URL(MARINE_URL);
+	url.search = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		hourly: 'wave_height,sea_surface_temperature',
+		timezone: 'auto',
+		forecast_days: '2'
+	}).toString();
+	return toMarine(await getJson(url, fetchFn));
 }
 
 export async function searchPlaces(

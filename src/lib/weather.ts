@@ -3,6 +3,7 @@
 
 import type { PlaceHolidays } from '#lib/holidays.js';
 import type { Pressure } from '#lib/pressure.js';
+import type { Sea } from '#lib/sea.js';
 
 export type Condition =
 	'clear' | 'partly' | 'cloudy' | 'fog' | 'drizzle' | 'rain' | 'showers' | 'snow' | 'thunder';
@@ -113,6 +114,8 @@ export type Forecast = {
 	sky?: Sky;
 	/** The country's public holidays in these days (F-26), from `/api/forecast` where it found them. */
 	holidays?: PlaceHolidays;
+	/** Today's waves and the sea temperature at coastal places (X-18), from `/api/forecast`. */
+	sea?: Sea;
 };
 
 /** WMO weather interpretation codes, as Open-Meteo documents them. */

@@ -78,6 +78,16 @@ export function formatSnow(cm: number, units: Units, locale = 'en'): string {
 	return `${value} ${inches ? 'in' : 'cm'}`;
 }
 
+/** Wave height in metres with one decimal, or feet for readers who chose inches for rain. */
+export function formatWaves(metres: number, units: Units, locale = 'en'): string {
+	const feet = units.rain === 'in';
+	const value = new Intl.NumberFormat(locale, {
+		minimumFractionDigits: 1,
+		maximumFractionDigits: 1
+	}).format(feet ? metres / 0.3048 : metres);
+	return `${value} ${feet ? 'ft' : 'm'}`;
+}
+
 /**
  * Pressure in hPa, or inches of mercury for readers who chose inches for rain: there is no
  * separate setting, and the US is where barometers read inHg.

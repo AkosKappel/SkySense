@@ -413,6 +413,15 @@ test("today's details show dew point, visibility and fog ahead", async ({ page }
 	).toBeVisible();
 });
 
+test('the wind tile tells the sea at the coast, and nothing inland', async ({ page }) => {
+	await page.goto('/p/1.29,103.85/Singapore');
+	const wind = page.locator('section', { hasText: 'How windy is it?' });
+	await expect(wind.getByText(/^A calm sea today, waves up to 0\.\d m\./)).toBeVisible();
+	await expect(wind.getByText(/The sea is 3\d°\./)).toBeVisible();
+	await page.goto('/p/48.15,17.11/Bratislava');
+	await expect(page.getByText(/sea today/)).toHaveCount(0);
+});
+
 test("today's details show sunshine, and snow where there is some", async ({ page }) => {
 	await page.goto('/p/48.15,17.11/Bratislava');
 	const details = page.locator('section', { hasText: 'Today in detail' });

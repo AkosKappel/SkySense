@@ -12,6 +12,7 @@ import {
 	formatPressure,
 	formatRain,
 	formatSnow,
+	formatWaves,
 	formatWind,
 	temperature,
 	windSpeed,
@@ -39,6 +40,7 @@ export function formatter(locale: string, units: Units) {
 		windValue: (kmh: number) => windSpeed(kmh, units),
 		rain: (mm: number) => formatRain(mm, units, intl),
 		snow: (cm: number) => formatSnow(cm, units, intl),
+		waves: (metres: number) => formatWaves(metres, units, intl),
 		pressure: (hpa: number) => formatPressure(hpa, units, intl),
 		distance: (metres: number) => formatDistance(metres, units, intl),
 		/** A length of time: "9 hrs, 32 mins". */

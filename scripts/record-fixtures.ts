@@ -3,7 +3,7 @@
 // history (`climate-*`), air quality (`air-*`), daily history and the long record (`history-*`,
 // `record-*`), the rain of the 60 days before (`recent-*`), the 30 days before as forecast a day
 // ahead (`hindcast-*`) and a week either side for the garden (`garden-*`); public holidays
-// (`holidays-*`) come from Nager.Date.
+// (`holidays-*`) come from Nager.Date, waves and sea temperature (`marine-*`) from the Marine API.
 // Run: node scripts/record-fixtures.ts [name ...]   (no names records all of them)
 //
 // Live forecasts are recorded as they are today. Past scenarios (polar night, midnight sun, a heat
@@ -396,4 +396,31 @@ if (wanted.length === 0 || wanted.includes('holidays')) {
 			JSON.stringify(await response.json()) + '\n'
 		);
 	}
+}
+// Waves and sea temperature (X-18) for the first two days of each live forecast:
+// `node scripts/record-fixtures.ts marine`. Inland places come back as nulls, as they do live.
+for (const [name, { lat, lon }] of Object.entries(fixtures)) {
+	if (!name.startsWith('forecast-') || !(wanted.length === 0 || wanted.includes('marine')))
+		continue;
+	const recorded = await import(`../src/lib/server/fixtures/${name}.json`, {
+		with: { type: 'json' }
+	});
+	const first = recorded.default.hourly.time[0].slice(0, 10);
+	const params = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		hourly: 'wave_height,sea_surface_temperature',
+		timezone: 'auto',
+		start_date: first,
+		end_date: addDays(first, 1)
+	});
+	const response = await fetch(`https://marine-api.open-meteo.com/v1/marine?${params}`);
+	if (!response.ok) throw new Error(`${name}: ${response.status} ${await response.text()}`);
+	writeFileSync(
+		new URL(
+			`../src/lib/server/fixtures/${name.replace('forecast-', 'marine-')}.json`,
+			import.meta.url
+		),
+		JSON.stringify(await response.json()) + '\n'
+	);
 }

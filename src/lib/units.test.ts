@@ -5,6 +5,7 @@ import {
 	formatPressure,
 	formatRain,
 	formatSnow,
+	formatWaves,
 	formatWind,
 	imperial,
 	metric,
@@ -53,6 +54,12 @@ describe('conversions', () => {
 		expect(formatSnow(12.4, metric)).toBe('12 cm');
 		expect(formatSnow(25.4, imperial)).toBe('10 in');
 		expect(formatSnow(4, imperial, 'de')).toBe('1,6 in');
+	});
+
+	it('formats waves in metres, or feet with inches for rain', () => {
+		expect(formatWaves(1.24, metric)).toBe('1.2 m');
+		expect(formatWaves(1, imperial)).toBe('3.3 ft');
+		expect(formatWaves(0.5, metric, 'es')).toBe('0,5 m');
 	});
 });
 
