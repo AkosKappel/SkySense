@@ -2,7 +2,8 @@
 // Each live forecast gets its ensemble (`ensemble-*`), model comparison (`models-*`), climate
 // history (`climate-*`), air quality (`air-*`), daily history and the long record (`history-*`,
 // `record-*`), the rain of the 60 days before (`recent-*`), the 30 days before as forecast a day
-// ahead (`hindcast-*`) and a week either side for the garden (`garden-*`).
+// ahead (`hindcast-*`) and a week either side for the garden (`garden-*`); public holidays
+// (`holidays-*`) come from Nager.Date.
 // Run: node scripts/record-fixtures.ts [name ...]   (no names records all of them)
 //
 // Live forecasts are recorded as they are today. Past scenarios (polar night, midnight sun, a heat
@@ -379,5 +380,17 @@ for (const [name, fixture] of Object.entries(fixtures)) {
 	const area = name.replace('forecast-', 'area-');
 	if (name.startsWith('forecast-') && (wanted.length === 0 || wanted.includes(area))) {
 		await recordArea(area, fixture);
+	}
+}
+// Public holidays from Nager.Date (F-26) for the forecast fixtures' countries, in the year they were
+// recorded: `node scripts/record-fixtures.ts holidays`. A country Nager.Date lacks gets no file.
+if (wanted.length === 0 || wanted.includes('holidays')) {
+	for (const country of ['sk', 'es', 'no', 'ru', 'sg']) {
+		const response = await fetch(`https://date.nager.at/api/v3/PublicHolidays/2026/${country}`);
+		if (response.status !== 200) continue;
+		writeFileSync(
+			new URL(`../src/lib/server/fixtures/holidays-${country}-2026.json`, import.meta.url),
+			JSON.stringify(await response.json()) + '\n'
+		);
 	}
 }

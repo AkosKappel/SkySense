@@ -7,6 +7,7 @@
 		Map as MapIcon,
 		MapPin,
 		Moon,
+		PartyPopper,
 		Plus,
 		Settings,
 		Sparkles,
@@ -51,6 +52,7 @@
 	import TempChart from '#lib/components/TempChart.svelte';
 	import ShareCardButton from '#lib/components/ShareCardButton.svelte';
 	import SummaryLine from '#lib/components/SummaryLine.svelte';
+	import { holidayLine } from '#lib/holidays.js';
 	import { summaryText } from '#lib/components/summary-text.js';
 	import SkyLayer from '#lib/components/SkyLayer.svelte';
 	import UmbrellaTile from '#lib/components/UmbrellaTile.svelte';
@@ -81,6 +83,7 @@
 	const forecast = $derived(data.forecast);
 	const now = $derived(forecast.current);
 	const today = $derived(forecast.days[0]);
+	const holiday = $derived(holidayLine(forecast.holidays, today.date, getLocale()));
 	const name = $derived(data.name ?? m.unnamed_place());
 	const place = $derived({ name, ...data.coordinates });
 	// The place sheet and its search load when first opened, outside the page's script budget, and
@@ -555,6 +558,14 @@
 				aria-label={m.summary_label()}
 			>
 				<section class="mt-5 px-1 xl:mt-6 xl:mb-2">
+					{#if holiday}
+						<p class="mb-2 flex items-center gap-1.5 text-sm font-semibold text-ink-muted">
+							<PartyPopper size={16} class="shrink-0" aria-hidden="true" />
+							{holiday.when === 'today'
+								? m.holiday_today({ name: holiday.name })
+								: m.holiday_tomorrow({ name: holiday.name })}
+						</p>
+					{/if}
 					<SummaryLine sentences={summarize(forecast.hours, now.temp)} {f} large />
 					<div class="flex flex-wrap gap-x-5 print:hidden">
 						<ShareCardButton card={shareCard} filename="skysense-{today.date}.png" />

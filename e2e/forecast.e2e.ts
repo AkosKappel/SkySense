@@ -421,6 +421,20 @@ test('the health check answers for the uptime monitor, uncached', async ({ reque
 	expect(forecast.sky).toMatchObject({ fullMoon: expect.any(String) });
 });
 
+test("the forecast carries the country's public holidays in its days", async ({ request }) => {
+	const forecast = await (await request.get('/api/forecast?lat=48.15&lon=17.11')).json();
+	expect(forecast.holidays).toEqual({
+		country: 'sk',
+		days: [
+			{
+				date: '2026-11-17',
+				localName: 'Deň boja za slobodu a demokraciu',
+				name: 'Struggle for Freedom and Democracy Day'
+			}
+		]
+	});
+});
+
 test('the reverse geocoder answers with a town name and checks its input', async ({ request }) => {
 	const named = await request.get('/api/reverse?lat=69.65&lon=18.96&lang=en');
 	expect(await named.json()).toEqual({ name: 'Tromsø' });

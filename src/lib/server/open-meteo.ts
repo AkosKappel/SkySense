@@ -22,6 +22,7 @@ import { pressureAt } from '#lib/pressure.js';
 import type { RecentDay } from '#lib/recent.js';
 import type { HindcastDay } from '#lib/hindcast.js';
 import type { GardenDay } from '#lib/garden.js';
+import type { Holiday } from '#lib/holidays.js';
 import { SITE_URL } from '#lib/site.js';
 
 export class WeatherServiceError extends Error {}
@@ -35,6 +36,7 @@ const ARCHIVE_URL = 'https://archive-api.open-meteo.com/v1/archive';
 const GEOCODING_URL = 'https://geocoding-api.open-meteo.com/v1/search';
 /** Open-Meteo has no reverse geocoding; OpenStreetMap's Nominatim names a position (F-12, 0006). */
 const REVERSE_URL = 'https://nominatim.openstreetmap.org/reverse';
+const HOLIDAYS_URL = 'https://date.nager.at/api/v3/PublicHolidays';
 /** Nominatim's usage policy asks every app to identify itself. */
 const REVERSE_AGENT = `SkySense (${SITE_URL})`;
 const DAYS = 10;
@@ -1114,6 +1116,82 @@ export async function reverseGeocode(
 		'accept-language': language
 	}).toString();
 	return toAreaName(await getJson(url, fetchFn, { 'user-agent': REVERSE_AGENT }));
+}
+
+const countrySchema = z.object({
+	address: z.object({ country_code: z.string().length(2).optional() }).optional()
+});
+
+/** The two-letter country code at a position (lower case), or null at sea. */
+export function toCountryCode(raw: unknown): string | null {
+	const parsed = countrySchema.safeParse(raw);
+	if (!parsed.success) throw new WeatherServiceError('Unexpected reverse geocoding response');
+	return parsed.data.address?.country_code?.toLowerCase() ?? null;
+}
+
+/** The country at a position, for its public holidays (F-26). Shares the geocoder's one-a-second gap. */
+export async function countryAt(
+	coordinates: Coordinates,
+	fetchFn: typeof fetch = fetch
+): Promise<string | null> {
+	const { lat, lon } = roundCoordinates(coordinates);
+	if (useFixtures()) {
+		return toCountryCode(
+			fixtures[`./fixtures/reverse-${nearestFixture({ lat, lon })}.json`].default
+		);
+	}
+	const now = Date.now();
+	if (now - lastReverse < REVERSE_GAP_MS) throw new WeatherServiceError('Reverse geocoder busy');
+	lastReverse = now;
+	const url = new URL(REVERSE_URL);
+	url.search = new URLSearchParams({
+		lat: String(lat),
+		lon: String(lon),
+		format: 'jsonv2',
+		zoom: '3'
+	}).toString();
+	return toCountryCode(await getJson(url, fetchFn, { 'user-agent': REVERSE_AGENT }));
+}
+
+const holidaySchema = z.array(
+	z.object({
+		date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+		localName: z.string(),
+		name: z.string(),
+		global: z.boolean()
+	})
+);
+
+/**
+ * A country's public holidays in a year from Nager.Date, nationwide ones only: a regional holiday
+ * (one German state's) would be wrong for most of the country. A country it lacks has none.
+ */
+export function toHolidays(raw: unknown): Holiday[] {
+	const parsed = holidaySchema.safeParse(raw);
+	if (!parsed.success) throw new WeatherServiceError('Unexpected holidays response');
+	return parsed.data
+		.filter((h) => h.global)
+		.map(({ date, localName, name }) => ({ date, localName, name }));
+}
+
+export async function fetchHolidays(
+	country: string,
+	year: number,
+	fetchFn: typeof fetch = fetch
+): Promise<Holiday[]> {
+	if (useFixtures()) {
+		const recorded = fixtures[`./fixtures/holidays-${country}-${year}.json`];
+		return recorded ? toHolidays(recorded.default) : [];
+	}
+	const response = await fetchFn(`${HOLIDAYS_URL}/${year}/${country.toUpperCase()}`, {
+		signal: AbortSignal.timeout(8000)
+	}).catch((cause) => {
+		throw new WeatherServiceError('Holidays service unreachable', { cause });
+	});
+	// 404 for a country it does not cover, 204 for a year without data.
+	if (response.status === 404 || response.status === 204) return [];
+	if (!response.ok) throw new WeatherServiceError(`Holidays service answered ${response.status}`);
+	return toHolidays(await response.json());
 }
 
 export async function searchPlaces(
