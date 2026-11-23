@@ -69,6 +69,15 @@ export function formatRain(mm: number, units: Units, locale = 'en'): string {
 	return `${value} ${inches ? 'in' : 'mm'}`;
 }
 
+/** Snow depth or fresh snow, in whole centimetres, or inches for readers who chose inches for rain. */
+export function formatSnow(cm: number, units: Units, locale = 'en'): string {
+	const inches = units.rain === 'in';
+	const value = new Intl.NumberFormat(locale, { maximumFractionDigits: inches ? 1 : 0 }).format(
+		inches ? cm / 2.54 : cm
+	);
+	return `${value} ${inches ? 'in' : 'cm'}`;
+}
+
 /**
  * Pressure in hPa, or inches of mercury for readers who chose inches for rain: there is no
  * separate setting, and the US is where barometers read inHg.

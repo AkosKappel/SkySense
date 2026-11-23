@@ -413,6 +413,20 @@ test("today's details show dew point, visibility and fog ahead", async ({ page }
 	).toBeVisible();
 });
 
+test("today's details show sunshine, and snow where there is some", async ({ page }) => {
+	await page.goto('/p/48.15,17.11/Bratislava');
+	const details = page.locator('section', { hasText: 'Today in detail' });
+	await expect(details.getByText('Sunshine')).toBeVisible();
+	await expect(details.getByText('Snow on the ground')).toHaveCount(0);
+	await page.goto('/p/69.65,18.96/Troms%C3%B8');
+	const north = page.locator('section', { hasText: 'Today in detail' });
+	await expect(north.getByText('Snow on the ground')).toBeVisible();
+	await expect(north.getByText('6 cm')).toBeVisible();
+	// Tomorrow brings a little over a centimetre.
+	await page.goto('/p/69.65,18.96/Troms%C3%B8?day=2026-11-11');
+	await expect(page.getByText('Fresh snow')).toBeVisible();
+});
+
 test('the health check answers for the uptime monitor, uncached', async ({ request }) => {
 	const health = await request.get('/api/health');
 	expect(health.status()).toBe(200);

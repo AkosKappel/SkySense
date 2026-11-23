@@ -54,7 +54,8 @@ const hourly = [
 	'pressure_msl',
 	'visibility',
 	'dew_point_2m',
-	'cloud_cover'
+	'cloud_cover',
+	'snow_depth'
 ] as const;
 
 const daily = [
@@ -65,7 +66,9 @@ const daily = [
 	'precipitation_sum',
 	'sunrise',
 	'sunset',
-	'uv_index_max'
+	'uv_index_max',
+	'snowfall_sum',
+	'sunshine_duration'
 ] as const;
 
 const current = [
@@ -112,7 +115,9 @@ const forecastSchema = z.object({
 		// Optional for the same reason (F-23).
 		visibility: numbers.optional(),
 		dew_point_2m: numbers.optional(),
-		cloud_cover: numbers.optional()
+		cloud_cover: numbers.optional(),
+		// Optional for the same reason (X-23); metres.
+		snow_depth: numbers.optional()
 	}),
 	daily: z.object({
 		time: z.array(z.string()),
@@ -123,7 +128,10 @@ const forecastSchema = z.object({
 		precipitation_sum: numbers,
 		sunrise: z.array(z.string().nullable()),
 		sunset: z.array(z.string().nullable()),
-		uv_index_max: numbers
+		uv_index_max: numbers,
+		// Optional (X-23): centimetres of fresh snow, and seconds of sunshine.
+		snowfall_sum: numbers.optional(),
+		sunshine_duration: numbers.optional()
 	})
 });
 
@@ -167,6 +175,9 @@ function toHour(h: HourlyColumns, i: number, temp: number): Hour {
 	};
 }
 
+const minutesOf = (seconds: number | null | undefined) =>
+	seconds == null ? undefined : Math.round(seconds / 60);
+
 function toDay(d: DailyColumns, i: number, max: number, min: number): Day {
 	return {
 		date: d.time[i],
@@ -176,9 +187,14 @@ function toDay(d: DailyColumns, i: number, max: number, min: number): Day {
 		rainChance: d.precipitation_probability_max[i] ?? 0,
 		rain: d.precipitation_sum[i] ?? 0,
 		...sunTimes(d.time[i], d.sunrise[i], d.sunset[i]),
-		uvMax: d.uv_index_max[i] ?? 0
+		uvMax: d.uv_index_max[i] ?? 0,
+		snowfall: d.snowfall_sum?.[i] ?? undefined,
+		sunshine: minutesOf(d.sunshine_duration?.[i])
 	};
 }
+
+const centimetres = (metres: number | null | undefined) =>
+	metres == null ? undefined : Math.round(metres * 100);
 
 /** Turns Open-Meteo's column arrays into hour and day records, from the current hour to the end of the tenth day. */
 export function toForecast(raw: unknown): Forecast {
@@ -220,7 +236,8 @@ export function toForecast(raw: unknown): Forecast {
 			gust: c.wind_gusts_10m,
 			windDirection: c.wind_direction_10m,
 			humidity: c.relative_humidity_2m,
-			pressure: h.pressure_msl ? pressureAt(h.pressure_msl, first) : null
+			pressure: h.pressure_msl ? pressureAt(h.pressure_msl, first) : null,
+			snowDepth: centimetres(h.snow_depth?.[first])
 		},
 		hours,
 		days

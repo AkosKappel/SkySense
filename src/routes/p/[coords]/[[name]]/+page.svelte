@@ -638,6 +638,7 @@
 			day={today}
 			{f}
 			humidity={now.humidity}
+			snowDepth={now.snowDepth}
 			pressure={now.pressure}
 			ahead={forecast.hours}
 		/>
@@ -687,7 +688,6 @@
 	</WhenNear>
 {/snippet}
 
-{#snippet chartsTile()}
 {#snippet darkTile()}
 	<WhenNear>
 		{#await import('#lib/components/DarkTile.svelte') then { default: DarkTile }}
@@ -696,6 +696,7 @@
 	</WhenNear>
 {/snippet}
 
+{#snippet chartsTile()}
 	<WhenNear>
 		{#await import('#lib/components/ChartsTile.svelte') then { default: ChartsTile }}
 			<ChartsTile hours={forecast.hours.slice(0, 25)} {f} />

@@ -2,6 +2,7 @@
 	import {
 		CloudFog,
 		CloudRain,
+		CloudSnow,
 		Droplet,
 		Droplets,
 		Eye,
@@ -24,12 +25,15 @@
 		day,
 		f,
 		humidity,
+		snowDepth,
 		pressure = null,
 		ahead = []
 	}: {
 		day: Day;
 		f: Formatter;
 		humidity?: number;
+		/** Snow on the ground now, in cm (X-23). */
+		snowDepth?: number;
 		pressure?: Pressure | null;
 		ahead?: Hour[];
 	} = $props();
@@ -117,6 +121,21 @@
 					? null
 					: { label: m.visibility(), Icon: Eye, value: f.distance(hour.visibility) },
 				{ label: m.rain_amount(), Icon: CloudRain, value: f.rain(day.rain) },
+				// Snow only where there is some: half a centimetre rounds to the first whole one.
+				(day.snowfall ?? 0) < 0.5
+					? null
+					: { label: m.fresh_snow(), Icon: CloudSnow, value: f.snow(day.snowfall!) },
+				(snowDepth ?? 0) < 1
+					? null
+					: { label: m.snow_depth(), Icon: CloudSnow, value: f.snow(snowDepth!) },
+				day.sunshine === undefined
+					? null
+					: {
+							label: m.sunshine(),
+							Icon: Sun,
+							// A duration of nothing formats as an empty string.
+							value: day.sunshine ? f.duration(day.sunshine) : m.sunshine_none()
+						},
 				{
 					label: m.rain_chance_label(),
 					Icon: Umbrella,

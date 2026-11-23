@@ -45,6 +45,17 @@ const forecastCalls = (fetchFn: ReturnType<typeof route>) =>
 describe('toForecast', () => {
 	const forecast = toForecast(bratislava);
 
+	it('reads snow on the ground, fresh snow and sunshine (X-23)', () => {
+		const north = toForecast(tromso);
+		expect(north.current.snowDepth).toBe(6);
+		expect(north.days[1].snowfall).toBeCloseTo(1.19);
+		expect(north.days[2].sunshine).toBe(180);
+		// Recordings and scenarios from before X-23 have none of them.
+		const before = toForecast(heat);
+		expect(before.current.snowDepth).toBeUndefined();
+		expect(before.days[0].sunshine).toBeUndefined();
+	});
+
 	it('starts the hours at the current hour', () => {
 		expect(forecast.current.time).toBe('2026-11-10T10:00');
 		expect(forecast.hours[0].time).toBe('2026-11-10T10:00');

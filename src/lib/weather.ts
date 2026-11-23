@@ -19,6 +19,8 @@ export type Current = {
 	humidity: number;
 	/** Sea-level pressure and its three-hour change (H-06); missing in older recordings. */
 	pressure?: Pressure | null;
+	/** Snow on the ground in cm (X-23); missing in older recordings. */
+	snowDepth?: number;
 };
 
 export type Hour = {
@@ -68,6 +70,9 @@ export type Day = {
 	sunrise: string | null;
 	sunset: string | null;
 	uvMax: number;
+	/** Fresh snow in cm and minutes of sunshine (X-23); missing in older recordings. */
+	snowfall?: number;
+	sunshine?: number;
 };
 
 /** The moon's next events (H-07), as the place's wall-clock times. */

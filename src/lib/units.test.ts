@@ -4,6 +4,7 @@ import {
 	beaufort,
 	formatPressure,
 	formatRain,
+	formatSnow,
 	formatWind,
 	imperial,
 	metric,
@@ -46,6 +47,12 @@ describe('conversions', () => {
 		expect(formatPressure(1013.6, metric, 'de')).toBe('1014 hPa');
 		expect(formatPressure(1013.25, imperial)).toBe('29.92 inHg');
 		expect(formatRain(1234, metric, 'en')).toBe('1,234.0 mm');
+	});
+
+	it('formats snow in centimetres, or inches with inches for rain', () => {
+		expect(formatSnow(12.4, metric)).toBe('12 cm');
+		expect(formatSnow(25.4, imperial)).toBe('10 in');
+		expect(formatSnow(4, imperial, 'de')).toBe('1,6 in');
 	});
 });
 

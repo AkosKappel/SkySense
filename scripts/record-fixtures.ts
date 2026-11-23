@@ -21,7 +21,8 @@ const hourly = [
 	'wind_gusts_10m',
 	'uv_index',
 	'is_day',
-	'pressure_msl'
+	'pressure_msl',
+	'snow_depth'
 ];
 const daily = [
 	'weather_code',
@@ -31,7 +32,9 @@ const daily = [
 	'precipitation_sum',
 	'sunrise',
 	'sunset',
-	'uv_index_max'
+	'uv_index_max',
+	'snowfall_sum',
+	'sunshine_duration'
 ];
 const current = [
 	'temperature_2m',
