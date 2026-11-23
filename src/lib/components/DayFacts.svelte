@@ -121,13 +121,14 @@
 					? null
 					: { label: m.visibility(), Icon: Eye, value: f.distance(hour.visibility) },
 				{ label: m.rain_amount(), Icon: CloudRain, value: f.rain(day.rain) },
-				// Snow only where there is some: half a centimetre rounds to the first whole one.
-				(day.snowfall ?? 0) < 0.5
-					? null
-					: { label: m.fresh_snow(), Icon: CloudSnow, value: f.snow(day.snowfall!) },
-				(snowDepth ?? 0) < 1
-					? null
-					: { label: m.snow_depth(), Icon: CloudSnow, value: f.snow(snowDepth!) },
+				{
+					label: m.rain_chance_label(),
+					Icon: Umbrella,
+					value: f.percent(day.rainChance),
+					meter: { value: day.rainChance, min: 0, max: 100 }
+				},
+				{ label: m.sunrise(), Icon: Sunrise, value: day.sunrise ? f.time(day.sunrise) : '–' },
+				{ label: m.sunset(), Icon: Sunset, value: day.sunset ? f.time(day.sunset) : '–' },
 				day.sunshine === undefined
 					? null
 					: {
@@ -136,23 +137,28 @@
 							// A duration of nothing formats as an empty string.
 							value: day.sunshine ? f.duration(day.sunshine) : m.sunshine_none()
 						},
-				{
-					label: m.rain_chance_label(),
-					Icon: Umbrella,
-					value: f.percent(day.rainChance),
-					meter: { value: day.rainChance, min: 0, max: 100 }
-				},
-				{ label: m.sunrise(), Icon: Sunrise, value: day.sunrise ? f.time(day.sunrise) : '–' },
-				{ label: m.sunset(), Icon: Sunset, value: day.sunset ? f.time(day.sunset) : '–' }
+				// Snow only where there is some: half a centimetre rounds to the first whole one.
+				(day.snowfall ?? 0) < 0.5
+					? null
+					: { label: m.fresh_snow(), Icon: CloudSnow, value: f.snow(day.snowfall!) },
+				(snowDepth ?? 0) < 1
+					? null
+					: { label: m.snow_depth(), Icon: CloudSnow, value: f.snow(snowDepth!) }
 			] satisfies (Fact | null)[]
 		).filter((fact) => fact !== null)
 	);
 </script>
 
-<!-- An odd last fact spans both columns rather than leaving a gap beside it. -->
-<dl class="mt-4 grid grid-cols-2 gap-3 [&>:last-child:nth-child(odd)]:col-span-2">
-	{#each facts as { label, Icon, value, badge, meter } (label)}
-		<div class="rounded-2xl bg-veil/5 p-4 outline-1 outline-veil/10">
+<!-- An odd last fact spans both columns rather than leaving a gap beside it, also when the
+     pressure follows it. -->
+<dl class="mt-4 grid grid-cols-2 gap-3">
+	{#each facts as { label, Icon, value, badge, meter }, i (label)}
+		<div
+			class={[
+				'rounded-2xl bg-veil/5 p-4 outline-1 outline-veil/10',
+				i === facts.length - 1 && i % 2 === 0 && 'col-span-2'
+			]}
+		>
 			<dt class="flex items-center gap-1.5 text-sm wrap-anywhere hyphens-auto text-ink-muted">
 				<Icon size={16} class="shrink-0" aria-hidden="true" />
 				{label}
