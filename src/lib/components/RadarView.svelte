@@ -288,6 +288,8 @@
 			return;
 		}
 		// Rain as blue squares, or cloud as white ones, thicker the more of the sky it covers (M-07).
+		// The model snaps each point to its own grid, so squares can overlap a little; cloud covers
+		// most of them, so it stays faint enough for the overlaps not to show as stripes.
 		const colour = getComputedStyle(container!).getPropertyValue(
 			layer === 'rain' ? '--color-rain' : '--color-veil'
 		);
@@ -299,7 +301,7 @@
 					? (hour?.rain ?? 0) < GRID_WET_MM
 						? 0
 						: Math.min(0.75, 0.2 + (hour?.rain ?? 0) / 6)
-					: ((hour?.clouds ?? 0) / 100) * 0.6;
+					: ((hour?.clouds ?? 0) / 100) * 0.4;
 			if (opacity < 0.05) continue;
 			cells.push(
 				L.rectangle(
