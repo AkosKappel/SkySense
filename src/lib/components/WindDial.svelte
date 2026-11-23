@@ -22,7 +22,7 @@
 	<text x="32" y="19" text-anchor="middle" class="fill-ink-muted text-[9px] font-bold">
 		{m.compass_north()}
 	</text>
-	<g transform="rotate({from + 180} 32 32)">
+	<g class="dial-arrow" style:rotate="{from + 180}deg" style:transform-origin="32px 32px">
 		<line
 			x1="32"
 			y1="42"

@@ -36,6 +36,8 @@
 	"back": "Späť",
 	"back_to_forecast": "Späť na predpoveď",
 	"cancel": "Zrušiť",
+	"chart_hour_uv": "{time}: UV index {uv}",
+	"chart_hour_wind": "{time}: vietor {wind}, nárazy {gust}",
 	"charts_question": "Vietor a slnko, hodinu po hodine",
 	"days_nav": "Dni",
 	"back_to_now": "Späť na teraz",

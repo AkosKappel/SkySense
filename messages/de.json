@@ -36,6 +36,8 @@
 	"back": "Zurück",
 	"back_to_forecast": "Zurück zur Vorhersage",
 	"cancel": "Abbrechen",
+	"chart_hour_uv": "{time}: UV-Index {uv}",
+	"chart_hour_wind": "{time}: Wind {wind}, Böen {gust}",
 	"charts_question": "Wind und Sonne, Stunde für Stunde",
 	"days_nav": "Tage",
 	"back_to_now": "Zurück zu jetzt",

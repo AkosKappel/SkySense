@@ -36,6 +36,8 @@
 	"back": "Vissza",
 	"back_to_forecast": "Vissza az előrejelzéshez",
 	"cancel": "Mégse",
+	"chart_hour_uv": "{time}: UV-index {uv}",
+	"chart_hour_wind": "{time}: szél {wind}, széllökések {gust}",
 	"charts_question": "Szél és nap, óráról órára",
 	"days_nav": "Napok",
 	"back_to_now": "Vissza a mostanihoz",

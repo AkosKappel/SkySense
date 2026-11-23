@@ -873,6 +873,12 @@ test('shows the map and the wind and UV charts when scrolled near', async ({ pag
 	const charts = page.locator('[data-tile="charts"]');
 	await charts.scrollIntoViewIfNeeded();
 	await expect(charts.getByText(/^Gusts up to \d+ km\/h around \d\d:\d\d\.$/)).toBeVisible();
+	// A tap on a chart reads out that hour; the first point is the first hour.
+	await charts
+		.locator('svg.cursor-crosshair')
+		.first()
+		.click({ position: { x: 1, y: 40 } });
+	await expect(charts.getByText(/^\d\d:\d\d: wind \d+ km\/h, gusts \d+ km\/h$/)).toBeVisible();
 	await charts.getByText('Show as a table').click();
 	await expect(charts.getByRole('row')).toHaveCount(26);
 	await expectAccessible(page);

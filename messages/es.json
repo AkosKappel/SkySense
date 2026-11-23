@@ -36,6 +36,8 @@
 	"back": "Volver",
 	"back_to_forecast": "Volver al pronóstico",
 	"cancel": "Cancelar",
+	"chart_hour_uv": "{time}: índice UV {uv}",
+	"chart_hour_wind": "{time}: viento {wind}, rachas {gust}",
 	"charts_question": "Viento y sol, hora a hora",
 	"days_nav": "Días",
 	"back_to_now": "Volver a ahora",

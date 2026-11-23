@@ -20,7 +20,7 @@
 
 <div class="relative mt-3 h-1.5 rounded-full bg-veil/10" aria-hidden="true">
 	{#if bands.length}
-		<div class="flex h-full overflow-hidden rounded-full">
+		<div class="grow-x flex h-full overflow-hidden rounded-full">
 			{#each bands as [upTo, color], i (i)}
 				<span
 					class="h-full {color}"
@@ -33,6 +33,6 @@
 			style="left: {at}%"
 		></span>
 	{:else}
-		<div class="h-full rounded-full bg-rain" style="width: {at}%"></div>
+		<div class="grow-x h-full rounded-full bg-rain" style="width: {at}%"></div>
 	{/if}
 </div>

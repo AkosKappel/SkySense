@@ -31,6 +31,14 @@
 			veryHigh: 'fill-rose',
 			extreme: 'fill-rose'
 		})[uvLevel(uv)];
+	// The hour under a pointer or a tap on a chart (U-25). Pointer only: the table below holds every
+	// hour for keyboards and screen readers.
+	let windAt = $state<number | null>(null);
+	let uvAt = $state<number | null>(null);
+	const share = (event: PointerEvent) => {
+		const box = (event.currentTarget as Element).getBoundingClientRect();
+		return Math.min(0.999, Math.max(0, (event.clientX - box.left) / box.width));
+	};
 	const uvWord = (uv: number) =>
 		({
 			low: m.uv_low,
@@ -52,12 +60,33 @@
 		<p class="mt-1 answer text-xl!">
 			{m.wind_chart_answer({ gust: f.wind(gust.gust), time: f.time(gust.time) })}
 		</p>
+		<p class="mt-2 min-h-5 text-sm font-semibold tabular-nums" aria-hidden="true">
+			{#if windAt !== null}{m.chart_hour_wind({
+					time: f.time(hours[windAt].time),
+					wind: f.wind(hours[windAt].wind),
+					gust: f.wind(hours[windAt].gust)
+				})}{/if}
+		</p>
 		<svg
 			viewBox="0 0 {width} {HEIGHT}"
 			preserveAspectRatio="none"
-			class="mt-3 h-24 w-full overflow-visible"
+			class="mt-1 h-24 w-full cursor-crosshair overflow-visible"
 			aria-hidden="true"
+			onpointerdown={(event) => (windAt = Math.round(share(event) * (hours.length - 1)))}
+			onpointermove={(event) => (windAt = Math.round(share(event) * (hours.length - 1)))}
+			onpointerleave={(event) => event.pointerType === 'mouse' && (windAt = null)}
 		>
+			{#if windAt !== null}
+				<line
+					x1={windAt * STEP}
+					x2={windAt * STEP}
+					y1="0"
+					y2={HEIGHT}
+					class="stroke-veil/50"
+					stroke-width="1"
+					vector-effect="non-scaling-stroke"
+				/>
+			{/if}
 			<path d={gustArea} class="fill-rain/15 forced-colors:hidden" />
 			<path
 				d={line((h) => h.gust)}
@@ -108,11 +137,20 @@
 				time: f.time(sun.peak.time)
 			})}
 		</p>
+		<p class="mt-2 min-h-5 text-sm font-semibold tabular-nums" aria-hidden="true">
+			{#if uvAt !== null}{m.chart_hour_uv({
+					time: f.time(sun.hours[uvAt].time),
+					uv: Math.round(sun.hours[uvAt].uv)
+				})}{/if}
+		</p>
 		<svg
 			viewBox="0 0 {sun.hours.length * 10} 40"
 			preserveAspectRatio="none"
-			class="mt-3 h-16 w-full"
+			class="mt-1 h-16 w-full cursor-crosshair"
 			aria-hidden="true"
+			onpointerdown={(event) => (uvAt = Math.floor(share(event) * sun.hours.length))}
+			onpointermove={(event) => (uvAt = Math.floor(share(event) * sun.hours.length))}
+			onpointerleave={(event) => event.pointerType === 'mouse' && (uvAt = null)}
 		>
 			{#each sun.hours as hour, i (hour.time)}
 				{@const height = Math.max(0.75, (hour.uv / uvTop) * 40)}
@@ -122,7 +160,11 @@
 					width="7"
 					{height}
 					rx="1.5"
-					class="{uvFill(hour.uv)} forced-color-adjust-none forced-colors:fill-[CanvasText]"
+					class="grow-y {uvFill(
+						hour.uv
+					)} forced-color-adjust-none forced-colors:fill-[CanvasText] {uvAt !== null && uvAt !== i
+						? 'opacity-50'
+						: ''}"
 				/>
 			{/each}
 		</svg>

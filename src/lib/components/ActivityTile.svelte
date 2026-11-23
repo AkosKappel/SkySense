@@ -182,7 +182,7 @@
 											<dt class="text-ink-muted">{factorNames[factor.id]()}</dt>
 											<div class="h-1.5 rounded-full bg-veil/10" aria-hidden="true">
 												<div
-													class="h-full rounded-full bg-veil/70 forced-color-adjust-none forced-colors:bg-[CanvasText]"
+													class="grow-x h-full rounded-full bg-veil/70 forced-color-adjust-none forced-colors:bg-[CanvasText]"
 													style:width="{Math.round(factor.value * 100)}%"
 												></div>
 											</div>
