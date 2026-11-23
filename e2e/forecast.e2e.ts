@@ -621,7 +621,7 @@ test('shows the rain radar, then the model, from the umbrella tile', async ({ pa
 	await expect(page.getByRole('button', { name: 'Full screen' })).toBeVisible();
 });
 
-test('the radar map switches to the model temperature and wind, said in words', async ({
+test('the radar map switches to the model temperature, wind and cloud, said in words', async ({
 	page
 }) => {
 	await blankMapTiles(page);
@@ -645,6 +645,10 @@ test('the radar map switches to the model temperature and wind, said in words', 
 		page.getByText('Wind from the southeast, up to 22 km/h within about 60 km.')
 	).toBeVisible();
 	await expectAccessible(page);
+
+	await page.getByText('Clouds', { exact: true }).click();
+	await expect(page.getByRole('region', { name: 'Map of cloud around Bratislava' })).toBeVisible();
+	await expect(page.getByText('Much the same sky all around, about 100% cloud.')).toBeVisible();
 
 	await page.getByText('Rain', { exact: true }).click();
 	await expect(page.getByText('The model shows rain within about 60 km from 10:00.')).toBeVisible();

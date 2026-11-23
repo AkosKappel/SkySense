@@ -27,6 +27,8 @@
 		warmerSide,
 		windAround,
 		type GridCell,
+		clearerSide,
+		meanClouds,
 		type GridLayer,
 		type RadarFrames
 	} from '#lib/radar.js';
@@ -88,6 +90,17 @@
 		return [...past, ...next];
 	});
 	const step = $derived(steps[index]);
+	// Clouds only where the grid has them: grids recorded before M-07 do not.
+	const layers = $derived(
+		(
+			[
+				['rain', m.radar_layer_rain],
+				['temperature', m.radar_layer_temperature],
+				['wind', m.radar_layer_wind],
+				['clouds', m.radar_layer_clouds]
+			] as const
+		).filter(([value]) => value !== 'clouds' || grid[0]?.hours[0]?.clouds !== undefined)
+	);
 	const wetFrom = $derived(firstWetHour(grid));
 	// The layer's answer in words, the text equivalent of what the map shows.
 	const answer = $derived.by(() => {
@@ -105,6 +118,20 @@
 				s: m.radar_warmer_s,
 				w: m.radar_warmer_w
 			}[warmer.side]({ difference });
+		}
+		if (layer === 'clouds') {
+			const clearer = clearerSide(grid, step.time);
+			if (clearer) {
+				const percent = f.percent(clearer.clouds);
+				return {
+					n: m.radar_clearer_n,
+					e: m.radar_clearer_e,
+					s: m.radar_clearer_s,
+					w: m.radar_clearer_w
+				}[clearer.side]({ percent });
+			}
+			const clouds = meanClouds(grid, step.time);
+			return clouds === null ? '' : m.radar_clouds_even({ percent: f.percent(clouds) });
 		}
 		const wind = windAround(grid, step.time);
 		if (!wind) return m.radar_wind_calm();
@@ -256,27 +283,31 @@
 		for (const cell of cells) cell.remove();
 		cells = [];
 		if (step.kind !== 'model') return;
-		if (layer !== 'rain') {
+		if (layer === 'temperature' || layer === 'wind') {
 			drawLabels(L, map, step.time);
 			return;
 		}
-		const rain = getComputedStyle(container!).getPropertyValue('--color-rain');
+		// Rain as blue squares, or cloud as white ones, thicker the more of the sky it covers (M-07).
+		const colour = getComputedStyle(container!).getPropertyValue(
+			layer === 'rain' ? '--color-rain' : '--color-veil'
+		);
 		const half = { lat: 0.15, lon: Math.abs((grid[1]?.lon ?? 0) - (grid[0]?.lon ?? 0)) / 2 };
 		for (const cell of grid) {
-			const mm = cell.hours.find((h) => h.time === step.time)?.rain ?? 0;
-			if (mm < GRID_WET_MM) continue;
+			const hour = cell.hours.find((h) => h.time === step.time);
+			const opacity =
+				layer === 'rain'
+					? (hour?.rain ?? 0) < GRID_WET_MM
+						? 0
+						: Math.min(0.75, 0.2 + (hour?.rain ?? 0) / 6)
+					: ((hour?.clouds ?? 0) / 100) * 0.6;
+			if (opacity < 0.05) continue;
 			cells.push(
 				L.rectangle(
 					[
 						[cell.lat - half.lat, cell.lon - half.lon],
 						[cell.lat + half.lat, cell.lon + half.lon]
 					],
-					{
-						stroke: false,
-						fillColor: rain,
-						fillOpacity: Math.min(0.75, 0.2 + mm / 6),
-						interactive: false
-					}
+					{ stroke: false, fillColor: colour, fillOpacity: opacity, interactive: false }
 				).addTo(map)
 			);
 		}
@@ -393,7 +424,8 @@
 			aria-label={{
 				rain: m.radar_map,
 				temperature: m.radar_map_temperature,
-				wind: m.radar_map_wind
+				wind: m.radar_map_wind,
+				clouds: m.radar_map_clouds
 			}[layer]({ place })}
 			class="dark-scope mt-4 min-h-72 {onMap
 				? 'h-[calc(100dvh-20rem)] min-h-96'
@@ -404,7 +436,7 @@
 			<fieldset class="mt-4 px-2">
 				<legend class="sr-only">{m.radar_layer()}</legend>
 				<div class="flex flex-wrap gap-2">
-					{#each [['rain', m.radar_layer_rain], ['temperature', m.radar_layer_temperature], ['wind', m.radar_layer_wind]] as const as [value, text] (value)}
+					{#each layers as [value, text] (value)}
 						<label
 							class="flex min-h-11 cursor-pointer items-center rounded-full bg-veil/10 px-4 font-semibold outline-1 outline-veil/20 transition has-checked:bg-veil has-checked:text-on-veil has-focus-visible:outline-2 has-focus-visible:outline-veil"
 						>
@@ -497,6 +529,8 @@
 				</p>
 			{:else if layer === 'wind'}
 				<p class="mt-3 px-2 text-sm text-ink-muted">{m.radar_legend_wind()}</p>
+			{:else if layer === 'clouds'}
+				<p class="mt-3 px-2 text-sm text-ink-muted">{m.radar_legend_clouds()}</p>
 			{:else}
 				<ul class="mt-3 flex flex-wrap gap-x-4 gap-y-1 px-2 text-sm text-ink-muted">
 					<li class="flex items-center gap-1.5">

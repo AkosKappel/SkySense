@@ -794,7 +794,9 @@ const gridSchema = z.array(
 			precipitation_probability: numbers,
 			temperature_2m: numbers,
 			wind_speed_10m: numbers,
-			wind_direction_10m: numbers
+			wind_direction_10m: numbers,
+			// Optional: grids recorded before M-07 lack it.
+			cloud_cover: numbers.optional()
 		})
 	})
 );
@@ -816,12 +818,13 @@ export function toGrid(raw: unknown): GridCell[] {
 			chance: point.hourly.precipitation_probability[i] ?? 0,
 			temperature: point.hourly.temperature_2m[i] ?? NaN,
 			wind: point.hourly.wind_speed_10m[i] ?? 0,
-			windFrom: point.hourly.wind_direction_10m[i] ?? 0
+			windFrom: point.hourly.wind_direction_10m[i] ?? 0,
+			clouds: point.hourly.cloud_cover?.[i] ?? undefined
 		}))
 	}));
 }
 
-/** The model's rain, temperature and wind for the next hours around a place: one request for all 25 points. */
+/** The model's rain, temperature, wind and cloud for the next hours around a place: one request for all 25 points. */
 export async function fetchGrid(
 	coordinates: Coordinates,
 	fetchFn: typeof fetch = fetch
@@ -836,7 +839,7 @@ export async function fetchGrid(
 		latitude: points.map((p) => p.lat).join(','),
 		longitude: points.map((p) => p.lon).join(','),
 		hourly:
-			'precipitation,precipitation_probability,temperature_2m,wind_speed_10m,wind_direction_10m',
+			'precipitation,precipitation_probability,temperature_2m,wind_speed_10m,wind_direction_10m,cloud_cover',
 		timezone: 'auto',
 		forecast_hours: String(GRID_HOURS + 1)
 	}).toString();

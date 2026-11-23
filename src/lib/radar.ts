@@ -19,6 +19,8 @@ export type GridHour = {
 	wind: number;
 	/** Degrees the wind comes from, 0 is north. */
 	windFrom: number;
+	/** Cloud cover in % (M-07); missing in older recordings. */
+	clouds?: number;
 };
 export type GridCell = { lat: number; lon: number; hours: GridHour[] };
 
@@ -35,7 +37,7 @@ export function firstWetHour(cells: GridCell[]): string | null {
 	);
 }
 
-export type GridLayer = 'rain' | 'temperature' | 'wind';
+export type GridLayer = 'rain' | 'temperature' | 'wind' | 'clouds';
 
 /** Below this difference between opposite edges of the grid, the temperature counts as even. */
 export const EVEN_DEGREES = 2;
@@ -52,18 +54,57 @@ export function warmerSide(
 	cells: GridCell[],
 	time: string
 ): { side: 'n' | 'e' | 's' | 'w'; by: number } | null {
+	const found = higherSide(cells, (c) => hourAt(c, time)?.temperature ?? NaN);
+	return found && found.by >= EVEN_DEGREES ? { side: found.side, by: found.by } : null;
+}
+
+/** Below this difference in cloud cover between opposite edges, the sky counts as alike (M-07). */
+export const EVEN_CLOUDS = 25;
+
+/**
+ * Which side of the place is clearer at an hour, with that side's cloud cover, in the same way as
+ * `warmerSide`; null when the sky is within EVEN_CLOUDS everywhere, or there is no cloud data.
+ */
+export function clearerSide(
+	cells: GridCell[],
+	time: string
+): { side: 'n' | 'e' | 's' | 'w'; clouds: number } | null {
+	const clear = (c: GridCell) => 100 - (hourAt(c, time)?.clouds ?? NaN);
+	const found = higherSide(cells, clear);
+	if (!found || found.by < EVEN_CLOUDS) return null;
+	return { side: found.side, clouds: Math.round(100 - found.mean) };
+}
+
+/** The mean cloud cover over the grid at an hour, or null without cloud data. */
+export function meanClouds(cells: GridCell[], time: string): number | null {
+	const value = mean(cells.map((c) => hourAt(c, time)?.clouds ?? NaN));
+	return Number.isNaN(value) ? null : Math.round(value);
+}
+
+/**
+ * The side whose points have the higher mean of `value`: north of the middle against south, east
+ * against west, and the larger difference wins. Sides come from each point's coordinates, not the
+ * order of the list.
+ */
+function higherSide(
+	cells: GridCell[],
+	value: (cell: GridCell) => number
+): { side: 'n' | 'e' | 's' | 'w'; by: number; mean: number } | null {
 	if (cells.length < 2) return null;
 	const middle = { lat: mean(cells.map((c) => c.lat)), lon: mean(cells.map((c) => c.lon)) };
-	const warmth = (pick: (cell: GridCell) => boolean) =>
-		mean(cells.filter(pick).map((c) => hourAt(c, time)?.temperature ?? NaN));
-	const northSouth = warmth((c) => c.lat > middle.lat) - warmth((c) => c.lat < middle.lat);
-	const eastWest = warmth((c) => c.lon > middle.lon) - warmth((c) => c.lon < middle.lon);
-	if (Number.isNaN(northSouth + eastWest)) return null;
-	const [by, side] =
-		Math.abs(northSouth) >= Math.abs(eastWest)
-			? [northSouth, northSouth > 0 ? ('n' as const) : ('s' as const)]
-			: [eastWest, eastWest > 0 ? ('e' as const) : ('w' as const)];
-	return Math.abs(by) < EVEN_DEGREES ? null : { side, by: Math.abs(by) };
+	const side = (pick: (cell: GridCell) => boolean) => mean(cells.filter(pick).map(value));
+	const [n, s, e, w] = [
+		side((c) => c.lat > middle.lat),
+		side((c) => c.lat < middle.lat),
+		side((c) => c.lon > middle.lon),
+		side((c) => c.lon < middle.lon)
+	];
+	if (Number.isNaN(n + s + e + w)) return null;
+	const [by, high, top] =
+		Math.abs(n - s) >= Math.abs(e - w)
+			? [n - s, n > s ? ('n' as const) : ('s' as const), Math.max(n, s)]
+			: [e - w, e > w ? ('e' as const) : ('w' as const), Math.max(e, w)];
+	return { side: high, by: Math.abs(by), mean: top };
 }
 
 /** Below this speed everywhere, the wind has no direction worth naming. */

@@ -4,7 +4,9 @@ import frames from '#lib/server/fixtures/radar-frames.json';
 import { gridPoints } from '#lib/grid.js';
 import { toGrid, toRadarFrames } from '#lib/server/open-meteo.js';
 import {
+	clearerSide,
 	firstWetHour,
+	meanClouds,
 	startZoom,
 	temperatureBand,
 	warmerSide,
@@ -27,7 +29,9 @@ const cell = (rain: number[]): GridCell => ({
 
 const TIME = '2026-11-10T10:00';
 /** A 3 × 3 grid, rows north to south and columns west to east, with one value per point. */
-const grid = (values: { temperature?: number; wind?: number; windFrom?: number }[]): GridCell[] =>
+const grid = (
+	values: { temperature?: number; wind?: number; windFrom?: number; clouds?: number }[]
+): GridCell[] =>
 	values.map((v, i) => ({
 		lat: 49 - Math.floor(i / 3),
 		lon: 16 + (i % 3),
@@ -88,6 +92,20 @@ describe('temperature and wind layers', () => {
 		// The recorded grids list points south to north; sides come from the coordinates.
 		expect(warmerSide(temperatures([8, 8, 8, 6, 6, 6, 4, 4, 4]).reverse(), TIME)?.side).toBe('n');
 		expect(warmerSide([], TIME)).toBeNull();
+	});
+
+	it('names the clearer side and its cloud, or the cloud all around (M-07)', () => {
+		const clouds = (c: number[]) => grid(c.map((clouds) => ({ clouds })));
+		expect(clearerSide(clouds([90, 90, 90, 60, 60, 60, 20, 20, 20]), TIME)).toEqual({
+			side: 's',
+			clouds: 20
+		});
+		expect(clearerSide(clouds([70, 70, 60, 70, 70, 60, 70, 70, 60]), TIME)).toBeNull();
+		expect(meanClouds(clouds([70, 70, 60, 70, 70, 60, 70, 70, 60]), TIME)).toBe(67);
+		// Grids recorded before M-07 have no cloud.
+		expect(clearerSide(temperatures([5, 5, 5, 5, 5, 5, 5, 5, 5]), TIME)).toBeNull();
+		expect(meanClouds(temperatures([5, 5, 5, 5, 5, 5, 5, 5, 5]), TIME)).toBeNull();
+		expect(toGrid(bratislavaGrid)[0].hours[0].clouds).toBe(100);
 	});
 
 	it('colours temperatures blue at freezing and below, yellow from 25°', () => {
