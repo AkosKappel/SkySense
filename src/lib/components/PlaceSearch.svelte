@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { LoaderCircle, LocateFixed, MapPin, Search, X } from '@lucide/svelte';
+	import { LoaderCircle, LocateFixed, Map as MapIcon, MapPin, Search, X } from '@lucide/svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { isSearchShortcut } from '#lib/keys.js';
@@ -8,7 +8,7 @@
 	import { locate } from '#lib/locate.js';
 	import { areaName } from '#lib/open-live.js';
 	import { savedPlaces, type SavedPlace } from '#lib/places.svelte.js';
-	import { formatCoordinates } from '#lib/weather.js';
+	import { formatCoordinates, type Coordinates } from '#lib/weather.js';
 
 	type Result = { id: number; name: string; detail: string; lat: number; lon: number };
 
@@ -17,14 +17,22 @@
 	 * `to` is where a chosen place opens: its forecast, or the map around it (M-11). `compact` fits
 	 * the search on one line above a map: the label only for screen readers, location as an icon.
 	 * `floating` lays the results over what follows; in a scrolling sheet they take their own
-	 * room instead, or the sheet would cut them off.
+	 * room instead, or the sheet would cut them off. `near` centres "Pick on the map" (M-13); without
+	 * it, the map starts at the first saved place.
 	 */
 	let {
 		replace = false,
 		to = 'place',
 		compact = false,
-		floating = true
-	}: { replace?: boolean; to?: 'place' | 'map'; compact?: boolean; floating?: boolean } = $props();
+		floating = true,
+		near
+	}: {
+		replace?: boolean;
+		to?: 'place' | 'map';
+		compact?: boolean;
+		floating?: boolean;
+		near?: Coordinates;
+	} = $props();
 
 	let query = $state('');
 	let results = $state<Result[]>([]);
@@ -32,6 +40,7 @@
 	let status = $state<'idle' | 'searching' | 'empty' | 'error'>('idle');
 	let locating = $state(false);
 	let locationError = $state('');
+	let picking = $state(false);
 	let timer: ReturnType<typeof setTimeout> | undefined;
 	let latest = 0;
 	let input: HTMLInputElement;
@@ -249,24 +258,45 @@
 	</p>
 
 	{#if !compact}
-		<button
-			type="button"
-			onclick={useMyLocation}
-			disabled={locating}
-			class="mt-2 flex h-12 cursor-pointer items-center gap-2 rounded-full bg-veil/10 px-5 font-semibold outline-1 outline-veil/20 transition hover:bg-veil/20 disabled:cursor-wait"
-		>
-			{#if locating}
-				<LoaderCircle
-					size={18}
-					class="animate-spin motion-reduce:animate-none"
-					aria-hidden="true"
+		<div class="mt-2 flex flex-wrap gap-2">
+			<button
+				type="button"
+				onclick={useMyLocation}
+				disabled={locating}
+				class="flex h-12 cursor-pointer items-center gap-2 rounded-full bg-veil/10 px-5 font-semibold outline-1 outline-veil/20 transition hover:bg-veil/20 disabled:cursor-wait"
+			>
+				{#if locating}
+					<LoaderCircle
+						size={18}
+						class="animate-spin motion-reduce:animate-none"
+						aria-hidden="true"
+					/>
+					{m.locating()}
+				{:else}
+					<LocateFixed size={18} aria-hidden="true" />
+					{m.use_my_location()}
+				{/if}
+			</button>
+			<button
+				type="button"
+				onclick={() => (picking = !picking)}
+				aria-expanded={picking}
+				class="flex h-12 cursor-pointer items-center gap-2 rounded-full bg-veil/10 px-5 font-semibold outline-1 outline-veil/20 transition hover:bg-veil/20"
+			>
+				<MapIcon size={18} aria-hidden="true" />
+				{m.pick_on_map()}
+			</button>
+		</div>
+		<!-- Leaflet loads only when the map is asked for. -->
+		{#if picking}
+			{#await import('#lib/components/MapPicker.svelte') then { default: MapPicker }}
+				<MapPicker
+					near={near ?? savedPlaces.list[0]}
+					onpick={(place) => openPlace(place)}
+					oncancel={() => (picking = false)}
 				/>
-				{m.locating()}
-			{:else}
-				<LocateFixed size={18} aria-hidden="true" />
-				{m.use_my_location()}
-			{/if}
-		</button>
+			{/await}
+		{/if}
 	{/if}
 	{#if locationError}<p class="mt-2 text-sm" role="alert">{locationError}</p>{/if}
 </div>

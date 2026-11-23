@@ -153,6 +153,35 @@ test('switches places in a sheet that Back and Escape close', async ({ page }) =
 	await expect(sheet).toBeHidden();
 });
 
+test('picks a place on a map, by pointer or keyboard, only once confirmed', async ({ page }) => {
+	await blankMapTiles(page);
+	await page.goto('/p/69.65,18.96/Troms%C3%B8');
+	await placeReady(page);
+	await page.getByRole('link', { name: /Change place/ }).click();
+	const sheet = page.getByRole('dialog', { name: 'Change place' });
+	await sheet.getByRole('button', { name: 'Pick on the map' }).click();
+
+	// The map opens on the current place, named from the reverse geocoder, and takes focus.
+	const map = sheet.getByRole('application', { name: 'Pick on the map' });
+	await expect(map).toBeFocused();
+	await expect(sheet.getByText('Tromsø · 69.65,18.96')).toBeVisible();
+	await expectAccessible(page);
+
+	// Panning with the keys moves the spot; Escape closes the map, not the sheet.
+	await page.keyboard.press('ArrowRight');
+	await expect(sheet.getByText('Tromsø · 69.65,18.96')).toBeHidden();
+	await page.keyboard.press('Escape');
+	await expect(map).toBeHidden();
+	await expect(sheet).toBeVisible();
+	await expect(page).toHaveURL(/Troms%C3%B8$/);
+
+	await sheet.getByRole('button', { name: 'Pick on the map' }).click();
+	await expect(sheet.getByText('Tromsø · 69.65,18.96')).toBeVisible();
+	await sheet.getByRole('button', { name: 'Choose this spot' }).click();
+	await expect(page).toHaveURL(/\/p\/69\.65,18\.96\/Troms%C3%B8$/);
+	await expect(page.getByRole('button', { name: 'Save' })).toHaveCount(0);
+});
+
 test('suggests times for the chosen activities and remembers the choice', async ({ page }) => {
 	await page.goto('/p/48.15,17.11/Bratislava');
 	await placeReady(page);

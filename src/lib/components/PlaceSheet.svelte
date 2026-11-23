@@ -61,7 +61,7 @@
 				</button>
 			</div>
 
-			<div class="mt-4"><PlaceSearch replace floating={false} /></div>
+			<div class="mt-4"><PlaceSearch replace floating={false} near={current} /></div>
 
 			{#if savedPlaces.list.length}
 				<h3 class="mt-4 question">{m.saved_places()}</h3>
