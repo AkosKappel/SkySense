@@ -704,6 +704,26 @@ test('the map shortcut opens the map around the last place, with search and both
 	await expect(page).toHaveURL(/\/p\/4\d\.\d+,1\d\.\d+/);
 });
 
+test('a commute set in Settings gets its line in the umbrella tile', async ({ page }) => {
+	await page.goto('/settings');
+	await page.getByLabel('Leaving').fill('07:30');
+	await page.getByLabel('Coming back').fill('17:30');
+	await page.getByRole('button', { name: 'Save' }).click();
+	await expect(page.getByRole('status')).toHaveText('Settings saved.');
+	await expect(page.getByLabel('Coming back')).toHaveValue('17:30');
+
+	// The recorded morning is Tuesday 10:00, so only the trip home is still ahead, after the rain.
+	await page.goto('/p/48.15,17.11/Bratislava');
+	await expect(page.getByText('Your trip at 17:30 today looks dry.')).toBeVisible();
+
+	await page.goto('/settings');
+	await page.getByLabel('Leaving').fill('');
+	await page.getByLabel('Coming back').fill('');
+	await page.getByRole('button', { name: 'Save' }).click();
+	await page.goto('/p/48.15,17.11/Bratislava');
+	await expect(page.getByText(/looks dry|Rain is likely for your trip/)).toHaveCount(0);
+});
+
 test('settings change units and language', async ({ page }) => {
 	await page.goto('/settings');
 	await expectAccessible(page);

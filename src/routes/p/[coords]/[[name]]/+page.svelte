@@ -49,6 +49,7 @@
 	import TempChart from '#lib/components/TempChart.svelte';
 	import ShareCardButton from '#lib/components/ShareCardButton.svelte';
 	import SummaryLine from '#lib/components/SummaryLine.svelte';
+	import { commuteCheck } from '#lib/commute.js';
 	import { holidayLine } from '#lib/holidays.js';
 	import { seaState } from '#lib/sea.js';
 	import { summaryText } from '#lib/components/summary-text.js';
@@ -78,6 +79,7 @@
 	const forecast = $derived(data.forecast);
 	const now = $derived(forecast.current);
 	const today = $derived(forecast.days[0]);
+	const commute = $derived(commuteCheck(forecast.hours, now.time, data.commute));
 	const holiday = $derived(holidayLine(forecast.holidays, today.date, getLocale()));
 	const name = $derived(data.name ?? m.unnamed_place());
 	const place = $derived({ name, ...data.coordinates });
@@ -564,6 +566,14 @@
 {#snippet umbrellaTile()}
 	<section class="flex flex-col glass p-6">
 		<UmbrellaTile hours={forecast.hours} {f} />
+		{#if commute}
+			<!-- The server knows there is a line, so its room is kept while its words load. -->
+			<div class="mt-3 min-h-10">
+				{#await import('#lib/components/CommuteLine.svelte') then { default: CommuteLine }}
+					<CommuteLine check={commute} {f} />
+				{/await}
+			</div>
+		{/if}
 		<a
 			href="{resolve('/p/[coords]/[[name]]', {
 				coords: page.params.coords ?? '',

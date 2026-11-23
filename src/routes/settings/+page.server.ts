@@ -1,5 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import { cookieMaxAge, cookieName, isLocale } from '#lib/paraglide/runtime.js';
+import { COMMUTE_COOKIE, writeCommute } from '#lib/commute.js';
 import { COMFORT_COOKIE, readComfort, readUnits, UNITS_COOKIE } from '#lib/settings.js';
 import { readTheme, THEME_COOKIE } from '#lib/theme.js';
 import { readTiles, TILES_COOKIE, writeTiles } from '#lib/tiles.js';
@@ -25,6 +26,7 @@ export const actions: Actions = {
 		cookies.set(UNITS_COOKIE, JSON.stringify(units), cookie);
 		cookies.set(COMFORT_COOKIE, readComfort(String(form.get('comfort'))), cookie);
 		cookies.set(THEME_COOKIE, readTheme(String(form.get('theme'))), cookie);
+		cookies.set(COMMUTE_COOKIE, writeCommute(form.get('leave'), form.get('back')), cookie);
 
 		// Ticked tiles show; the order and widths from the place page's edit mode stay as they are.
 		if (form.get('tiles') === 'reset') {

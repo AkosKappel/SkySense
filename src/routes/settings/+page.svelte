@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		ArrowLeft,
+		BriefcaseBusiness,
 		Check,
 		ChevronDown,
 		Clock,
@@ -171,6 +172,27 @@
 				{#if group.note}<p class="mt-2 text-sm text-ink-muted">{group.note()}</p>{/if}
 			</fieldset>
 		{/each}
+
+		<fieldset>
+			<legend class="mb-2 question">
+				<BriefcaseBusiness size={18} aria-hidden="true" />
+				{m.commute()}
+			</legend>
+			<div class="flex flex-wrap gap-4">
+				{#each [['leave', m.commute_leave, data.commute?.leave], ['back', m.commute_back, data.commute?.back]] as const as [name, label, value] (name)}
+					<label class="flex flex-col gap-1 text-sm font-semibold">
+						{label()}
+						<input
+							type="time"
+							{name}
+							value={value ?? ''}
+							class="h-12 rounded-2xl bg-veil/10 px-4 text-base text-ink outline-1 outline-veil/20"
+						/>
+					</label>
+				{/each}
+			</div>
+			<p class="mt-2 text-sm text-ink-muted">{m.commute_note()}</p>
+		</fieldset>
 
 		<!-- U-26: tiles come back here as well as in the edit mode on a place page. -->
 		<fieldset>
