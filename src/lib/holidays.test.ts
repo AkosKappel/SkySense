@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { holidayLine, holidayName, holidaysWithin, type Holiday } from './holidays.js';
+import { holidayLine, holidayName, holidaysWithin, languagesOf, type Holiday } from './holidays.js';
 import { toHolidays } from './server/open-meteo.js';
 import recorded from './server/fixtures/holidays-sk-2026.json';
 
@@ -11,15 +11,15 @@ const christmasEve: Holiday = {
 
 describe('holidayName', () => {
 	it('uses the local name where the reader’s language is spoken', () => {
-		expect(holidayName(christmasEve, 'sk', 'sk')).toBe('Štedrý deň');
-		expect(holidayName({ ...christmasEve, localName: 'Nochebuena' }, 'mx', 'es')).toBe(
-			'Nochebuena'
-		);
+		expect(holidayName(christmasEve, languagesOf('sk'), 'sk')).toBe('Štedrý deň');
+		expect(languagesOf('mx')).toEqual(['es']);
+		expect(languagesOf('ch')).toEqual(['de']);
 	});
 
 	it('falls back to English elsewhere', () => {
-		expect(holidayName(christmasEve, 'sk', 'de')).toBe('Christmas Eve');
-		expect(holidayName(christmasEve, 'sk', 'en')).toBe('Christmas Eve');
+		expect(holidayName(christmasEve, languagesOf('sk'), 'de')).toBe('Christmas Eve');
+		expect(holidayName(christmasEve, languagesOf('sk'), 'en')).toBe('Christmas Eve');
+		expect(languagesOf('no')).toEqual([]);
 	});
 });
 
@@ -47,7 +47,7 @@ describe('toHolidays', () => {
 });
 
 describe('holidayLine', () => {
-	const holidays = { country: 'sk', days: [christmasEve] };
+	const holidays = { languages: ['sk'], days: [christmasEve] };
 
 	it('names today’s holiday, else tomorrow’s, for the reader', () => {
 		expect(holidayLine(holidays, '2026-12-24', 'sk')).toEqual({

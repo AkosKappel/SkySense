@@ -36,6 +36,8 @@ test('finds a place and shows its forecast', async ({ page }) => {
 	await expect(page.getByText('6°', { exact: true }).first()).toBeVisible();
 	await expect(page.getByText('Rain until 16:00, then dry.')).toBeVisible();
 	await expect(page.getByText('Do I need an umbrella?')).toBeVisible();
+	// The darkness tile loads when scrolled near, like the climate tiles placeReady waits for.
+	await placeReady(page);
 	await expect(page.getByText('When does it get dark?')).toBeVisible();
 	// The server keeps forecasts for a few minutes, so later in a run this place can be a minute old.
 	await expect(page.getByText(/^Updated (just now|\d+ minutes? ago)$/)).toBeVisible();
@@ -299,6 +301,7 @@ test('shows recorded scenarios for screenshots with ?demo=', async ({ page }) =>
 	await page.goto('/p/40.42,-3.7/Madrid?demo=heat');
 	await expect(page.getByText(/Hot, up to 35° around 16:00\./)).toBeVisible();
 	await page.goto('/p/69.65,18.96/Troms%C3%B8?demo=polar-night');
+	await placeReady(page);
 	await expect(page.getByText("The sun doesn't rise today.")).toBeVisible();
 });
 
@@ -424,7 +427,7 @@ test('the health check answers for the uptime monitor, uncached', async ({ reque
 test("the forecast carries the country's public holidays in its days", async ({ request }) => {
 	const forecast = await (await request.get('/api/forecast?lat=48.15&lon=17.11')).json();
 	expect(forecast.holidays).toEqual({
-		country: 'sk',
+		languages: ['sk'],
 		days: [
 			{
 				date: '2026-11-17',

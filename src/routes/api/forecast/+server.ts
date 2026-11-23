@@ -10,7 +10,7 @@ import {
 import { memo } from '#lib/server/memo.js';
 import { skyEvents } from '#lib/server/sky.js';
 import { auroraTonight, fetchKp } from '#lib/server/aurora.js';
-import { holidaysWithin, type Holiday } from '#lib/holidays.js';
+import { holidaysWithin, languagesOf, type PlaceHolidays } from '#lib/holidays.js';
 import { parseCoordinates, roundCoordinates, type Coordinates } from '#lib/weather.js';
 import type { RequestHandler } from './$types';
 
@@ -78,13 +78,9 @@ export const GET: RequestHandler = async ({ url, fetch, setHeaders }) => {
 			aurora: auroraTonight(kp, coordinates, time, forecast.utcOffsetSeconds)
 		};
 		const found = await holidaysLookup;
-		const holidays = found && {
-			country: found.country,
-			days: holidaysWithin(
-				found.list,
-				forecast.days[0].date,
-				forecast.days.length
-			) satisfies Holiday[]
+		const holidays: PlaceHolidays | null = found && {
+			languages: languagesOf(found.country),
+			days: holidaysWithin(found.list, forecast.days[0].date, forecast.days.length)
 		};
 		// Open-Meteo updates hourly; 15 minutes keeps "now" fresh while the CDN absorbs repeats.
 		setHeaders({

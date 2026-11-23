@@ -3,6 +3,9 @@
 
 export type Holiday = { date: string; localName: string; name: string };
 
+/** A place's holidays in the forecast's days, and which of the app's languages its country speaks. */
+export type PlaceHolidays = { languages: string[]; days: Holiday[] };
+
 /** Where each of the app's languages is spoken, so a reader sees the holiday in their own words. */
 const countriesOf: Record<string, string[]> = {
 	de: ['de', 'at', 'ch', 'li', 'lu'],
@@ -31,13 +34,18 @@ const countriesOf: Record<string, string[]> = {
 	]
 };
 
+/** The app's languages spoken in a country, so the server can say which readers get local names. */
+export function languagesOf(country: string): string[] {
+	return Object.keys(countriesOf).filter((locale) => countriesOf[locale].includes(country));
+}
+
 /**
  * The holiday's own name where the reader's language is spoken there ("Štedrý deň" for a Slovak
  * reader in Slovakia), otherwise the English one, which a German reader in Madrid is likelier to
  * follow than the Spanish. Nager.Date has no other translations.
  */
-export function holidayName(holiday: Holiday, country: string, locale: string): string {
-	return countriesOf[locale]?.includes(country) ? holiday.localName : holiday.name;
+export function holidayName(holiday: Holiday, languages: string[], locale: string): string {
+	return languages.includes(locale) ? holiday.localName : holiday.name;
 }
 
 /** Holidays from `from` for `days` days, in date order; two on one day keep both. */
@@ -57,7 +65,7 @@ export type HolidayLine = { when: 'today' | 'tomorrow'; name: string };
  * a calendar. `today` is the place's date.
  */
 export function holidayLine(
-	holidays: { country: string; days: Holiday[] } | undefined,
+	holidays: PlaceHolidays | undefined,
 	today: string,
 	locale: string
 ): HolidayLine | null {
@@ -70,6 +78,6 @@ export function holidayLine(
 	if (!found) return null;
 	return {
 		when: found.date === today ? 'today' : 'tomorrow',
-		name: holidayName(found, holidays.country, locale)
+		name: holidayName(found, holidays.languages, locale)
 	};
 }

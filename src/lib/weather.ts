@@ -1,7 +1,7 @@
 // The forecast as the app uses it, shared by server and browser. Times are the place's local
 // wall-clock time as Open-Meteo returns them with `timezone=auto` ("2026-11-10T14:00").
 
-import type { Holiday } from '#lib/holidays.js';
+import type { PlaceHolidays } from '#lib/holidays.js';
 import type { Pressure } from '#lib/pressure.js';
 
 export type Condition =
@@ -107,7 +107,7 @@ export type Forecast = {
 	/** Added by `/api/forecast`; the other pages that load a forecast do without it. */
 	sky?: Sky;
 	/** The country's public holidays in these days (F-26), from `/api/forecast` where it found them. */
-	holidays?: { country: string; days: Holiday[] };
+	holidays?: PlaceHolidays;
 };
 
 /** WMO weather interpretation codes, as Open-Meteo documents them. */
