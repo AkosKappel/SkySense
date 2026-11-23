@@ -24,7 +24,7 @@ The weather, made sense of. Most weather apps show a grid of numbers and icons a
 - **Is rain coming my way?** A radar map of the last 2 hours, then the model's rain for the next 3, said in words too ("The model shows rain within about 60 km from 11:00."). The same map switches to the model's temperature and wind ("Warmer to the south, by about 2°."), shows the other saved places, and opens full screen.
 - **Where is the weather better?** For an activity and a day, a map of some 150 km around the place, each 25 km square coloured by the same activity score, and the answer in words: "Better around Győr, 70 km south-east: 14:00 to 16:00, a score of 92 against 76 here." Arrow keys move between squares; Enter or a click opens the forecast there.
 - **Which day this week?** A week page: the best day for each chosen activity ("Run: best on Saturday 14 November, 10:00 to 11:00."), then every day as a strip of its hours, temperature and rain, with that day's best times.
-- **A map of its own.** `/map` opens both maps full width around the last place, with a place search that stays on the map. A click anywhere on the radar opens the forecast there.
+- **A map of its own.** `/map` opens both maps full width around the last place, with a place search that stays on the map. A click anywhere on the radar opens the forecast there, and "Pick on the map" in the place search chooses a spot without a searchable name (a hill, a lake, a campsite).
 - **Where is it nicer?** Two saved places side by side, day by day, with the nicer one marked.
 
 Mobile first, installable and usable offline for places opened before, with a "My location" entry that finds you again. No accounts, no tracking. In English, German, Slovak, Hungarian and Spanish.
