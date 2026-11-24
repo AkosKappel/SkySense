@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { rainTurn, type NowcastStep } from './nowcast.js';
+import { rainAhead, rainTurn, type NowcastStep } from './nowcast.js';
+import type { Hour } from './weather.js';
 import { toNowcast } from './server/open-meteo.js';
 import recorded from './server/fixtures/nowcast-bratislava.json';
 
@@ -43,5 +44,36 @@ describe('rainTurn', () => {
 		const recordedSteps = toNowcast(recorded);
 		expect(recordedSteps.length).toBeGreaterThan(8);
 		expect(recordedSteps[0].time).toMatch(/^2026-11-10T00:00$/);
+	});
+});
+
+describe('rainAhead', () => {
+	const hours = (chances: number[]) =>
+		chances.map((rainChance, i) => ({
+			time: `2026-11-10T${String(10 + i).padStart(2, '0')}:00`,
+			rainChance
+		})) as Hour[];
+
+	it('takes the quarter hours where there are some', () => {
+		expect(rainAhead(steps([0, 0, 0.3, 0.5]), hours([10, 80]), '2026-11-10T10:05')).toEqual({
+			turn: 'starts',
+			at: '2026-11-10T10:30',
+			quarter: true
+		});
+		// Quarter hours that see no change win over the hourly guess.
+		expect(rainAhead(steps([0, 0, 0, 0]), hours([10, 80]), '2026-11-10T10:05')).toBeNull();
+	});
+
+	it('falls back to the next hour elsewhere', () => {
+		expect(rainAhead(undefined, hours([10, 80]), '2026-11-10T10:05')).toEqual({
+			turn: 'starts',
+			at: '2026-11-10T11:00',
+			quarter: false
+		});
+		expect(rainAhead(undefined, hours([90, 20]), '2026-11-10T10:05')?.turn).toBe('stops');
+		expect(rainAhead(undefined, hours([90, 90]), '2026-11-10T10:05')).toBeNull();
+		expect(rainAhead([], hours([10]), '2026-11-10T10:05')).toBeNull();
+		// Quarter hours that have all gone by give way to the hours.
+		expect(rainAhead(steps([0, 0]), hours([10, 80]), '2026-11-10T13:05')?.quarter).toBe(false);
 	});
 });

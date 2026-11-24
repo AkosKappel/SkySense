@@ -904,6 +904,46 @@ test("the wall display's sentence turns to tomorrow after sunset", async ({ page
 	).toBeVisible();
 });
 
+test('the wall display says when rain turns, what to wear, the commute and a second place', async ({
+	context,
+	page
+}) => {
+	await context.addCookies([
+		{ name: 'skysense_commute', value: '07:30-17:30', url: 'http://localhost:4173' }
+	]);
+	// 15:20 in Bratislava: the recorded quarter hours have gone by, and the next hour turns dry.
+	await page.clock.install({ time: new Date('2026-11-10T14:20:00Z') });
+	await page.goto(
+		'/wall/48.15,17.11/Bratislava?show=clock&show=rain&show=wear&show=commute&also=40.42%2C-3.7%2FMadrid'
+	);
+	await expect(page.getByRole('status').filter({ hasText: 'Dry from about 16:00.' })).toBeVisible();
+	await expect(page.getByText(/^What to wear/)).toBeVisible();
+	await expect(page.getByText('Your trip at 17:30 today looks dry.')).toBeVisible();
+	const madrid = page.getByRole('region', { name: 'Madrid' });
+	await expect(madrid).toContainText(/High \d+° · Low \d+°/);
+	await expect(madrid.getByRole('link', { name: 'Madrid' })).toHaveAttribute(
+		'href',
+		'/p/40.42,-3.7/Madrid'
+	);
+
+	await page.mouse.move(200, 200);
+	await page.getByRole('button', { name: 'Customize this screen' }).click();
+	const panel = page.getByRole('dialog', { name: 'Customize this screen' });
+	await expect(panel.getByLabel('Second place')).toHaveValue('40.42,-3.7/Madrid');
+	await panel.getByText('Clock only', { exact: true }).click();
+	await panel.getByRole('button', { name: 'Save' }).click();
+	await expect(page).toHaveURL(/night=clock/);
+	await expect(page).toHaveURL(/also=40.42%2C-3.7%2FMadrid/);
+});
+
+test('the wall display shows only the clock at night when asked', async ({ page }) => {
+	await page.clock.install({ time: new Date('2026-11-10T18:00:00Z') });
+	await page.goto('/wall/48.15,17.11/Bratislava?night=clock&also=40.42%2C-3.7%2FMadrid');
+	await expect(page.getByText('19:00')).toBeVisible();
+	await expect(page.getByRole('region', { name: 'Next 12 hours' })).toHaveCount(0);
+	await expect(page.getByRole('region', { name: 'Madrid' })).toHaveCount(0);
+});
+
 test('the map shows where the weather is better and opens a square from the keyboard', async ({
 	page
 }) => {

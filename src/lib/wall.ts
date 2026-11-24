@@ -1,4 +1,4 @@
-import type { Hour } from '#lib/weather.js';
+import { formatCoordinates, parseCoordinates, type Coordinates, type Hour } from '#lib/weather.js';
 
 /** The place's wall-clock time as `YYYY-MM-DDTHH:MM`, the form the forecast's times use. */
 export function placeNow(utcOffsetSeconds: number, nowMs: number): string {
@@ -29,8 +29,11 @@ export const wallBlocks = [
 	'clock',
 	'date',
 	'now',
+	'rain',
 	'sentence',
 	'umbrella',
+	'wear',
+	'commute',
 	'readings',
 	'hours',
 	'tomorrow'
@@ -39,32 +42,66 @@ export type WallBlock = (typeof wallBlocks)[number];
 export const heroBlocks: readonly WallBlock[] = ['clock', 'date', 'now'];
 export const wallSizes = ['s', 'm', 'l'] as const;
 export type WallSize = (typeof wallSizes)[number];
-export type WallLayout = { blocks: WallBlock[]; size: WallSize };
+/** After sunset (F-32): dimmed as by day's layout, the clock alone, or nearly black. */
+export const nightModes = ['dim', 'clock', 'dark'] as const;
+export type NightMode = (typeof nightModes)[number];
+/** A second place beside the first (F-32), as `48.15,17.11/Bratislava` in the address. */
+export type OtherPlace = { coordinates: Coordinates; name: string };
+export type WallLayout = {
+	blocks: WallBlock[];
+	size: WallSize;
+	night: NightMode;
+	also: OtherPlace | null;
+};
 
 export const wallPresets = {
-	/** What the wall showed before it could be set up. */
-	standard: ['clock', 'date', 'now', 'sentence', 'umbrella', 'readings', 'hours'],
+	/** What the wall showed before it could be set up, and the rain banner when rain turns. */
+	standard: ['clock', 'date', 'now', 'rain', 'sentence', 'umbrella', 'readings', 'hours'],
 	clock: ['clock', 'date', 'now'],
-	forecast: ['now', 'umbrella', 'hours', 'tomorrow'],
+	forecast: ['now', 'rain', 'umbrella', 'wear', 'hours', 'tomorrow'],
 	everything: [...wallBlocks]
 } satisfies Record<string, WallBlock[]>;
+
+function parseOther(value: string | null): OtherPlace | null {
+	if (!value) return null;
+	const slash = value.indexOf('/');
+	const coordinates = parseCoordinates(slash === -1 ? value : value.slice(0, slash));
+	if (!coordinates) return null;
+	const name =
+		slash === -1
+			? ''
+			: value
+					.slice(slash + 1)
+					.trim()
+					.slice(0, 80);
+	return { coordinates, name };
+}
 
 export function wallLayout(params: Pick<URLSearchParams, 'get' | 'getAll'>): WallLayout {
 	const chosen = new Set(params.getAll('show'));
 	const blocks = wallBlocks.filter((block) => chosen.has(block));
-	const size = wallSizes.find((s) => s === params.get('size')) ?? 'm';
-	return { blocks: blocks.length ? blocks : [...wallPresets.standard], size };
+	return {
+		blocks: blocks.length ? blocks : [...wallPresets.standard],
+		size: wallSizes.find((s) => s === params.get('size')) ?? 'm',
+		night: nightModes.find((n) => n === params.get('night')) ?? 'dim',
+		also: parseOther(params.get('also'))
+	};
 }
 
 /** The address of a layout, the default parts left out so a plain wall keeps its plain address. */
-export function wallQuery({ blocks, size }: WallLayout): string {
+export function wallQuery({ blocks, size, night, also }: WallLayout): string {
 	const params = new URLSearchParams();
 	const standard = blocks.join() === wallPresets.standard.join();
 	if (!standard) for (const block of blocks) params.append('show', block);
 	if (size !== 'm') params.set('size', size);
+	if (night !== 'dim') params.set('night', night);
+	if (also) params.set('also', otherValue(also));
 	const query = params.toString();
 	return query ? `?${query}` : '';
 }
+
+export const otherValue = ({ coordinates, name }: OtherPlace) =>
+	`${formatCoordinates(coordinates)}/${name}`;
 
 /** After the place's sunset and before midnight, tomorrow is what people ask about. */
 export const isEvening = (localNow: string, sunset: string | null) =>

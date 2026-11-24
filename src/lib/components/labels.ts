@@ -3,7 +3,9 @@
 import { m } from '#lib/paraglide/messages.js';
 import type { ActivityId } from '#lib/activities.js';
 import type { Formatter } from '#lib/format.js';
+import type { RainAhead } from '#lib/nowcast.js';
 import type { Outlook } from '#lib/tomorrow.js';
+import type { Extra, Layer } from '#lib/wear.js';
 import type { Condition } from '#lib/weather.js';
 
 export function conditionLabel(condition: Condition, isDay = true): string {
@@ -66,4 +68,40 @@ export function tomorrowText(outlook: Outlook, f: Formatter): string {
 		thunder: m.tomorrow_thunder_window
 	};
 	return `${temp} ${window[fall.kind]({ from: f.time(fall.from), until: f.time(fall.until) })}`;
+}
+
+/** When rain starts or stops (M-02, F-32): to the quarter hour where a model runs at that step. */
+export function rainAheadText(found: RainAhead, snow: boolean, f: Formatter): string {
+	const time = f.time(found.at);
+	if (!found.quarter) {
+		return found.turn === 'starts' ? m.wall_rain_from({ time }) : m.wall_dry_from({ time });
+	}
+	if (found.turn === 'starts')
+		return snow ? m.nowcast_snow_starts({ time }) : m.nowcast_starts({ time });
+	return snow ? m.nowcast_snow_stops({ time }) : m.nowcast_stops({ time });
+}
+
+/** What to wear (X-02), as `whatToWear` answers it, in a line. */
+export function wearText(
+	wear: { layer: Layer; extras: Extra[]; shedFrom?: string },
+	f: Formatter
+): string {
+	const layers: Record<Layer, () => string> = {
+		tshirt: m.wear_tshirt,
+		layer: m.wear_layer,
+		light: m.wear_light,
+		warm: m.wear_warm,
+		winter: m.wear_winter,
+		arctic: m.wear_arctic
+	};
+	const extras: Record<Extra, () => string> = {
+		rain: m.wear_rain,
+		wind: m.wear_wind,
+		sun: m.wear_sun
+	};
+	return [
+		layers[wear.layer](),
+		...(wear.shedFrom ? [m.wear_shed({ time: f.time(wear.shedFrom) })] : []),
+		...wear.extras.map((extra) => extras[extra]())
+	].join(' ');
 }

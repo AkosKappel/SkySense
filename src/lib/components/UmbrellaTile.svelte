@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Umbrella } from '@lucide/svelte';
+	import { rainAheadText } from '#lib/components/labels.js';
 	import type { Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { rainTurn, type NowcastStep } from '#lib/nowcast.js';
@@ -75,11 +76,8 @@
 		const wetHour = (hours[0]?.rainChance ?? 0) >= RAIN_LIKELY;
 		const found = nowcast && now ? rainTurn(nowcast, now, wetHour) : null;
 		if (!found) return null;
-		const time = f.time(found.at);
 		const snow = hours.find((h) => h.time === `${found.at.slice(0, 13)}:00`)?.condition === 'snow';
-		if (found.turn === 'starts')
-			return snow ? m.nowcast_snow_starts({ time }) : m.nowcast_starts({ time });
-		return snow ? m.nowcast_snow_stops({ time }) : m.nowcast_stops({ time });
+		return rainAheadText({ ...found, quarter: true }, snow, f);
 	});
 </script>
 

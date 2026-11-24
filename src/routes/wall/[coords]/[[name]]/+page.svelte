@@ -1,6 +1,8 @@
 <script lang="ts">
 	import {
+		CloudRain,
 		Droplets,
+		Shirt,
 		Sun,
 		Sunrise,
 		Sunset,
@@ -14,10 +16,16 @@
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
 	import SkyLayer from '#lib/components/SkyLayer.svelte';
 	import SummaryLine from '#lib/components/SummaryLine.svelte';
+	import CommuteLine from '#lib/components/CommuteLine.svelte';
 	import TomorrowTile from '#lib/components/TomorrowTile.svelte';
 	import WallCustomize from '#lib/components/WallCustomize.svelte';
+	import WallOtherPlace from '#lib/components/WallOtherPlace.svelte';
 	import WeatherIcon from '#lib/components/WeatherIcon.svelte';
-	import { conditionLabel, tomorrowText } from '#lib/components/labels.js';
+	import { conditionLabel, rainAheadText, tomorrowText, wearText } from '#lib/components/labels.js';
+	import { comfortShift } from '#lib/activities.js';
+	import { commuteCheck } from '#lib/commute.js';
+	import { rainAhead } from '#lib/nowcast.js';
+	import { whatToWear } from '#lib/wear.js';
 	import { formatter, uvLevel } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
@@ -72,15 +80,29 @@
 
 	// What this screen shows (F-31), from its address; the big column only when both have blocks.
 	const layout = $derived(wallLayout(page.url.searchParams));
-	const shows = (block: WallBlock) => layout.blocks.includes(block);
-	const hero = $derived(layout.blocks.some((b) => heroBlocks.includes(b)));
-	const side = $derived(layout.blocks.some((b) => !heroBlocks.includes(b)));
+	// "Clock only" at night (F-32) keeps the clock and date and lets the rest rest until sunrise.
+	const blocks = $derived<WallBlock[]>(
+		night && layout.night === 'clock' ? ['clock', 'date'] : layout.blocks
+	);
+	const shows = (block: WallBlock) => blocks.includes(block);
+	const also = $derived(night && layout.night === 'clock' ? null : layout.also);
+	const hero = $derived(blocks.some((b) => heroBlocks.includes(b)));
+	const side = $derived(blocks.some((b) => !heroBlocks.includes(b)) || also !== null);
 	// Zoom scales lengths inside the page too, so its full height is divided back out below.
 	const zoom = $derived({ s: 0.8, m: 1, l: 1.25 }[layout.size]);
 	// From sunset on, the sentence answers for tomorrow; beside the tomorrow tile it would repeat it.
 	const days = $derived(forecast.days.slice(Math.max(0, forecast.days.indexOf(today))));
 	const outlook = $derived(tomorrowOutlook(days, forecast.hours));
 	const evening = $derived(isEvening(local, today.sunset) && outlook !== null);
+	// The blocks below the sentence (F-32): rain about to turn, clothes, and the commute.
+	const turn = $derived(rainAhead(forecast.nowcast, hours, local));
+	const turnText = $derived.by(() => {
+		if (!turn) return null;
+		const at = hours.find((h) => h.time === `${turn.at.slice(0, 13)}:00`);
+		return rainAheadText(turn, at?.condition === 'snow', f);
+	});
+	const wear = $derived(whatToWear(hours, comfortShift[data.comfort]));
+	const commute = $derived(commuteCheck(forecast.hours, local, data.commute));
 	// The readings people glance at from across the room; the sun times only where the sun rises.
 	const readings = $derived([
 		{ Icon: Thermometer, label: m.feels_like_line(), value: f.temp(now.feels) },
@@ -215,6 +237,12 @@
 
 	{#if side}
 		<section class="flex min-w-0 flex-col gap-5" style:translate="{shift.x}px {shift.y}px">
+			{#if shows('rain') && turnText}
+				<p class="flex items-center gap-3 glass px-5 py-4 text-2xl font-bold" role="status">
+					<CloudRain size={28} class="shrink-0 text-rain" aria-hidden="true" />
+					{turnText}
+				</p>
+			{/if}
 			{#if shows('sentence') && !(evening && shows('tomorrow'))}
 				<div
 					class="md:[&_p]:text-[2.75rem] md:[&_p]:leading-[1.08] md:[&_p]:font-extrabold md:[&_p]:tracking-[-0.025em]"
@@ -234,6 +262,17 @@
 					<Umbrella size={20} aria-hidden="true" />
 					{rain ? m.embed_umbrella_yes() : m.embed_umbrella_no()}
 				</p>
+			{/if}
+			{#if shows('wear') && wear}
+				<p class="flex items-start gap-2 text-xl">
+					<Shirt size={22} class="mt-1 shrink-0 text-ink-muted" aria-hidden="true" />
+					<span><span class="sr-only">{m.wear_label()}</span>{wearText(wear, f)}</span>
+				</p>
+			{/if}
+			{#if shows('commute') && commute}
+				<div class="[&_p]:text-lg">
+					<CommuteLine check={commute} {f} />
+				</div>
 			{/if}
 			{#if shows('readings')}
 				<dl class="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -257,6 +296,9 @@
 			{#if shows('tomorrow')}
 				<TomorrowTile {days} hours={forecast.hours} {f} />
 			{/if}
+			{#if also}
+				<WallOtherPlace place={also} {f} {clock} />
+			{/if}
 		</section>
 	{/if}
 	{#if offline}
@@ -274,9 +316,15 @@
 
 <WallCustomize {layout} />
 
-<!-- Dims the whole screen at night; the text keeps its contrast against the darkened sky. -->
+<!-- Dims the whole screen at night; the text keeps its contrast against the darkened sky.
+     "Nearly black" (F-32) is for a bedroom: the clock still shows, faintly. -->
 {#if night}
-	<div class="pointer-events-none fixed inset-0 bg-surface/30 forced-colors:hidden"></div>
+	<div
+		class={[
+			'pointer-events-none fixed inset-0 forced-colors:hidden',
+			layout.night === 'dark' ? 'bg-black/80' : 'bg-surface/30'
+		]}
+	></div>
 {/if}
 
 <SkyLayer kind={sky} falling={precipitation(now.condition)} />

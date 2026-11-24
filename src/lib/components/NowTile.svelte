@@ -2,7 +2,7 @@
 	import { RotateCcw, Shirt } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 	import WeatherIcon from '#lib/components/WeatherIcon.svelte';
-	import { conditionLabel } from '#lib/components/labels.js';
+	import { conditionLabel, wearText } from '#lib/components/labels.js';
 	import type { Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
@@ -52,20 +52,6 @@
 		const shown = new Intl.NumberFormat(getLocale()).format(hours);
 		return ahead > 0 ? m.tz_ahead({ place, hours, shown }) : m.tz_behind({ place, hours, shown });
 	});
-
-	const layers: Record<Layer, () => string> = {
-		tshirt: m.wear_tshirt,
-		layer: m.wear_layer,
-		light: m.wear_light,
-		warm: m.wear_warm,
-		winter: m.wear_winter,
-		arctic: m.wear_arctic
-	};
-	const extras: Record<Extra, () => string> = {
-		rain: m.wear_rain,
-		wind: m.wear_wind,
-		sun: m.wear_sun
-	};
 </script>
 
 <!-- Wide (a tablet, or the full-width tile between 1024 and 1280 px): the reading on the left,
@@ -104,11 +90,7 @@
 					<Shirt size={18} class="mt-0.5 shrink-0 text-ink-muted" aria-hidden="true" />
 					<span>
 						<span class="sr-only">{m.wear_label()}</span>
-						{[
-							layers[wear.layer](),
-							...(wear.shedFrom ? [m.wear_shed({ time: f.time(wear.shedFrom) })] : []),
-							...wear.extras.map((extra) => extras[extra]())
-						].join(' ')}
+						{wearText(wear, f)}
 					</span>
 				</p>
 			{/if}

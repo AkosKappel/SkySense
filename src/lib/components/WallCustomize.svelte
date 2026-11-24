@@ -1,9 +1,12 @@
 <script lang="ts">
-	import { SlidersHorizontal, X } from '@lucide/svelte';
+	import { ChevronDown, SlidersHorizontal, X } from '@lucide/svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { m } from '#lib/paraglide/messages.js';
+	import { savedPlaces } from '#lib/places.svelte.js';
 	import {
+		nightModes,
+		otherValue,
 		wallBlocks,
 		wallPresets,
 		wallQuery,
@@ -41,8 +44,11 @@
 		clock: m.wall_block_clock,
 		date: m.wall_block_date,
 		now: m.now,
+		rain: m.wall_block_rain,
 		sentence: m.wall_block_sentence,
 		umbrella: m.wall_block_umbrella,
+		wear: m.wall_block_wear,
+		commute: m.wall_block_commute,
 		readings: m.wall_block_readings,
 		hours: m.next_12_hours,
 		tomorrow: m.wall_block_tomorrow
@@ -54,6 +60,19 @@
 		['standard', m.wall_preset_standard]
 	] as const;
 	const sizeNames = { s: m.wall_size_s, m: m.wall_size_m, l: m.wall_size_l };
+	const nightNames = { dim: m.wall_night_dim, clock: m.wall_night_clock, dark: m.wall_night_dark };
+	// The second place comes from the saved places, which only this browser knows; one already in
+	// the address stays choosable even when it is not saved here.
+	const others = $derived.by(() => {
+		const here = page.params.coords;
+		const saved = savedPlaces.list
+			.filter((p) => otherValue({ coordinates: p, name: p.name }).split('/')[0] !== here)
+			.map((p) => ({ value: otherValue({ coordinates: p, name: p.name }), name: p.name }));
+		const current = layout.also && otherValue(layout.also);
+		return current && !saved.some((o) => o.value === current)
+			? [{ value: current, name: layout.also!.name }, ...saved]
+			: saved;
+	});
 	const wall = $derived(
 		resolve('/wall/[coords]/[[name]]', {
 			coords: page.params.coords ?? '',
@@ -102,7 +121,7 @@
 					href="{resolve('/wall/[coords]/[[name]]', {
 						coords: page.params.coords ?? '',
 						name: encodeURIComponent(page.params.name ?? '')
-					})}{wallQuery({ blocks: [...wallPresets[id]], size: layout.size })}"
+					})}{wallQuery({ ...layout, blocks: [...wallPresets[id]] })}"
 					data-sveltekit-replacestate
 					class="flex min-h-11 items-center rounded-full bg-veil/10 px-4 font-semibold outline-1 outline-veil/20 hover:bg-veil/20"
 					onclick={() => dialog?.close()}
@@ -151,6 +170,54 @@
 				{/each}
 			</div>
 		</fieldset>
+
+		<fieldset>
+			<legend class="text-sm font-semibold">{m.wall_night()}</legend>
+			<div class="mt-2 flex flex-wrap gap-2">
+				{#each nightModes as mode (mode)}
+					<label
+						class="flex min-h-11 cursor-pointer items-center rounded-full bg-veil/10 px-4 font-semibold outline-1 outline-veil/20 has-checked:bg-veil has-checked:text-on-veil has-focus-visible:outline-2 has-focus-visible:outline-veil"
+					>
+						<input
+							type="radio"
+							name="night"
+							value={mode}
+							checked={layout.night === mode}
+							class="sr-only"
+						/>
+						{nightNames[mode]()}
+					</label>
+				{/each}
+			</div>
+		</fieldset>
+
+		<div>
+			<label for="wall-also" class="text-sm font-semibold">{m.wall_also()}</label>
+			<div class="relative mt-2">
+				<select
+					id="wall-also"
+					name="also"
+					aria-describedby="wall-also-note"
+					class="h-12 w-full cursor-pointer appearance-none rounded-2xl bg-veil/10 pr-12 pl-4 text-ink outline-1 outline-veil/20"
+				>
+					<option value="">{m.wall_also_none()}</option>
+					{#each others as other (other.value)}
+						<option
+							value={other.value}
+							selected={layout.also !== null && otherValue(layout.also) === other.value}
+						>
+							{other.name}
+						</option>
+					{/each}
+				</select>
+				<ChevronDown
+					size={18}
+					class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-ink-muted"
+					aria-hidden="true"
+				/>
+			</div>
+			<p id="wall-also-note" class="mt-2 text-sm text-ink-muted">{m.wall_also_note()}</p>
+		</div>
 
 		<p class="text-sm text-ink-muted">{m.wall_customize_note()}</p>
 		<button
