@@ -29,6 +29,9 @@
 		type GridCell,
 		clearerSide,
 		meanClouds,
+		satelliteDate,
+		satelliteTiles,
+		SATELLITE_MAX_ZOOM,
 		type GridLayer,
 		type RadarFrames
 	} from '#lib/radar.js';
@@ -71,6 +74,8 @@
 	// One timeline: the radar frames, then the model's hours that come after the last of them.
 	// Temperature and wind come from the model only, so their timeline is its hours.
 	const steps = $derived.by(() => {
+		// One picture a day from the satellite: no timeline.
+		if (layer === 'satellite') return [];
 		if (layer !== 'rain') {
 			return (grid[0]?.hours ?? []).map((h) => ({
 				kind: 'model' as const,
@@ -97,13 +102,19 @@
 				['rain', m.radar_layer_rain],
 				['temperature', m.radar_layer_temperature],
 				['wind', m.radar_layer_wind],
-				['clouds', m.radar_layer_clouds]
+				['clouds', m.radar_layer_clouds],
+				['satellite', m.radar_layer_satellite]
 			] as const
 		).filter(([value]) => value !== 'clouds' || grid[0]?.hours[0]?.clouds !== undefined)
 	);
 	const wetFrom = $derived(firstWetHour(grid));
 	// The layer's answer in words, the text equivalent of what the map shows.
+	// The satellite picture's day (M-07), from the place's own clock.
+	const satelliteDay = $derived(
+		satelliteDate(new Date(Date.now() + utcOffsetSeconds * 1000).toISOString().slice(0, 16))
+	);
 	const answer = $derived.by(() => {
+		if (layer === 'satellite') return m.radar_satellite({ day: f.date(satelliteDay) });
 		if (layer === 'rain') {
 			return wetFrom ? m.radar_model_wet({ time: f.time(wetFrom) }) : m.radar_model_dry();
 		}
@@ -268,10 +279,27 @@
 		}).addTo(map!));
 	}
 
+	let satellite: TileLayer | undefined;
+
 	/** Puts the current step on the map: its radar layer, or the model's grid for that hour. */
 	function show() {
 		const L = leaflet;
-		if (!L || !map || !radar || !step) return;
+		if (!L || !map || !radar) return;
+		// The satellite picture shows alone, under the place and the saved places.
+		if (layer === 'satellite') {
+			satellite ??= L.tileLayer(satelliteTiles(satelliteDay), {
+				maxNativeZoom: SATELLITE_MAX_ZOOM,
+				attribution:
+					'Satellite <a href="https://www.earthdata.nasa.gov/data/tools/gibs">NASA GIBS</a>, NOAA-20 VIIRS'
+			});
+			satellite.addTo(map);
+			for (const radarFrame of Object.values(radarLayers)) radarFrame.setOpacity(0);
+			for (const cell of cells) cell.remove();
+			cells = [];
+			return;
+		}
+		satellite?.remove();
+		if (!step) return;
 		const layerFor = (path: string) => radarLayer(L, path);
 		if (step.kind === 'radar') layerFor(step.path);
 		for (const [path, layer] of Object.entries(radarLayers)) {
@@ -427,7 +455,8 @@
 				rain: m.radar_map,
 				temperature: m.radar_map_temperature,
 				wind: m.radar_map_wind,
-				clouds: m.radar_map_clouds
+				clouds: m.radar_map_clouds,
+				satellite: m.radar_map_satellite
 			}[layer]({ place })}
 			class="dark-scope mt-4 min-h-72 {onMap
 				? 'h-[calc(100dvh-20rem)] min-h-96'
@@ -457,6 +486,9 @@
 			</fieldset>
 		{/if}
 
+		{#if layer === 'satellite'}
+			<p class="mt-3 px-2 text-sm text-ink-muted">{m.radar_legend_satellite()}</p>
+		{/if}
 		{#if steps.length}
 			<div class="mt-4 flex flex-wrap items-center gap-3 px-2">
 				<div class="flex gap-2">

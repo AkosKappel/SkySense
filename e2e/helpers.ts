@@ -34,10 +34,10 @@ const blankPng = Buffer.from(
 	'base64'
 );
 
-/** Answers radar and base map tiles with a blank image, so tests never reach those services. */
+/** Answers radar, base map and satellite tiles with a blank image, so tests never reach those services. */
 export async function blankMapTiles(page: Page) {
 	await page.route(
-		/^https:\/\/(tilecache\.rainviewer\.com|[a-d]\.basemaps\.cartocdn\.com)\//,
+		/^https:\/\/(tilecache\.rainviewer\.com|[a-d]\.basemaps\.cartocdn\.com|gibs\.earthdata\.nasa\.gov)\//,
 		(route) => route.fulfill({ contentType: 'image/png', body: blankPng })
 	);
 }

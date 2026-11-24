@@ -7,6 +7,7 @@ import {
 	clearerSide,
 	firstWetHour,
 	meanClouds,
+	satelliteDate,
 	startZoom,
 	temperatureBand,
 	warmerSide,
@@ -146,5 +147,13 @@ describe('radar frames', () => {
 		expect(radar.host).toBe('https://tilecache.rainviewer.com');
 		expect(radar.frames).toHaveLength(13);
 		expect(radar.frames.at(-1)!.time).toBe(Date.UTC(2026, 10, 10, 9) / 1000);
+	});
+});
+
+describe('satellite', () => {
+	it('shows today’s picture from 17:00, yesterday’s before', () => {
+		expect(satelliteDate('2026-11-24T17:05')).toBe('2026-11-24');
+		expect(satelliteDate('2026-11-24T09:00')).toBe('2026-11-23');
+		expect(satelliteDate('2026-03-01T06:00')).toBe('2026-02-28');
 	});
 });

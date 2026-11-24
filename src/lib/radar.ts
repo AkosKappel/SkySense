@@ -37,7 +37,7 @@ export function firstWetHour(cells: GridCell[]): string | null {
 	);
 }
 
-export type GridLayer = 'rain' | 'temperature' | 'wind' | 'clouds';
+export type GridLayer = 'rain' | 'temperature' | 'wind' | 'clouds' | 'satellite';
 
 /** Below this difference between opposite edges of the grid, the temperature counts as even. */
 export const EVEN_DEGREES = 2;
@@ -152,3 +152,21 @@ export function startZoom(lat: number): number {
 	const extra = Math.ceil(Math.log2(LABEL_ROOM_PX / (GRID_SPACING_M / metresPerPixel)) * 4) / 4;
 	return RADAR_MAX_ZOOM + Math.min(1, Math.max(0, extra));
 }
+
+/**
+ * The day of the latest satellite picture (M-07) for a place's wall-clock time: NOAA-20 passes
+ * around 13:30 local time and NASA publishes within about three hours, so from 17:00 it is
+ * today's, before that yesterday's.
+ */
+export function satelliteDate(placeNow: string): string {
+	const date = placeNow.slice(0, 10);
+	if (Number(placeNow.slice(11, 13)) >= 17) return date;
+	const day = new Date(`${date}T00:00:00Z`);
+	day.setUTCDate(day.getUTCDate() - 1);
+	return day.toISOString().slice(0, 10);
+}
+
+/** NASA GIBS true-colour tiles from NOAA-20's VIIRS for a day; level 9 is their finest. */
+export const satelliteTiles = (date: string) =>
+	`https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_NOAA20_CorrectedReflectance_TrueColor/default/${date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg`;
+export const SATELLITE_MAX_ZOOM = 9;

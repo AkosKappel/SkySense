@@ -671,6 +671,15 @@ test('the radar map switches to the model temperature, wind and cloud, said in w
 });
 
 test('the radar shows the other saved places and opens their radar', async ({ page }) => {
+	await page.getByText('Satellite', { exact: true }).click();
+	await expect(
+		page.getByRole('region', { name: 'Satellite picture around Bratislava' })
+	).toBeVisible();
+	await expect(
+		page.getByText(/^NASA's satellite picture from .+, taken around midday\.$/)
+	).toBeVisible();
+	await expect(page.getByRole('slider', { name: 'Time' })).toHaveCount(0);
+
 	await blankMapTiles(page);
 	await page.goto('/p/48.21,16.37/Vienna');
 	await savePlace(page);
