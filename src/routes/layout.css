@@ -194,6 +194,28 @@ select option {
 	}
 }
 
+/* U-15. Paper: black on white with no sky, glass or falling rain, for reading in bright sun or
+   with low vision when the system does not ask for more contrast. The light palette's accents
+   pass on white, so only the surfaces change. */
+:root[data-theme='paper'] {
+	color-scheme: light;
+	--color-ink-muted: var(--color-ink);
+	--sky-dusk: none;
+	& body {
+		background: #ffffff;
+	}
+	& [data-sky] {
+		display: none;
+	}
+	& .glass,
+	& .pill {
+		background: #ffffff;
+		backdrop-filter: none;
+		box-shadow: none;
+		outline: 1px solid rgb(15 23 42 / 0.7);
+	}
+}
+
 /* U-12. On paper: the light palette on white, no sky, no glass, and no controls (marked
    `print:hidden` where they sit). Tiles stay whole across page breaks. */
 @media print {

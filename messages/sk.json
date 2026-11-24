@@ -536,6 +536,8 @@
 	"theme_system": "Podľa systému",
 	"theme_weather": "Podľa počasia",
 	"theme_weather_note": "Podľa počasia: svetlá pod jasnou dennou oblohou, tmavá pri oblačnosti, daždi a v noci.",
+	"theme_paper": "Papier",
+	"theme_paper_note": "Papier: čierna na bielej bez oblohy, najlepšie čitateľné na ostrom slnku.",
 	"tile_down": "Posunúť nižšie: {tile}",
 	"tile_drag": "Potiahni a presuň: {tile}",
 	"tile_hide": "Skryť: {tile}",

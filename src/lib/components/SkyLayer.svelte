@@ -15,7 +15,9 @@
 	const light = () => (scheme ? scheme === 'light' : isLight());
 
 	// The phone's status bar takes the top of the sky (U-05), and the default again on leaving.
+	// Paper (U-15) shows no sky, so its bar stays white.
 	$effect(() => {
+		if (page.data.theme === 'paper') return;
 		const metas = [...document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')];
 		const before = metas.map((meta) => meta.content);
 		const top = light() ? skies[kind].light[0] : skies[kind].stops[0];

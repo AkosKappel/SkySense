@@ -85,7 +85,10 @@
 		<meta name="theme-color" content="#c7d2fe" media="(prefers-color-scheme: light)" />
 		<meta name="theme-color" content="#1e1b4b" media="(prefers-color-scheme: dark)" />
 	{:else}
-		<meta name="theme-color" content={data.theme === 'light' ? '#c7d2fe' : '#1e1b4b'} />
+		<meta
+			name="theme-color"
+			content={{ light: '#c7d2fe', paper: '#ffffff', dark: '#1e1b4b' }[data.theme]}
+		/>
 	{/if}
 </svelte:head>
 

@@ -475,6 +475,8 @@
 	"theme_system": "Ahogy a rendszer",
 	"theme_weather": "Az időjárás szerint",
 	"theme_weather_note": "Az időjárás szerint: világos derült nappali égbolt alatt, sötét felhős, esős időben és éjjel.",
+	"theme_paper": "Papír",
+	"theme_paper_note": "Papír: fekete a fehéren, ég nélkül, erős napfényben is jól olvasható.",
 	"tile_down": "Lejjebb: {tile}",
 	"tile_drag": "Húzd az áthelyezéshez: {tile}",
 	"tile_hide": "Elrejtés: {tile}",

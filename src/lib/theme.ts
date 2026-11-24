@@ -1,9 +1,9 @@
-// The colour theme (U-05): dark, light, the system's choice, or the weather's (U-13). Stored in a
+// The colour theme (U-05): dark, light, the system's choice, the weather's (U-13), or paper (U-15). Stored in a
 // cookie so the server renders the page in it and nothing flashes.
 import type { SkyKind } from '#lib/sky.js';
 
 export const THEME_COOKIE = 'skysense_theme';
-export const themes = ['system', 'dark', 'light', 'weather'] as const;
+export const themes = ['system', 'dark', 'light', 'weather', 'paper'] as const;
 export type Theme = (typeof themes)[number];
 
 export function readTheme(cookie: string | undefined): Theme {
@@ -20,7 +20,7 @@ export const weatherScheme = (kind: SkyKind): 'light' | 'dark' =>
 /** Whether the page shows light colours now, for what CSS cannot reach (canvas, theme-color). */
 export function isLight(): boolean {
 	const theme = document.documentElement.dataset.theme;
-	if (theme === 'light') return true;
+	if (theme === 'light' || theme === 'paper') return true;
 	if (theme === 'dark') return false;
 	return matchMedia('(prefers-color-scheme: light)').matches;
 }

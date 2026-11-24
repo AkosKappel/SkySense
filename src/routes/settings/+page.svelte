@@ -35,12 +35,13 @@
 			name: 'theme',
 			icon: Palette,
 			legend: m.theme,
-			note: m.theme_weather_note,
+			note: () => `${m.theme_weather_note()} ${m.theme_paper_note()}`,
 			options: [
 				['system', m.theme_system],
 				['dark', m.theme_dark],
 				['light', m.theme_light],
-				['weather', m.theme_weather]
+				['weather', m.theme_weather],
+				['paper', m.theme_paper]
 			]
 		},
 		{

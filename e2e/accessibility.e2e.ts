@@ -57,6 +57,23 @@ for (const path of pages.slice(0, 14)) {
 	});
 }
 
+// Paper (U-15) drops the sky and the glass, so its contrast rests on the page alone.
+for (const path of [
+	'/?choose',
+	'/p/48.15,17.11/Bratislava',
+	'/p/1.29,103.85/Singapore',
+	'/settings'
+]) {
+	test(`${path} passes axe in the paper theme`, async ({ context, page }) => {
+		await context.addCookies([
+			{ name: 'skysense_theme', value: 'paper', url: 'http://localhost:4173' }
+		]);
+		await page.goto(path);
+		await expect(page.locator('[data-sky]')).toBeHidden();
+		await expectAccessible(page);
+	});
+}
+
 test('everything Tab reaches on a place page shows where the focus is', async ({ page }) => {
 	await page.goto('/p/48.15,17.11/Bratislava');
 	const unseen: string[] = [];

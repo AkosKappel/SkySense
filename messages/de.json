@@ -529,6 +529,8 @@
 	"theme_system": "Wie das System",
 	"theme_weather": "Wie das Wetter",
 	"theme_weather_note": "Wie das Wetter: hell unter klarem Taghimmel, dunkel bei Wolken, Regen und in der Nacht.",
+	"theme_paper": "Papier",
+	"theme_paper_note": "Papier: Schwarz auf Weiß ohne Himmel, am besten lesbar in praller Sonne.",
 	"tile_down": "Nach unten: {tile}",
 	"tile_drag": "Zum Verschieben ziehen: {tile}",
 	"tile_hide": "Ausblenden: {tile}",

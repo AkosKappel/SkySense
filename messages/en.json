@@ -529,6 +529,8 @@
 	"theme_system": "Like the system",
 	"theme_weather": "Like the weather",
 	"theme_weather_note": "Like the weather: light under a clear daytime sky, dark under clouds, rain and at night.",
+	"theme_paper": "Paper",
+	"theme_paper_note": "Paper: black on white without the sky, easiest to read in bright sun.",
 	"tile_down": "Move down: {tile}",
 	"tile_drag": "Drag to move: {tile}",
 	"tile_hide": "Hide: {tile}",

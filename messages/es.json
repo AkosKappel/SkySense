@@ -529,6 +529,8 @@
 	"theme_system": "Como el sistema",
 	"theme_weather": "Según el tiempo",
 	"theme_weather_note": "Según el tiempo: claro con el cielo despejado de día, oscuro con nubes, lluvia y de noche.",
+	"theme_paper": "Papel",
+	"theme_paper_note": "Papel: negro sobre blanco y sin cielo, se lee mejor a pleno sol.",
 	"tile_down": "Bajar: {tile}",
 	"tile_drag": "Arrastra para mover: {tile}",
 	"tile_hide": "Ocultar: {tile}",
