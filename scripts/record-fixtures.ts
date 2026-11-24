@@ -401,6 +401,49 @@ if (wanted.length === 0 || wanted.includes('holidays')) {
 		);
 	}
 }
+// The climate models' 1995 to 2014 and 2040s (X-20), one day a week kept like the long record:
+// `node scripts/record-fixtures.ts projection` (or `projection-madrid` for one place). Each place
+// weighs about 550 calls, near the free tier's 600 a minute, so the places are a minute apart.
+{
+	const models =
+		'CMCC_CM2_VHR4,FGOALS_f3_H,HiRAM_SIT_HR,MRI_AGCM3_2_S,EC_Earth3P_HR,MPI_ESM1_2_XR,NICAM16_8S';
+	const places = Object.entries(fixtures).filter(
+		([name]) =>
+			name.startsWith('forecast-') &&
+			(wanted.length === 0 ||
+				wanted.includes('projection') ||
+				wanted.includes(name.replace('forecast-', 'projection-')))
+	);
+	for (const [i, [name, { lat, lon }]] of places.entries()) {
+		if (i > 0) await new Promise((resolve) => setTimeout(resolve, 65_000));
+		const period = async (from: number, until: number) => {
+			const params = new URLSearchParams({
+				latitude: String(Math.round(lat * 4) / 4),
+				longitude: String(Math.round(lon * 4) / 4),
+				start_date: `${from}-01-01`,
+				end_date: `${until}-12-31`,
+				models,
+				daily: 'temperature_2m_mean'
+			});
+			const response = await fetch(`https://climate-api.open-meteo.com/v1/climate?${params}`);
+			if (!response.ok) throw new Error(`${name}: ${response.status} ${await response.text()}`);
+			const data = await response.json();
+			for (const key of Object.keys(data.daily)) {
+				data.daily[key] = data.daily[key].filter((_: unknown, i: number) => i % 7 === 0);
+			}
+			return data;
+		};
+		const base = await period(1995, 2014);
+		const future = await period(2041, 2050);
+		writeFileSync(
+			new URL(
+				`../src/lib/server/fixtures/${name.replace('forecast-', 'projection-')}.json`,
+				import.meta.url
+			),
+			JSON.stringify({ base, future }) + '\n'
+		);
+	}
+}
 // Waves and sea temperature (X-18) for the first two days of each live forecast:
 // `node scripts/record-fixtures.ts marine`. Inland places come back as nulls, as they do live.
 for (const [name, { lat, lon }] of Object.entries(fixtures)) {

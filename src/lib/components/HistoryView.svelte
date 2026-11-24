@@ -24,6 +24,7 @@
 	} from '#lib/history.js';
 	import { koppen } from '#lib/koppen.js';
 	import { m } from '#lib/paraglide/messages.js';
+	import type { Projection } from '#lib/projection.js';
 	import {
 		era5Cell,
 		HOT_DAY,
@@ -99,6 +100,22 @@
 			ice: m.about_place_ice
 		}[zone.kind](values);
 	});
+	// The models' 2040s (X-20), asked for only when the reader opens them: the request weighs
+	// nearly a minute of the free tier's calls, too much to spend beside the long record unasked.
+	let projection = $state<Projection | null>();
+	let projectionAsked = false;
+	function loadProjection() {
+		if (projectionAsked) return;
+		projectionAsked = true;
+		const cell = era5Cell(coordinates);
+		load<Projection | null>(
+			`/api/projection?lat=${cell.lat}&lon=${cell.lon}`,
+			AbortSignal.timeout(20_000)
+		)
+			.then((p) => (projection = p))
+			.catch(() => (projection = null));
+	}
+
 	const trend = $derived(record ? trendOf(record, Number(chosen.at.slice(5, 7))) : null);
 	const strongest = $derived(
 		Math.max(0.1, ...(trend?.stripes.map((s) => Math.abs(s.anomaly)) ?? []))
@@ -420,6 +437,30 @@
 			{m.trend_stripes_note({ from: REFERENCE[0], until: REFERENCE[1] })}
 		</p>
 		{#if about}<p class="mt-2 text-sm text-ink-muted">{about}</p>{/if}
+
+		<details class="mt-3" ontoggle={(e) => e.currentTarget.open && loadProjection()}>
+			<summary class="min-h-11 cursor-pointer content-center text-sm font-semibold">
+				{m.projection_open()}
+			</summary>
+			<div aria-live="polite">
+				{#if projection}
+					<p class="mt-1 text-lg font-semibold">
+						{projection.median >= 0.1
+							? m.projection_warmer({
+									diff: f.tempDelta(projection.median, 1),
+									low: f.tempDelta(projection.low, 1),
+									high: f.tempDelta(projection.high, 1)
+								})
+							: m.projection_same()}
+					</p>
+					<p class="mt-2 text-sm text-ink-muted">{m.projection_note()}</p>
+				{:else if projection === null}
+					<p class="mt-1 text-sm text-ink-muted">{m.projection_unavailable()}</p>
+				{:else}
+					<p class="mt-1 text-sm text-ink-muted">{m.projection_loading()}</p>
+				{/if}
+			</div>
+		</details>
 
 		<table class="mt-4 w-full text-sm tabular-nums [&_td]:pr-3 [&_th]:pr-3">
 			<caption class="pb-1 text-left text-sm text-ink-muted">{m.trend_decades_caption()}</caption>

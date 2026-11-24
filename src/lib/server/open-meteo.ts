@@ -15,6 +15,12 @@ import { modelIds, type ModelRun } from '#lib/models.js';
 import type { DailyHistory } from '#lib/year.js';
 import type { DayNormal } from '#lib/history.js';
 import { RECORD_FROM, summarizeRecord, type ClimateRecord } from '#lib/trend.js';
+import {
+	PROJECTION_BASE,
+	PROJECTION_FUTURE,
+	projectionOf,
+	type Projection
+} from '#lib/projection.js';
 import { areaPoints, type AreaCell } from '#lib/better.js';
 import { gridPoints } from '#lib/grid.js';
 import type { GridCell, RadarFrames } from '#lib/radar.js';
@@ -625,6 +631,66 @@ export async function fetchRecord(
 		timezone: 'auto'
 	}).toString();
 	return toRecord(await getJson(url, fetchFn));
+}
+
+const CLIMATE_URL = 'https://climate-api.open-meteo.com/v1/climate';
+/** All seven HighResMIP models: Open-Meteo recommends comparing several, none is the best. */
+const CLIMATE_MODELS = [
+	'CMCC_CM2_VHR4',
+	'FGOALS_f3_H',
+	'HiRAM_SIT_HR',
+	'MRI_AGCM3_2_S',
+	'EC_Earth3P_HR',
+	'MPI_ESM1_2_XR',
+	'NICAM16_8S'
+];
+const COLUMN = 'temperature_2m_mean_';
+
+const projectionSchema = z.object({
+	daily: z.object({ time: z.array(z.string()) }).catchall(numbers)
+});
+
+/** One period of the Climate API's answer as each model's daily means, keyed by model. */
+function modelColumns(raw: unknown): Record<string, (number | null)[]> {
+	const parsed = projectionSchema.safeParse(raw);
+	if (!parsed.success) throw new WeatherServiceError('Unexpected climate projection response');
+	return Object.fromEntries(
+		Object.entries(parsed.data.daily)
+			.filter(([key]) => key.startsWith(COLUMN))
+			.map(([key, values]) => [key.slice(COLUMN.length), values as (number | null)[]])
+	);
+}
+
+export const toProjection = (base: unknown, future: unknown): Projection | null =>
+	projectionOf(modelColumns(base), modelColumns(future));
+
+/**
+ * The models' 2040s against their own 1995 to 2014 (X-20). Two requests of daily means, together
+ * about 550 of the free tier's 600 weighted calls a minute, so the route caches each cell a year.
+ */
+export async function fetchProjection(
+	cell: Coordinates,
+	fetchFn: typeof fetch = fetch
+): Promise<Projection | null> {
+	if (useFixtures()) {
+		const { base, future } = fixtures[`./fixtures/projection-${nearestFixture(cell)}.json`]
+			.default as { base: unknown; future: unknown };
+		return toProjection(base, future);
+	}
+	const period = ([from, until]: readonly [number, number]) => {
+		const url = new URL(CLIMATE_URL);
+		url.search = new URLSearchParams({
+			latitude: String(cell.lat),
+			longitude: String(cell.lon),
+			start_date: `${from}-01-01`,
+			end_date: `${until}-12-31`,
+			models: CLIMATE_MODELS.join(','),
+			daily: 'temperature_2m_mean'
+		}).toString();
+		return getJson(url, fetchFn);
+	};
+	const [base, future] = await Promise.all([period(PROJECTION_BASE), period(PROJECTION_FUTURE)]);
+	return toProjection(base, future);
 }
 
 const recentSchema = z.object({

@@ -582,6 +582,13 @@ test('explores the past from the "past years" tile', async ({ page }) => {
 			'At 159 m above sea level, with a temperate oceanic climate (Cfb) by these normals.'
 		)
 	).toBeVisible();
+	// The climate models' 2040s (X-20), fetched only when opened.
+	await trend.getByText('And in the coming decades?').click();
+	await expect(
+		trend.getByText(
+			/^Climate models expect the 2040s here to be about [\d.]+° warmer than 1995 to 2014, between [\d.]+° and [\d.]+° depending on the model\.$/
+		)
+	).toBeVisible();
 
 	await page.getByRole('link', { name: 'Year', exact: true }).click();
 	await expect(page.getByRole('region', { name: '2026' })).toContainText(
