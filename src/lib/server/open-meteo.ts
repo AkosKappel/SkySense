@@ -94,6 +94,8 @@ const numbers = z.array(z.number().nullable());
 
 const forecastSchema = z.object({
 	timezone: z.string(),
+	// The grid cell's height, corrected with a 90 m elevation model (F-28).
+	elevation: z.number().optional(),
 	utc_offset_seconds: z.number(),
 	current: z.object({
 		time: z.string(),
@@ -239,6 +241,7 @@ export function toForecast(raw: unknown): Forecast {
 	return {
 		timezone: data.timezone,
 		utcOffsetSeconds: data.utc_offset_seconds,
+		elevation: data.elevation,
 		fetchedAt: new Date().toISOString(),
 		current: {
 			time: c.time,

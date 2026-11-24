@@ -576,6 +576,12 @@ test('explores the past from the "past years" tile', async ({ page }) => {
 		trend.getByText(/^October has warmed by about .+ a decade since 1961\.$/)
 	).toBeVisible();
 	await expect(trend.getByRole('rowheader', { name: '2020–2025' })).toBeVisible();
+	// The place in a line (F-28): its height and the Köppen zone of its normals.
+	await expect(
+		trend.getByText(
+			'At 159 m above sea level, with a temperate oceanic climate (Cfb) by these normals.'
+		)
+	).toBeVisible();
 
 	await page.getByRole('link', { name: 'Year', exact: true }).click();
 	await expect(page.getByRole('region', { name: '2026' })).toContainText(
@@ -665,12 +671,6 @@ test('the radar map switches to the model temperature, wind and cloud, said in w
 	await expect(page.getByRole('region', { name: 'Map of cloud around Bratislava' })).toBeVisible();
 	await expect(page.getByText('Much the same sky all around, about 100% cloud.')).toBeVisible();
 
-	await page.getByText('Rain', { exact: true }).click();
-	await expect(page.getByText('The model shows rain within about 60 km from 10:00.')).toBeVisible();
-	await expect(slider).toHaveAttribute('aria-valuetext', '10:00, radar');
-});
-
-test('the radar shows the other saved places and opens their radar', async ({ page }) => {
 	await page.getByText('Satellite', { exact: true }).click();
 	await expect(
 		page.getByRole('region', { name: 'Satellite picture around Bratislava' })
@@ -680,6 +680,12 @@ test('the radar shows the other saved places and opens their radar', async ({ pa
 	).toBeVisible();
 	await expect(page.getByRole('slider', { name: 'Time' })).toHaveCount(0);
 
+	await page.getByText('Rain', { exact: true }).click();
+	await expect(page.getByText('The model shows rain within about 60 km from 10:00.')).toBeVisible();
+	await expect(slider).toHaveAttribute('aria-valuetext', '10:00, radar');
+});
+
+test('the radar shows the other saved places and opens their radar', async ({ page }) => {
 	await blankMapTiles(page);
 	await page.goto('/p/48.21,16.37/Vienna');
 	await savePlace(page);

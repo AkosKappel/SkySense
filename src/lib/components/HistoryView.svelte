@@ -22,6 +22,7 @@
 		step,
 		choosePeriod
 	} from '#lib/history.js';
+	import { koppen } from '#lib/koppen.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import {
 		era5Cell,
@@ -34,8 +35,12 @@
 	import type { Coordinates } from '#lib/weather.js';
 	import type { DailyHistory } from '#lib/year.js';
 
-	let { coordinates, today, f }: { coordinates: Coordinates; today: string; f: Formatter } =
-		$props();
+	let {
+		coordinates,
+		today,
+		elevation,
+		f
+	}: { coordinates: Coordinates; today: string; elevation?: number; f: Formatter } = $props();
 
 	// Fetched in the browser, like the other tiles about the past: the place page's load and first
 	// scripts stay as they were, and the browser's requests reach the CDN, which keeps the past for
@@ -73,6 +78,26 @@
 		...chosen,
 		days,
 		normals: record === undefined ? undefined : (record?.normals ?? null)
+	});
+	// The place in a line (F-28): its height and the climate its normals add up to.
+	const zone = $derived(record ? koppen(record.normals, coordinates.lat < 0) : null);
+	const about = $derived.by(() => {
+		if (!zone || elevation === undefined) return null;
+		const values = { elevation: f.elevation(elevation), code: zone.code };
+		return {
+			rainforest: m.about_place_rainforest,
+			monsoon: m.about_place_monsoon,
+			savanna: m.about_place_savanna,
+			desert: m.about_place_desert,
+			steppe: m.about_place_steppe,
+			mediterranean: m.about_place_mediterranean,
+			subtropical: m.about_place_subtropical,
+			oceanic: m.about_place_oceanic,
+			continental: m.about_place_continental,
+			subarctic: m.about_place_subarctic,
+			tundra: m.about_place_tundra,
+			ice: m.about_place_ice
+		}[zone.kind](values);
 	});
 	const trend = $derived(record ? trendOf(record, Number(chosen.at.slice(5, 7))) : null);
 	const strongest = $derived(
@@ -394,6 +419,7 @@
 		<p class="mt-2 text-sm text-ink-muted">
 			{m.trend_stripes_note({ from: REFERENCE[0], until: REFERENCE[1] })}
 		</p>
+		{#if about}<p class="mt-2 text-sm text-ink-muted">{about}</p>{/if}
 
 		<table class="mt-4 w-full text-sm tabular-nums [&_td]:pr-3 [&_th]:pr-3">
 			<caption class="pb-1 text-left text-sm text-ink-muted">{m.trend_decades_caption()}</caption>

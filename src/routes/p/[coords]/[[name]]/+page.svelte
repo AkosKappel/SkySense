@@ -419,7 +419,12 @@
 	{:else if showHistory}
 		<ViewHeader title={m.history_title({ place: name })} />
 		{#await import('#lib/components/HistoryView.svelte') then { default: HistoryView }}
-			<HistoryView coordinates={data.coordinates} today={forecast.days[0].date} {f} />
+			<HistoryView
+				coordinates={data.coordinates}
+				today={forecast.days[0].date}
+				elevation={forecast.elevation}
+				{f}
+			/>
 		{/await}
 	{:else if comparing}
 		<ViewHeader title={m.compare_models()} />

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { defaultUnits, readUnits } from './settings.js';
 import {
 	beaufort,
+	formatElevation,
 	formatPressure,
 	formatRain,
 	formatSnow,
@@ -54,6 +55,11 @@ describe('conversions', () => {
 		expect(formatSnow(12.4, metric)).toBe('12 cm');
 		expect(formatSnow(25.4, imperial)).toBe('10 in');
 		expect(formatSnow(4, imperial, 'de')).toBe('1,6 in');
+	});
+
+	it('formats heights above sea level in metres or feet', () => {
+		expect(formatElevation(159.4, metric)).toBe('159 m');
+		expect(formatElevation(1000, imperial, 'de')).toBe('3.281 ft');
 	});
 
 	it('formats waves in metres, or feet with inches for rain', () => {

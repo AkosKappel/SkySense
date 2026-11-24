@@ -78,6 +78,15 @@ export function formatSnow(cm: number, units: Units, locale = 'en'): string {
 	return `${value} ${inches ? 'in' : 'cm'}`;
 }
 
+/** A height above sea level, in whole metres, or feet for readers who chose inches for rain. */
+export function formatElevation(metres: number, units: Units, locale = 'en'): string {
+	const feet = units.rain === 'in';
+	const value = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(
+		feet ? metres / 0.3048 : metres
+	);
+	return `${value} ${feet ? 'ft' : 'm'}`;
+}
+
 /** Wave height in metres with one decimal, or feet for readers who chose inches for rain. */
 export function formatWaves(metres: number, units: Units, locale = 'en'): string {
 	const feet = units.rain === 'in';

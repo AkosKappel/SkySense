@@ -9,6 +9,7 @@ import {
 } from '#lib/time.js';
 import {
 	formatDistance,
+	formatElevation,
 	formatPressure,
 	formatRain,
 	formatSnow,
@@ -41,6 +42,7 @@ export function formatter(locale: string, units: Units) {
 		rain: (mm: number) => formatRain(mm, units, intl),
 		snow: (cm: number) => formatSnow(cm, units, intl),
 		waves: (metres: number) => formatWaves(metres, units, intl),
+		elevation: (metres: number) => formatElevation(metres, units, intl),
 		pressure: (hpa: number) => formatPressure(hpa, units, intl),
 		distance: (metres: number) => formatDistance(metres, units, intl),
 		/** A length of time: "9 hrs, 32 mins". */
