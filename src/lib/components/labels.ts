@@ -2,6 +2,8 @@
 // language, so a module-level constant would freeze one language.
 import { m } from '#lib/paraglide/messages.js';
 import type { ActivityId } from '#lib/activities.js';
+import type { Formatter } from '#lib/format.js';
+import type { Outlook } from '#lib/tomorrow.js';
 import type { Condition } from '#lib/weather.js';
 
 export function conditionLabel(condition: Condition, isDay = true): string {
@@ -40,4 +42,28 @@ const activityNames: Record<ActivityId, () => string> = {
 
 export function activityLabel(id: ActivityId): string {
 	return activityNames[id]();
+}
+
+/** Tomorrow in two sentences (F-29): its warmth against today's, then its rain, snow or storms. */
+export function tomorrowText(outlook: Outlook, f: Formatter): string {
+	const max = f.temp(outlook.day.max);
+	const temp = { warmer: m.tomorrow_warmer, colder: m.tomorrow_colder, same: m.tomorrow_same }[
+		outlook.temp.key
+	]({ max });
+	const fall = outlook.fall;
+	if (fall.key === 'dry') return `${temp} ${m.tomorrow_dry()}`;
+	if (fall.key === 'from') {
+		const from = {
+			rain: m.tomorrow_rain_from,
+			snow: m.tomorrow_snow_from,
+			thunder: m.tomorrow_thunder_from
+		};
+		return `${temp} ${from[fall.kind]({ from: f.time(fall.from) })}`;
+	}
+	const window = {
+		rain: m.tomorrow_rain_window,
+		snow: m.tomorrow_snow_window,
+		thunder: m.tomorrow_thunder_window
+	};
+	return `${temp} ${window[fall.kind]({ from: f.time(fall.from), until: f.time(fall.until) })}`;
 }

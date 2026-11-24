@@ -863,6 +863,47 @@ test('the wall display keeps the last forecast when the network goes', async ({ 
 	);
 });
 
+test('the wall display shows what its address asks for, set up from its panel', async ({
+	page
+}) => {
+	await page.clock.install({ time: new Date('2026-11-10T09:20:00Z') });
+	await page.goto('/wall/48.15,17.11/Bratislava?show=clock&show=now&size=l');
+	await expect(page.getByText('10:20')).toBeVisible();
+	await expect(page.getByRole('region', { name: 'Next 12 hours' })).toHaveCount(0);
+	await expect(page.getByText('Tuesday 10 November')).toHaveCount(0);
+
+	await page.mouse.move(200, 200);
+	await page.getByRole('button', { name: 'Customize this screen' }).click();
+	const panel = page.getByRole('dialog', { name: 'Customize this screen' });
+	await expect(panel.getByRole('checkbox', { name: 'Clock' })).toBeChecked();
+	await expect(panel.getByRole('checkbox', { name: 'Date' })).not.toBeChecked();
+	await expectAccessible(page);
+
+	await panel.getByRole('link', { name: 'Forecast' }).click();
+	await expect(page).toHaveURL(/show=tomorrow/);
+	await expect(page).toHaveURL(/size=l/);
+	await expect(page.getByText('What about tomorrow?')).toBeVisible();
+	await expect(page.getByText('10:20')).toHaveCount(0);
+
+	// Ticking boxes saves them into the address.
+	await page.getByRole('button', { name: 'Customize this screen' }).click();
+	await panel.getByRole('checkbox', { name: 'Date' }).check();
+	await panel.getByText('Small', { exact: true }).click();
+	await panel.getByRole('button', { name: 'Save' }).click();
+	await expect(page).toHaveURL(/show=date.*size=s/);
+	await expect(page.getByText('Tuesday 10 November')).toBeVisible();
+});
+
+test("the wall display's sentence turns to tomorrow after sunset", async ({ page }) => {
+	// 19:00 in Bratislava, after the 16:19 sunset.
+	await page.clock.install({ time: new Date('2026-11-10T18:00:00Z') });
+	await page.goto('/wall/48.15,17.11/Bratislava');
+	await expect(page.getByText('What about tomorrow?')).toBeVisible();
+	await expect(
+		page.getByText('About as warm as today, up to 6°. Dry during the day.')
+	).toBeVisible();
+});
+
 test('the map shows where the weather is better and opens a square from the keyboard', async ({
 	page
 }) => {

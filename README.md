@@ -77,7 +77,7 @@ Only `/embed/` pages allow framing; every other page sends `frame-ancestors 'non
 
 ## Wall display
 
-`/wall/48.15,17.11/Bratislava` (linked from each place as "Wall display") is for a tablet or an old phone left on all day: a big clock, now, the day's sentence and the next 12 hours. It reloads every 10 minutes and keeps the last forecast while offline, keeps the screen on with the Screen Wake Lock API, turns dark and dim between sunset and sunrise, and shifts a few pixels every hour against burn-in.
+`/wall/48.15,17.11/Bratislava` (linked from each place as "Wall display") is for a tablet or an old phone left on all day: a big clock, now, the day's sentence and the next 12 hours. It reloads every 10 minutes and keeps the last forecast while offline, keeps the screen on with the Screen Wake Lock API, turns dark and dim between sunset and sunrise, and shifts a few pixels every hour against burn-in. Each screen can show its own set: a button that appears on touch opens presets (a clock alone, the forecast without the big text, everything) and a choice of blocks and text size, kept in the page's address (`?show=clock&show=now&size=l`), so a bookmark keeps the layout. After sunset the day's sentence turns to tomorrow.
 
 ## Data and attribution
 

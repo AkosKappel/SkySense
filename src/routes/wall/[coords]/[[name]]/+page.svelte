@@ -10,17 +10,29 @@
 		Wind
 	} from '@lucide/svelte';
 	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 	import HourlyStrip from '#lib/components/HourlyStrip.svelte';
 	import SkyLayer from '#lib/components/SkyLayer.svelte';
 	import SummaryLine from '#lib/components/SummaryLine.svelte';
+	import TomorrowTile from '#lib/components/TomorrowTile.svelte';
+	import WallCustomize from '#lib/components/WallCustomize.svelte';
 	import WeatherIcon from '#lib/components/WeatherIcon.svelte';
-	import { conditionLabel } from '#lib/components/labels.js';
+	import { conditionLabel, tomorrowText } from '#lib/components/labels.js';
 	import { formatter, uvLevel } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { getLocale } from '#lib/paraglide/runtime.js';
 	import { precipitation, skyKind } from '#lib/sky.js';
 	import { summarize } from '#lib/summary.js';
-	import { burnInShift, placeNow, upcoming } from '#lib/wall.js';
+	import { tomorrowOutlook } from '#lib/tomorrow.js';
+	import {
+		burnInShift,
+		heroBlocks,
+		isEvening,
+		placeNow,
+		upcoming,
+		wallLayout,
+		type WallBlock
+	} from '#lib/wall.js';
 	import { formatCoordinates, nextRain, type Forecast } from '#lib/weather.js';
 	import type { PageProps } from './$types';
 
@@ -57,6 +69,18 @@
 		today.sunrise && today.sunset ? local < today.sunrise || local >= today.sunset : !now.isDay
 	);
 	const shift = $derived(burnInShift(Number(local.slice(11, 13))));
+
+	// What this screen shows (F-31), from its address; the big column only when both have blocks.
+	const layout = $derived(wallLayout(page.url.searchParams));
+	const shows = (block: WallBlock) => layout.blocks.includes(block);
+	const hero = $derived(layout.blocks.some((b) => heroBlocks.includes(b)));
+	const side = $derived(layout.blocks.some((b) => !heroBlocks.includes(b)));
+	// Zoom scales lengths inside the page too, so its full height is divided back out below.
+	const zoom = $derived({ s: 0.8, m: 1, l: 1.25 }[layout.size]);
+	// From sunset on, the sentence answers for tomorrow; beside the tomorrow tile it would repeat it.
+	const days = $derived(forecast.days.slice(Math.max(0, forecast.days.indexOf(today))));
+	const outlook = $derived(tomorrowOutlook(days, forecast.hours));
+	const evening = $derived(isEvening(local, today.sunset) && outlook !== null);
 	// The readings people glance at from across the room; the sun times only where the sun rises.
 	const readings = $derived([
 		{ Icon: Thermometer, label: m.feels_like_line(), value: f.temp(now.feels) },
@@ -137,66 +161,118 @@
 </svelte:head>
 
 <main
-	class="mx-auto grid min-h-dvh w-full max-w-3xl content-center gap-8 p-6 md:p-10 landscape:lg:max-w-7xl landscape:lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] landscape:lg:items-center landscape:lg:gap-16"
+	class={[
+		'mx-auto grid w-full max-w-3xl content-center gap-8 p-6 md:p-10',
+		hero &&
+			side &&
+			'landscape:lg:max-w-7xl landscape:lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] landscape:lg:items-center landscape:lg:gap-16'
+	]}
+	style:zoom
+	style:min-height="calc(100dvh / {zoom})"
 >
 	<!-- The shift stays inside the page padding, so it never makes the page scroll. -->
-	<section style:translate="{shift.x}px {shift.y}px">
+	<section style:translate="{shift.x}px {shift.y}px" class={hero ? undefined : 'sr-only'}>
 		<h1 class="text-xl font-semibold text-ink-muted md:text-2xl">
 			<a href={placeUrl} class="underline-offset-4 hover:underline">{name}</a>
 		</h1>
-		<!-- Sized to the screen so "12:24 PM" stays on one line beside the other column. -->
-		<p
-			class="mt-2 text-[clamp(3.5rem,15vw,8rem)] leading-none font-bold tracking-tight whitespace-nowrap tabular-nums landscape:lg:text-[clamp(4rem,8vw,8rem)]"
-			aria-live="off"
-		>
-			<time datetime={local}>{f.time(local)}</time>
-		</p>
-		<p class="mt-1 text-lg text-ink-muted md:text-xl">{f.date(local.slice(0, 10))}</p>
-
-		<div class="mt-8 flex items-center gap-5">
-			<WeatherIcon condition={now.condition} isDay={now.isDay} size={88} strokeWidth={1.25} halo />
-			<div>
-				<p class="text-6xl font-bold tracking-tight tabular-nums md:text-7xl">{f.temp(now.temp)}</p>
-				<p class="mt-1 text-lg md:text-xl">{conditionLabel(now.condition, now.isDay)}</p>
-			</div>
-		</div>
-	</section>
-
-	<section class="flex min-w-0 flex-col gap-5" style:translate="{shift.x}px {shift.y}px">
-		<div
-			class="md:[&_p]:text-[2.75rem] md:[&_p]:leading-[1.08] md:[&_p]:font-extrabold md:[&_p]:tracking-[-0.025em]"
-		>
-			<SummaryLine sentences={summarize(hours, now.temp)} {f} />
-		</div>
-		<p class="flex items-center gap-2 text-lg text-ink-muted">
-			<Umbrella size={20} aria-hidden="true" />
-			{rain ? m.embed_umbrella_yes() : m.embed_umbrella_no()}
-		</p>
-		<dl class="grid grid-cols-2 gap-3 sm:grid-cols-3">
-			{#each readings as { Icon, label, value } (label)}
-				<div class="glass px-4 py-3">
-					<dt class="flex items-center gap-1.5 text-sm text-ink-muted">
-						<Icon size={16} aria-hidden="true" />
-						{label}
-					</dt>
-					<dd class="mt-1 text-2xl font-bold tabular-nums">{value}</dd>
-				</div>
-			{/each}
-		</dl>
-		<div class="glass px-4 pt-1 pb-2">
-			<!-- Every second hour, so the twelve fit across a tablet without scrolling. -->
-			<HourlyStrip hours={everySecond} {f} label={m.next_12_hours()} />
-		</div>
-		{#if offline}
-			<p class="flex items-center gap-2 text-sm text-ink-muted" role="status">
-				<WifiOff size={16} aria-hidden="true" />
-				{m.wall_offline({
-					time: f.time(placeNow(forecast.utcOffsetSeconds, Date.parse(forecast.fetchedAt)))
-				})}
+		{#if shows('clock')}
+			<!-- Sized to the screen so "12:24 PM" stays on one line beside the other column, and
+			     larger when the clock has the screen to itself. -->
+			<p
+				class={[
+					'mt-2 leading-none font-bold tracking-tight whitespace-nowrap tabular-nums',
+					side
+						? 'text-[clamp(3.5rem,15vw,8rem)] landscape:lg:text-[clamp(4rem,8vw,8rem)]'
+						: 'text-[clamp(4rem,min(20vw,32dvh),13rem)]'
+				]}
+				aria-live="off"
+			>
+				<time datetime={local}>{f.time(local)}</time>
 			</p>
 		{/if}
+		{#if shows('date')}
+			<p class="mt-1 text-lg text-ink-muted md:text-xl">{f.date(local.slice(0, 10))}</p>
+		{/if}
+
+		{#if shows('now')}
+			<div class="mt-8 flex items-center gap-5">
+				<WeatherIcon
+					condition={now.condition}
+					isDay={now.isDay}
+					size={88}
+					strokeWidth={1.25}
+					halo
+				/>
+				<div>
+					<p class="text-6xl font-bold tracking-tight tabular-nums md:text-7xl">
+						{f.temp(now.temp)}
+					</p>
+					<p class="mt-1 text-lg md:text-xl">{conditionLabel(now.condition, now.isDay)}</p>
+				</div>
+			</div>
+		{/if}
 	</section>
+
+	{#if side}
+		<section class="flex min-w-0 flex-col gap-5" style:translate="{shift.x}px {shift.y}px">
+			{#if shows('sentence') && !(evening && shows('tomorrow'))}
+				<div
+					class="md:[&_p]:text-[2.75rem] md:[&_p]:leading-[1.08] md:[&_p]:font-extrabold md:[&_p]:tracking-[-0.025em]"
+				>
+					{#if evening && outlook}
+						<p class="text-lg font-semibold text-ink-muted md:text-xl!">
+							{m.tomorrow_question()}
+						</p>
+						<p class="mt-1 text-3xl font-extrabold">{tomorrowText(outlook, f)}</p>
+					{:else}
+						<SummaryLine sentences={summarize(hours, now.temp)} {f} />
+					{/if}
+				</div>
+			{/if}
+			{#if shows('umbrella')}
+				<p class="flex items-center gap-2 text-lg text-ink-muted">
+					<Umbrella size={20} aria-hidden="true" />
+					{rain ? m.embed_umbrella_yes() : m.embed_umbrella_no()}
+				</p>
+			{/if}
+			{#if shows('readings')}
+				<dl class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+					{#each readings as { Icon, label, value } (label)}
+						<div class="glass px-4 py-3">
+							<dt class="flex items-center gap-1.5 text-sm text-ink-muted">
+								<Icon size={16} aria-hidden="true" />
+								{label}
+							</dt>
+							<dd class="mt-1 text-2xl font-bold tabular-nums">{value}</dd>
+						</div>
+					{/each}
+				</dl>
+			{/if}
+			{#if shows('hours')}
+				<div class="glass px-4 pt-1 pb-2">
+					<!-- Every second hour, so the twelve fit across a tablet without scrolling. -->
+					<HourlyStrip hours={everySecond} {f} label={m.next_12_hours()} />
+				</div>
+			{/if}
+			{#if shows('tomorrow')}
+				<TomorrowTile {days} hours={forecast.hours} {f} />
+			{/if}
+		</section>
+	{/if}
+	{#if offline}
+		<p
+			class="flex items-center gap-2 text-sm text-ink-muted landscape:lg:col-span-full"
+			role="status"
+		>
+			<WifiOff size={16} aria-hidden="true" />
+			{m.wall_offline({
+				time: f.time(placeNow(forecast.utcOffsetSeconds, Date.parse(forecast.fetchedAt)))
+			})}
+		</p>
+	{/if}
 </main>
+
+<WallCustomize {layout} />
 
 <!-- Dims the whole screen at night; the text keeps its contrast against the darkened sky. -->
 {#if night}

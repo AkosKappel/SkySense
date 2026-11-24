@@ -3,7 +3,7 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import WeatherIcon from '#lib/components/WeatherIcon.svelte';
-	import { conditionLabel } from '#lib/components/labels.js';
+	import { conditionLabel, tomorrowText } from '#lib/components/labels.js';
 	import type { Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { tomorrowOutlook } from '#lib/tomorrow.js';
@@ -26,31 +26,7 @@
 		}))
 	);
 
-	const tempText = $derived.by(() => {
-		if (!outlook) return '';
-		const max = f.temp(outlook.day.max);
-		return { warmer: m.tomorrow_warmer, colder: m.tomorrow_colder, same: m.tomorrow_same }[
-			outlook.temp.key
-		]({ max });
-	});
-
-	const fallText = $derived.by(() => {
-		if (!outlook) return '';
-		const fall = outlook.fall;
-		if (fall.key === 'dry') return m.tomorrow_dry();
-		if (fall.key === 'from') {
-			return {
-				rain: m.tomorrow_rain_from,
-				snow: m.tomorrow_snow_from,
-				thunder: m.tomorrow_thunder_from
-			}[fall.kind]({ from: f.time(fall.from) });
-		}
-		return {
-			rain: m.tomorrow_rain_window,
-			snow: m.tomorrow_snow_window,
-			thunder: m.tomorrow_thunder_window
-		}[fall.kind]({ from: f.time(fall.from), until: f.time(fall.until) });
-	});
+	const text = $derived(outlook ? tomorrowText(outlook, f) : '');
 </script>
 
 {#if outlook}
@@ -61,7 +37,7 @@
 					<CalendarDays size={18} aria-hidden="true" />
 					{m.tomorrow_question()}
 				</p>
-				<p class="mt-2 answer">{tempText} {fallText}</p>
+				<p class="mt-2 answer">{text}</p>
 				<p class="mt-2 text-sm text-ink-muted">
 					{f.weekday(outlook.day.date)} · {m.tomorrow_detail({
 						min: f.temp(outlook.day.min),
