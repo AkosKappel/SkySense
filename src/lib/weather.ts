@@ -77,7 +77,34 @@ export type Day = {
 	/** Fresh snow in cm and minutes of sunshine (X-23); missing in older recordings. */
 	snowfall?: number;
 	sunshine?: number;
+	/** The day's highest CAPE in J/kg and solar radiation in MJ/m² (X-23); missing in older recordings. */
+	capeMax?: number;
+	radiation?: number;
 };
+
+/**
+ * Whether thunderstorms may come (X-23). CAPE is the energy a rising air parcel gains; on its own
+ * it says the air could carry storms, not that something will set them off, so it counts only
+ * with a real chance of rain. A forecast thunderstorm settles it.
+ */
+export function stormRisk(day: Day): 'likely' | 'possible' | null {
+	if (day.condition === 'thunder') return 'likely';
+	const cape = day.capeMax ?? 0;
+	if (cape >= 1000 && day.rainChance >= 30) return 'likely';
+	if (cape >= 300 && day.rainChance >= 20) return 'possible';
+	return null;
+}
+
+/** Losses in the inverter, wiring, heat and dirt: what a typical system delivers of the sunlight. */
+const PERFORMANCE_RATIO = 0.8;
+
+/**
+ * Roughly what solar panels make in a day per kWp installed (X-23), from the sunlight on flat
+ * ground: 1 kWh/m² is the light a 1 kWp panel is rated at for one hour. Tilted panels catch more in
+ * winter, so this is a floor rather than a promise.
+ */
+export const solarYield = (megajoules: number) =>
+	Math.round((megajoules / 3.6) * PERFORMANCE_RATIO * 10) / 10;
 
 /** The moon's next events (H-07), as the place's wall-clock times. */
 export type Sky = {

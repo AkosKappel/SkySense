@@ -4,7 +4,10 @@ import {
 	formatCoordinates,
 	nextRain,
 	parseCoordinates,
+	solarYield,
+	stormRisk,
 	type Condition,
+	type Day,
 	type Hour
 } from './weather.js';
 
@@ -102,5 +105,43 @@ describe('coordinates', () => {
 
 	it('formats rounded coordinates', () => {
 		expect(formatCoordinates({ lat: 69.6496, lon: 18.9553 })).toBe('69.65,18.96');
+	});
+});
+
+describe('stormRisk', () => {
+	const on = (condition: Condition, capeMax: number | undefined, rainChance: number): Day => ({
+		date: '2026-07-10',
+		condition,
+		max: 30,
+		min: 18,
+		rainChance,
+		rain: 0,
+		sunrise: '2026-07-10T05:00',
+		sunset: '2026-07-10T21:00',
+		uvMax: 8,
+		capeMax
+	});
+
+	it('takes a forecast thunderstorm as it is', () => {
+		expect(stormRisk(on('thunder', 0, 10))).toBe('likely');
+	});
+
+	it('needs unstable air and a chance of rain together', () => {
+		expect(stormRisk(on('partly', 1500, 40))).toBe('likely');
+		expect(stormRisk(on('partly', 1500, 25))).toBe('possible');
+		expect(stormRisk(on('partly', 500, 20))).toBe('possible');
+		// Unstable but dry air, or rain from stable air, brings no storm.
+		expect(stormRisk(on('clear', 2500, 5))).toBeNull();
+		expect(stormRisk(on('rain', 100, 90))).toBeNull();
+		expect(stormRisk(on('rain', undefined, 90))).toBeNull();
+	});
+});
+
+describe('solarYield', () => {
+	it('turns a day of sunlight into kWh per kWp after losses', () => {
+		// 18 MJ/m² is 5 kWh/m², of which 80% reaches the grid.
+		expect(solarYield(18)).toBe(4);
+		expect(solarYield(1.31)).toBe(0.3);
+		expect(solarYield(0)).toBe(0);
 	});
 });

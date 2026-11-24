@@ -38,7 +38,9 @@ const daily = [
 	'sunset',
 	'uv_index_max',
 	'snowfall_sum',
-	'sunshine_duration'
+	'sunshine_duration',
+	'cape_max',
+	'shortwave_radiation_sum'
 ];
 const current = [
 	'temperature_2m',

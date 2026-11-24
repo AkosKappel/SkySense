@@ -451,6 +451,18 @@ test("today's details show sunshine, and snow where there is some", async ({ pag
 	await expect(page.getByText('Fresh snow')).toBeVisible();
 });
 
+test("today's details say what solar panels make, and when storms may come", async ({ page }) => {
+	await page.goto('/p/48.15,17.11/Bratislava');
+	const details = page.locator('section', { hasText: 'Today in detail' });
+	await expect(details.getByText('About 0.3 kWh per kWp')).toBeVisible();
+	await expect(details.getByText('Thunderstorms')).toHaveCount(0);
+	// Singapore's air is unstable every day, with rain likely.
+	await page.goto('/p/1.29,103.85/Singapore');
+	const tropics = page.locator('section', { hasText: 'Today in detail' });
+	await expect(tropics.getByText('Thunderstorms')).toBeVisible();
+	await expect(tropics.getByText('Likely', { exact: true })).toBeVisible();
+});
+
 test('the health check answers for the uptime monitor, uncached', async ({ request }) => {
 	const health = await request.get('/api/health');
 	expect(health.status()).toBe(200);

@@ -45,6 +45,12 @@ const forecastCalls = (fetchFn: ReturnType<typeof route>) =>
 describe('toForecast', () => {
 	const forecast = toForecast(bratislava);
 
+	it("reads the day's CAPE and solar radiation (X-23)", () => {
+		expect(forecast.days[0].capeMax).toBe(0);
+		expect(forecast.days[0].radiation).toBeCloseTo(1.31);
+		expect(toForecast(heat).days[0].capeMax).toBeUndefined();
+	});
+
 	it('reads snow on the ground, fresh snow and sunshine (X-23)', () => {
 		const north = toForecast(tromso);
 		expect(north.current.snowDepth).toBe(6);

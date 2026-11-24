@@ -547,7 +547,9 @@
 		"precipitation_sum": "mm",
 		"sunrise": "iso8601",
 		"sunset": "iso8601",
-		"uv_index_max": ""
+		"uv_index_max": "",
+		"cape_max": "J/kg",
+		"shortwave_radiation_sum": "MJ/m²"
 	},
 	"daily": {
 		"time": [
@@ -593,6 +595,8 @@
 		],
 		"uv_index_max": [0.2, 0.15, 0.15, 0.15, 0.1, 0.05, 0.05, 0, 0.05, 0],
 		"snowfall_sum": [0.07, 0.42, 1.33, 0.77, 0.42, 0.07, 4.41, 2.45, 2.17, 0],
-		"sunshine_duration": [2850.3, 7791.45, 0, 0, 0, 92.02, 0, 0, 0, 0]
+		"sunshine_duration": [2850.3, 7791.45, 0, 0, 0, 92.02, 0, 0, 0, 0],
+		"cape_max": [10, 0, 0, 10, 0, 0, 0, 10, 10, 10],
+		"shortwave_radiation_sum": [0.31, 0.3, 0.22, 0.15, 0.1, 0.14, 0.04, 0.06, 0.03, 0.03]
 	}
 }

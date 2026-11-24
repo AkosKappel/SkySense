@@ -1,12 +1,14 @@
 <script lang="ts">
 	import {
 		CloudFog,
+		CloudLightning,
 		CloudRain,
 		CloudSnow,
 		Droplet,
 		Droplets,
 		Eye,
 		Gauge,
+		SolarPanel,
 		Sun,
 		Sunrise,
 		Sunset,
@@ -18,7 +20,7 @@
 	import { uvLevel, type Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import { pressureTrend, type Pressure } from '#lib/pressure.js';
-	import { RAIN_LIKELY, type Day, type Hour } from '#lib/weather.js';
+	import { RAIN_LIKELY, solarYield, stormRisk, type Day, type Hour } from '#lib/weather.js';
 
 	// Humidity, pressure and the hours ahead are readings for now, so only today's tile passes them.
 	let {
@@ -98,6 +100,9 @@
 		[12, 'bg-rose']
 	];
 
+	const storm = $derived(stormRisk(day));
+	const solar = $derived(day.radiation === undefined ? null : solarYield(day.radiation));
+
 	const facts = $derived(
 		(
 			[
@@ -143,7 +148,26 @@
 					: { label: m.fresh_snow(), Icon: CloudSnow, value: f.snow(day.snowfall!) },
 				(snowDepth ?? 0) < 1
 					? null
-					: { label: m.snow_depth(), Icon: CloudSnow, value: f.snow(snowDepth!) }
+					: { label: m.snow_depth(), Icon: CloudSnow, value: f.snow(snowDepth!) },
+				// Only on days that could bring storms.
+				storm === null
+					? null
+					: {
+							label: m.storms(),
+							Icon: CloudLightning,
+							value: storm === 'likely' ? m.storms_likely() : m.storms_possible()
+						},
+				solar === null
+					? null
+					: {
+							label: m.solar(),
+							Icon: SolarPanel,
+							value: solar
+								? m.solar_yield({
+										kwh: new Intl.NumberFormat(f.locale, { maximumFractionDigits: 1 }).format(solar)
+									})
+								: m.solar_none()
+						}
 			] satisfies (Fact | null)[]
 		).filter((fact) => fact !== null)
 	);

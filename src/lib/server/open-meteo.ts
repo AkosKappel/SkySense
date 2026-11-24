@@ -81,7 +81,9 @@ const daily = [
 	'sunset',
 	'uv_index_max',
 	'snowfall_sum',
-	'sunshine_duration'
+	'sunshine_duration',
+	'cape_max',
+	'shortwave_radiation_sum'
 ] as const;
 
 const current = [
@@ -148,7 +150,10 @@ const forecastSchema = z.object({
 		uv_index_max: numbers,
 		// Optional (X-23): centimetres of fresh snow, and seconds of sunshine.
 		snowfall_sum: numbers.optional(),
-		sunshine_duration: numbers.optional()
+		sunshine_duration: numbers.optional(),
+		// Optional for the same reason: J/kg and MJ/m².
+		cape_max: numbers.optional(),
+		shortwave_radiation_sum: numbers.optional()
 	})
 });
 
@@ -211,7 +216,9 @@ function toDay(d: DailyColumns, i: number, max: number, min: number): Day {
 		...sunTimes(d.time[i], d.sunrise[i], d.sunset[i]),
 		uvMax: d.uv_index_max[i] ?? 0,
 		snowfall: d.snowfall_sum?.[i] ?? undefined,
-		sunshine: minutesOf(d.sunshine_duration?.[i])
+		sunshine: minutesOf(d.sunshine_duration?.[i]),
+		capeMax: d.cape_max?.[i] ?? undefined,
+		radiation: d.shortwave_radiation_sum?.[i] ?? undefined
 	};
 }
 

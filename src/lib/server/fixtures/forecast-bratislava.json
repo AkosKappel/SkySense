@@ -559,7 +559,9 @@
 		"sunrise": "iso8601",
 		"sunset": "iso8601",
 		"uv_index_max": "",
-		"wind_speed_10m_max": "km/h"
+		"wind_speed_10m_max": "km/h",
+		"cape_max": "J/kg",
+		"shortwave_radiation_sum": "MJ/m²"
 	},
 	"daily": {
 		"time": [
@@ -606,6 +608,8 @@
 		"uv_index_max": [0.55, 1.7, 1.65, 1.05, 2.05, 1.95, 0.9, 1.75, 1, 1.2],
 		"wind_speed_10m_max": [15.9, 17.9, 14.5, 24.8, 15.4, 21.3, 23.2, 21.7, 10.4, 8],
 		"snowfall_sum": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-		"sunshine_duration": [0, 0, 0, 0, 32251.21, 11503.23, 0, 0, 25011.03, 12246.13]
+		"sunshine_duration": [0, 0, 0, 0, 32251.21, 11503.23, 0, 0, 25011.03, 12246.13],
+		"cape_max": [0, 0, 0, 0, 0, 0, 0, 0, 110, 0],
+		"shortwave_radiation_sum": [1.31, 1.82, 2.47, 2.86, 7.56, 3.99, 2.56, 1.31, 6.27, 3.39]
 	}
 }
