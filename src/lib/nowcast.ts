@@ -9,15 +9,19 @@ export const NOWCAST_WET_MM = 0.1;
 
 /**
  * When the rain starts or stops within the steps from `now`, or null when nothing changes: dry
- * throughout says nothing the hourly answer does not, and neither does rain throughout.
+ * throughout says nothing the hourly answer does not, and neither does rain throughout. The
+ * 15-minute models are not the hourly forecast's, so where they disagree about now (`wetHour`,
+ * the hourly answer) the line is left out rather than contradict the answer above it.
  */
 export function rainTurn(
 	steps: NowcastStep[],
-	now: string
+	now: string,
+	wetHour: boolean
 ): { turn: 'starts' | 'stops'; at: string } | null {
 	const ahead = steps.filter((s) => s.time >= `${now.slice(0, 14)}${quarter(now)}`);
 	if (ahead.length < 2) return null;
 	const wetNow = ahead[0].rain >= NOWCAST_WET_MM;
+	if (wetNow !== wetHour) return null;
 	const change = ahead.find((s) => s.rain >= NOWCAST_WET_MM !== wetNow);
 	return change ? { turn: wetNow ? 'stops' : 'starts', at: change.time } : null;
 }

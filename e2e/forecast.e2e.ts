@@ -413,17 +413,19 @@ test("today's details show dew point, visibility and fog ahead", async ({ page }
 	).toBeVisible();
 });
 
-test('says to the quarter hour when rain starts, only where 15-minute data is native', async ({
-	page
+test('carries 15-minute rain only where it is native, and never contradicts the hourly answer', async ({
+	page,
+	request
 }) => {
+	// Madrid's recorded quarter hours start dry while its hourly forecast says rain now: no line.
+	const madrid = await (await request.get('/api/forecast?lat=40.42&lon=-3.7')).json();
+	expect(madrid.nowcast[0]).toEqual({ time: '2026-11-10T10:00', rain: 0 });
 	await page.goto('/p/40.42,-3.7/Madrid');
-	const umbrella = page.locator('[data-tile="umbrella"]');
-	await expect(
-		umbrella.getByText('Rain from about 11:15, by the 15-minute forecast.')
-	).toBeVisible();
-	// Tromsø is outside every 15-minute model, so the hourly answer stands alone.
-	await page.goto('/p/69.65,18.96/Troms%C3%B8');
+	await expect(page.getByText('Yes, all day.')).toBeVisible();
 	await expect(page.getByText(/by the 15-minute forecast/)).toHaveCount(0);
+	// Tromsø is outside every 15-minute model.
+	const tromso = await (await request.get('/api/forecast?lat=69.65&lon=18.96')).json();
+	expect(tromso.nowcast).toBeUndefined();
 });
 
 test('the wind tile tells the sea at the coast, and nothing inland', async ({ page }) => {

@@ -72,7 +72,8 @@
 	});
 	// When the rain starts or stops in the next two hours, to the quarter hour where that is native.
 	const turn = $derived.by(() => {
-		const found = nowcast && now ? rainTurn(nowcast, now) : null;
+		const wetHour = (hours[0]?.rainChance ?? 0) >= RAIN_LIKELY;
+		const found = nowcast && now ? rainTurn(nowcast, now, wetHour) : null;
 		if (!found) return null;
 		const time = f.time(found.at);
 		const snow = hours.find((h) => h.time === `${found.at.slice(0, 13)}:00`)?.condition === 'snow';

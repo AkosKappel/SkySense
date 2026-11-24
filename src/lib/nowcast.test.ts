@@ -11,27 +11,32 @@ const steps = (mm: number[]): NowcastStep[] =>
 
 describe('rainTurn', () => {
 	it('says when rain starts or stops within the steps ahead', () => {
-		expect(rainTurn(steps([0, 0, 0.3, 0.5]), '2026-11-10T10:00')).toEqual({
+		expect(rainTurn(steps([0, 0, 0.3, 0.5]), '2026-11-10T10:00', false)).toEqual({
 			turn: 'starts',
 			at: '2026-11-10T10:30'
 		});
-		expect(rainTurn(steps([0.4, 0.2, 0, 0]), '2026-11-10T10:05')).toEqual({
+		expect(rainTurn(steps([0.4, 0.2, 0, 0]), '2026-11-10T10:05', true)).toEqual({
 			turn: 'stops',
 			at: '2026-11-10T10:30'
 		});
 	});
 
 	it('starts from the quarter hour now falls in', () => {
-		expect(rainTurn(steps([0.5, 0, 0, 0, 0.2]), '2026-11-10T10:20')).toEqual({
+		expect(rainTurn(steps([0.5, 0, 0, 0, 0.2]), '2026-11-10T10:20', false)).toEqual({
 			turn: 'starts',
 			at: '2026-11-10T11:00'
 		});
 	});
 
 	it('says nothing when nothing changes', () => {
-		expect(rainTurn(steps([0, 0.05, 0, 0]), '2026-11-10T10:00')).toBeNull();
-		expect(rainTurn(steps([0.3, 0.3, 0.3, 0.3]), '2026-11-10T10:00')).toBeNull();
-		expect(rainTurn([], '2026-11-10T10:00')).toBeNull();
+		expect(rainTurn(steps([0, 0.05, 0, 0]), '2026-11-10T10:00', false)).toBeNull();
+		expect(rainTurn(steps([0.3, 0.3, 0.3, 0.3]), '2026-11-10T10:00', true)).toBeNull();
+		expect(rainTurn([], '2026-11-10T10:00', false)).toBeNull();
+	});
+
+	it('stays quiet where the 15-minute models disagree with the hourly answer', () => {
+		expect(rainTurn(steps([0, 0, 0.3, 0.5]), '2026-11-10T10:00', true)).toBeNull();
+		expect(rainTurn(steps([0.4, 0.2, 0, 0]), '2026-11-10T10:00', false)).toBeNull();
 	});
 
 	it('reads a recorded morning', () => {
