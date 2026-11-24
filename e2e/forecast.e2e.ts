@@ -413,6 +413,19 @@ test("today's details show dew point, visibility and fog ahead", async ({ page }
 	).toBeVisible();
 });
 
+test('says to the quarter hour when rain starts, only where 15-minute data is native', async ({
+	page
+}) => {
+	await page.goto('/p/40.42,-3.7/Madrid');
+	const umbrella = page.locator('[data-tile="umbrella"]');
+	await expect(
+		umbrella.getByText('Rain from about 11:15, by the 15-minute forecast.')
+	).toBeVisible();
+	// Tromsø is outside every 15-minute model, so the hourly answer stands alone.
+	await page.goto('/p/69.65,18.96/Troms%C3%B8');
+	await expect(page.getByText(/by the 15-minute forecast/)).toHaveCount(0);
+});
+
 test('the wind tile tells the sea at the coast, and nothing inland', async ({ page }) => {
 	await page.goto('/p/1.29,103.85/Singapore');
 	const wind = page.locator('section', { hasText: 'How windy is it?' });

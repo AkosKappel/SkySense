@@ -24,6 +24,7 @@ import type { HindcastDay } from '#lib/hindcast.js';
 import type { GardenDay } from '#lib/garden.js';
 import type { Holiday } from '#lib/holidays.js';
 import type { MarineHour } from '#lib/sea.js';
+import type { NowcastStep } from '#lib/nowcast.js';
 import { SITE_URL } from '#lib/site.js';
 
 export class WeatherServiceError extends Error {}
@@ -39,6 +40,8 @@ const GEOCODING_URL = 'https://geocoding-api.open-meteo.com/v1/search';
 const REVERSE_URL = 'https://nominatim.openstreetmap.org/reverse';
 const HOLIDAYS_URL = 'https://date.nager.at/api/v3/PublicHolidays';
 const MARINE_URL = 'https://marine-api.open-meteo.com/v1/marine';
+/** The models with native 15-minute steps (M-02); outside all of them Open-Meteo answers 400. */
+const NOWCAST_MODELS = 'icon_d2,meteofrance_arome_france_hd,ncep_hrrr_conus';
 /** Nominatim's usage policy asks every app to identify itself. */
 const REVERSE_AGENT = `SkySense (${SITE_URL})`;
 const DAYS = 10;
@@ -1261,6 +1264,49 @@ export async function fetchMarine(
 		forecast_days: '2'
 	}).toString();
 	return toMarine(await getJson(url, fetchFn));
+}
+
+const nowcastSchema = z.object({
+	minutely_15: z.object({ time: z.array(z.string()) }).catchall(numbers)
+});
+
+/** One value per quarter hour: the first model with one, as their areas overlap (Paris has two). */
+export function toNowcast(raw: unknown): NowcastStep[] {
+	const parsed = nowcastSchema.safeParse(raw);
+	if (!parsed.success) throw new WeatherServiceError('Unexpected 15-minute response');
+	const { time, ...columns } = parsed.data.minutely_15;
+	const values = Object.values(columns) as (number | null)[][];
+	return time.flatMap((t, i) => {
+		const rain = values.map((column) => column[i]).find((v) => v !== null && v !== undefined);
+		return rain === undefined || rain === null ? [] : [{ time: t, rain }];
+	});
+}
+
+/** The next two hours in quarter hours, or null where no model has native 15-minute data. */
+export async function fetchNowcast(
+	{ lat, lon }: Coordinates,
+	fetchFn: typeof fetch = fetch
+): Promise<NowcastStep[] | null> {
+	if (useFixtures()) {
+		const recorded = fixtures[`./fixtures/nowcast-${nearestFixture({ lat, lon })}.json`];
+		return recorded ? toNowcast(recorded.default) : null;
+	}
+	const url = new URL(FORECAST_URL);
+	url.search = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		minutely_15: 'precipitation',
+		models: NOWCAST_MODELS,
+		forecast_minutely_15: '9',
+		timezone: 'auto'
+	}).toString();
+	const response = await fetchFn(url, { signal: AbortSignal.timeout(8000) }).catch((cause) => {
+		throw new WeatherServiceError('Weather service unreachable', { cause });
+	});
+	// "No data is available for this location": outside every 15-minute model.
+	if (response.status === 400) return null;
+	if (!response.ok) throw new WeatherServiceError(`Weather service answered ${response.status}`);
+	return toNowcast(await response.json());
 }
 
 export async function searchPlaces(

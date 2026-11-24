@@ -3,7 +3,8 @@
 // history (`climate-*`), air quality (`air-*`), daily history and the long record (`history-*`,
 // `record-*`), the rain of the 60 days before (`recent-*`), the 30 days before as forecast a day
 // ahead (`hindcast-*`) and a week either side for the garden (`garden-*`); public holidays
-// (`holidays-*`) come from Nager.Date, waves and sea temperature (`marine-*`) from the Marine API.
+// (`holidays-*`) come from Nager.Date, waves and sea temperature (`marine-*`) from the Marine API,
+// rain in quarter hours (`nowcast-*`) from the models that run at that step.
 // Run: node scripts/record-fixtures.ts [name ...]   (no names records all of them)
 //
 // Live forecasts are recorded as they are today. Past scenarios (polar night, midnight sun, a heat
@@ -422,6 +423,37 @@ for (const [name, { lat, lon }] of Object.entries(fixtures)) {
 	writeFileSync(
 		new URL(
 			`../src/lib/server/fixtures/${name.replace('forecast-', 'marine-')}.json`,
+			import.meta.url
+		),
+		JSON.stringify(await response.json()) + '\n'
+	);
+}
+// Rain in quarter hours (M-02) on the day of each live forecast, from the models with native
+// 15-minute steps: `node scripts/record-fixtures.ts nowcast`. Places outside them get no file.
+for (const [name, { lat, lon }] of Object.entries(fixtures)) {
+	if (!name.startsWith('forecast-') || !(wanted.length === 0 || wanted.includes('nowcast')))
+		continue;
+	const recorded = await import(`../src/lib/server/fixtures/${name}.json`, {
+		with: { type: 'json' }
+	});
+	const day = recorded.default.hourly.time[0].slice(0, 10);
+	const params = new URLSearchParams({
+		latitude: String(lat),
+		longitude: String(lon),
+		minutely_15: 'precipitation',
+		models: 'icon_d2,meteofrance_arome_france_hd,ncep_hrrr_conus',
+		timezone: 'auto',
+		start_date: day,
+		end_date: day
+	});
+	const response = await fetch(
+		`https://historical-forecast-api.open-meteo.com/v1/forecast?${params}`
+	);
+	if (response.status === 400) continue;
+	if (!response.ok) throw new Error(`${name}: ${response.status} ${await response.text()}`);
+	writeFileSync(
+		new URL(
+			`../src/lib/server/fixtures/${name.replace('forecast-', 'nowcast-')}.json`,
 			import.meta.url
 		),
 		JSON.stringify(await response.json()) + '\n'

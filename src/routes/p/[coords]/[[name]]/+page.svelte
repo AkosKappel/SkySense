@@ -565,7 +565,7 @@
 
 {#snippet umbrellaTile()}
 	<section class="flex flex-col glass p-6">
-		<UmbrellaTile hours={forecast.hours} {f} />
+		<UmbrellaTile hours={forecast.hours} {f} nowcast={forecast.nowcast} now={now.time} />
 		{#if commute}
 			<!-- The server knows there is a line, so its room is kept while its words load. -->
 			<div class="mt-3 min-h-10">

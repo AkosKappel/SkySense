@@ -3,6 +3,7 @@
 
 import type { PlaceHolidays } from '#lib/holidays.js';
 import type { Pressure } from '#lib/pressure.js';
+import type { NowcastStep } from '#lib/nowcast.js';
 import type { Sea } from '#lib/sea.js';
 
 export type Condition =
@@ -118,6 +119,8 @@ export type Forecast = {
 	holidays?: PlaceHolidays;
 	/** Today's waves and the sea temperature at coastal places (X-18), from `/api/forecast`. */
 	sea?: Sea;
+	/** Rain in quarter hours for the next two hours, where a model runs at that step (M-02). */
+	nowcast?: NowcastStep[];
 };
 
 /** WMO weather interpretation codes, as Open-Meteo documents them. */

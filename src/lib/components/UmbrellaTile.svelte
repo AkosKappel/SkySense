@@ -2,16 +2,22 @@
 	import { Umbrella } from '@lucide/svelte';
 	import type { Formatter } from '#lib/format.js';
 	import { m } from '#lib/paraglide/messages.js';
+	import { rainTurn, type NowcastStep } from '#lib/nowcast.js';
 	import { nextRain, RAIN_LIKELY, type Hour } from '#lib/weather.js';
 
 	let {
 		hours,
 		f,
-		fromNow = true
+		fromNow = true,
+		nowcast,
+		now
 	}: {
 		hours: Hour[];
 		f: Formatter;
 		/** False for a later day: no "Now" label, no "until". */ fromNow?: boolean;
+		/** Quarter hours ahead (M-02) and the current time, where a model has them. */
+		nowcast?: NowcastStep[];
+		now?: string;
 	} = $props();
 
 	const rain = $derived(nextRain(hours));
@@ -64,11 +70,22 @@
 			? m.agreement_now({ percent })
 			: m.agreement_at({ percent, time: f.time(at.time) });
 	});
+	// When the rain starts or stops in the next two hours, to the quarter hour where that is native.
+	const turn = $derived.by(() => {
+		const found = nowcast && now ? rainTurn(nowcast, now) : null;
+		if (!found) return null;
+		const time = f.time(found.at);
+		const snow = hours.find((h) => h.time === `${found.at.slice(0, 13)}:00`)?.condition === 'snow';
+		if (found.turn === 'starts')
+			return snow ? m.nowcast_snow_starts({ time }) : m.nowcast_starts({ time });
+		return snow ? m.nowcast_snow_stops({ time }) : m.nowcast_stops({ time });
+	});
 </script>
 
 <p class="question"><Umbrella size={18} aria-hidden="true" /> {m.umbrella_question()}</p>
 <p class="mt-2 answer">{answer}</p>
 {#if agreement}<p class="mt-1 text-sm text-ink-muted">{agreement}</p>{/if}
+{#if turn}<p class="mt-1 text-sm font-semibold">{turn}</p>{/if}
 <!-- The bars grow with the tile: beside a taller tile they fill its height instead of leaving a gap. -->
 <div class="mt-4 flex max-h-48 min-h-16 flex-1 gap-0.5" aria-hidden="true">
 	{#each day as hour, i (hour.time)}

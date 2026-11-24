@@ -5,6 +5,7 @@ import {
 	fetchForecast,
 	fetchHolidays,
 	fetchMarine,
+	fetchNowcast,
 	WeatherServiceError,
 	type DemoScenario
 } from '#lib/server/open-meteo.js';
@@ -69,6 +70,11 @@ export const GET: RequestHandler = async ({ url, fetch, setHeaders }) => {
 	const demo = demoScenarios.find((d) => d === demoParam) as DemoScenario | undefined;
 
 	const holidaysLookup = placeHolidays(coordinates, fetch);
+	const nowcastLookup = optional(
+		memo(`nowcast:${coordinates.lat},${coordinates.lon}`, 10 * MINUTE, () =>
+			fetchNowcast(coordinates, fetch)
+		)
+	);
 	// Waves change slowly; an hour's cache serves a coast's many readers.
 	const marineLookup = optional(
 		memo(`marine:${coordinates.lat},${coordinates.lon}`, HOUR, () =>
@@ -95,6 +101,9 @@ export const GET: RequestHandler = async ({ url, fetch, setHeaders }) => {
 			languages: languagesOf(found.country),
 			days: holidaysWithin(found.list, forecast.days[0].date, forecast.days.length)
 		};
+		// The two hours from the current quarter hour; recordings hold the whole day.
+		const steps = await nowcastLookup;
+		const nowcast = steps?.filter((s) => s.time >= `${time.slice(0, 13)}:00`).slice(0, 9);
 		const marine = await marineLookup;
 		const sea = marine && seaToday(marine, time);
 		// Open-Meteo updates hourly; 15 minutes keeps "now" fresh while the CDN absorbs repeats.
@@ -102,7 +111,13 @@ export const GET: RequestHandler = async ({ url, fetch, setHeaders }) => {
 			'cache-control':
 				'public, max-age=300, s-maxage=900, stale-while-revalidate=600, stale-if-error=86400'
 		});
-		return json({ ...forecast, sky, ...(holidays && { holidays }), ...(sea && { sea }) });
+		return json({
+			...forecast,
+			sky,
+			...(holidays && { holidays }),
+			...(sea && { sea }),
+			...(nowcast?.length && { nowcast })
+		});
 	} catch (cause) {
 		if (cause instanceof WeatherServiceError) error(502, 'Weather service unavailable');
 		throw cause;
