@@ -31,7 +31,7 @@
 					: ''}"
 			>
 				<span class="text-xs font-medium text-ink-muted">
-					{i === 0 && fromNow ? m.now() : f.hour(hour.time)}
+					{i === 0 && fromNow ? m.now() : f.clockHour(hour.time)}
 				</span>
 				<WeatherIcon condition={hour.condition} isDay={hour.isDay} />
 				<span class="sr-only">{conditionLabel(hour.condition, hour.isDay)}</span>

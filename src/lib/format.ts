@@ -32,6 +32,9 @@ export function formatter(locale: string, units: Units) {
 			`${new Intl.NumberFormat(intl, { maximumFractionDigits: fractionDigits }).format(units.temperature === 'f' ? celsius * 1.8 : celsius)}°`,
 		time: (local: string) => formatTime(local, intl, units.clock),
 		hour: (local: string) => formatHour(local, intl, units.clock),
+		/** An hour that stands alone, not on a chart's axis: "22:00" rather than "22", or "10 PM". */
+		clockHour: (local: string) =>
+			units.clock === '24' ? formatTime(local, intl, '24') : formatHour(local, intl, '12'),
 		weekday: (date: string) => formatWeekday(date, intl),
 		date: (date: string) => formatDate(date, intl),
 		pastDate: (date: string) => formatPastDate(date, intl),

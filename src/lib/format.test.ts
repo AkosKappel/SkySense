@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { compass, uvLevel, windLevel } from './format.js';
+import { compass, formatter, uvLevel, windLevel } from './format.js';
+import { imperial, metric } from './units.js';
 
 describe('compass', () => {
 	it.each([
@@ -38,5 +39,12 @@ describe('levels', () => {
 			'veryHigh',
 			'extreme'
 		]);
+	});
+});
+
+describe('clockHour', () => {
+	it('reads as a time of day on either clock', () => {
+		expect(formatter('en', metric).clockHour('2026-11-10T22:00')).toBe('22:00');
+		expect(formatter('en', imperial).clockHour('2026-11-10T22:00')).toMatch(/^10\sPM$/);
 	});
 });
