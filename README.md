@@ -5,6 +5,8 @@
 
 The weather, made sense of. Most weather apps show a grid of numbers and icons and leave the thinking to you. SkySense answers the questions people actually ask, and says how sure the answer is.
 
+**Case study:** [akoskappel.dev/projects/skysense](https://akoskappel.dev/projects/skysense)
+
 <p align="center">
   <img src="docs/screenshots/mobile-overview.png" alt="Bratislava on a phone: the summary 'Rain until 16:00, then dry.', a moderate air quality notice, and 6 degrees with rain and the advice 'A warm jacket. Something waterproof too.'" width="260">
   <img src="docs/screenshots/mobile-activities.png" alt="The activity tile: a run from 16:00 to 17:00 scored 97 of 100 with a bar for each factor, a walk at the same time, and laundry 'Too cold in the next 24 hours.'" width="260">
